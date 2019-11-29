@@ -1,0 +1,17 @@
+﻿<Window x:Class="VoukoderManager.GUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VoukoderManager.GUI"
+        mc:Ignorable="d"
+        Title="Voukoder Manager" Height="464.699" Width="469.902" Icon="./Resources/logo.png"
+        ResizeMode="CanMinimize">
+    <Grid Margin="0,0,4.667,1.667">
+        <ListBox HorizontalAlignment="Left" Height="268" Margin="21,75,0,0" VerticalAlignment="Top" Width="209" x:Name="listBoxPrograms" />
+        <Button Content="Refresh" Name="buttonRefresh" HorizontalAlignment="Left" Margin="194,358,0,0" VerticalAlignment="Top" Width="74" Click="buttonRefresh_Click" />
+        <ListBox HorizontalAlignment="Left" Height="268" Margin="241,75,0,0" VerticalAlignment="Top" Width="209" Name="listBoxVoukoderComponents" />
+        <Label Content="Detected programs" HorizontalAlignment="Left" Margin="71,44,0,0" VerticalAlignment="Top" Name="labelPrograms" />
+        <Label Content="Installed Voukoder components" HorizontalAlignment="Left" Margin="259,44,0,0" VerticalAlignment="Top" Name="labelVoukoderComponents" />
+    </Grid>
+</Window>
