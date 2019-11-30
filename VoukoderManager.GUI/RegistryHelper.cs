@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using VoukoderManager.GUI.Models;
 
 namespace VoukoderManager.GUI
 {
@@ -55,7 +56,10 @@ namespace VoukoderManager.GUI
             }
             return values;
         }
-
+        /// <summary>
+        /// Returns the registry base key for 32bit or 64bit
+        /// </summary>
+        /// <returns></returns>
         private static RegistryKey GetSystemTypeKey()
         {
             if (Environment.Is64BitOperatingSystem)

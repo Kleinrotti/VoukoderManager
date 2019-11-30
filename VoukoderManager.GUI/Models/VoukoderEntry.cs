@@ -1,7 +1,10 @@
-﻿namespace VoukoderManager.GUI
+﻿namespace VoukoderManager.GUI.Models
 {
     internal class VoukoderEntry : ProgramEntry
     {
+        /// <summary>
+        /// Uninstall string/command for the program
+        /// </summary>
         public string UninstallString { get; set; }
         public VoukoderEntry(string programName, string installationPath, string version) : base(programName, installationPath, version)
         {

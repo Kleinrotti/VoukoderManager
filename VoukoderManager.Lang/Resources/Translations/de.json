@@ -1,0 +1,9 @@
+{
+  "id": "german",
+  "name": "German",
+  "langId": 1031,
+  "translations": {
+    "ui_labelPrograms": "Erkannte Programme",
+    "ui_labelVoukoderComponents": "Installierte Voukoder Komponenten"
+  }
+}

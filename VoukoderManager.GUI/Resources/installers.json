@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "installers",
+  "name": "MSI",
+  "description": "Current voukoder component versions",
+  "groups": [
+    {
+      "id": "voukoder.core",
+      "properties": [
+        {
+          "id": "voukoder.core.version",
+          "parameter": "version",
+          "downloadString": "https://github.com/Vouk/voukoder/releases/download/2.3beta7/voukoder-2.3beta7.msi",
+          "value": "2.2.7.0"
+        }
+      ]
+    },
+    {
+      "id": "voukoder.connector",
+      "properties": [
+        {
+          "id": "voukoder.connector.premiere",
+          "properties": [
+            {
+              "parameter": "version",
+              "downloadString": "https://github.com/Vouk/voukoder-connectors/blob/master/premiere/premiere-connector-0.9.5.msi",
+              "value": "0.9.5.0"
+            }
+          ]
+        },
+        {
+          "id": "voukoder.connector.aftereffects",
+          "properties": [
+            {
+              "parameter": "version",
+              "downloadString": "https://github.com/Vouk/voukoder-connectors/blob/master/aftereffects/aftereffects-connector-0.9.3.msi",
+              "value": "0.9.3.0"
+            }
+          ]
+        },
+        {
+          "id": "voukoder.connector.vegas",
+          "properties": [
+            {
+              "parameter": "version",
+              "downloadString": "https://github.com/Vouk/voukoder-connectors/blob/master/vegas/vegas-connector-0.4.5.msi",
+              "value": "0.4.5.0"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

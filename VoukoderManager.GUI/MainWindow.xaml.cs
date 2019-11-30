@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
+using VoukoderManager.GUI.Models;
+using VoukoderManager.Language;
 
 namespace VoukoderManager.GUI
 {
@@ -11,6 +13,7 @@ namespace VoukoderManager.GUI
         private ProgramDetector _detector;
         private List<ProgramEntry> _detectedPrograms;
         private List<ProgramEntry> _installedVoukoderComponents;
+        private Lang _lang;
 
         public MainWindow()
         {
@@ -18,6 +21,8 @@ namespace VoukoderManager.GUI
             _detector = new ProgramDetector();
             _detectedPrograms = new List<ProgramEntry>();
             _installedVoukoderComponents = new List<ProgramEntry>();
+            _lang = new Lang();
+            InitializeLanguage();
             _installedVoukoderComponents = _detector.GetInstalledVoukoderComponents();
             _detectedPrograms = _detector.GetInstalledPrograms();
             foreach (ProgramEntry s in _detectedPrograms)
@@ -30,8 +35,15 @@ namespace VoukoderManager.GUI
             }
         }
 
+        private void InitializeLanguage()
+        {
+            labelPrograms.Content = Lang.GetText("ui_labelPrograms");
+            labelVoukoderComponents.Content = Lang.GetText("ui_labelVoukoderComponents");
+        }
+
         private void buttonRefresh_Click(object sender, RoutedEventArgs e)
         {
+            
             listBoxPrograms.Items.Clear();
             listBoxVoukoderComponents.Items.Clear();
             _installedVoukoderComponents = _detector.GetInstalledVoukoderComponents();

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using VoukoderManager.GUI.Models;
 
 namespace VoukoderManager.GUI
 {
