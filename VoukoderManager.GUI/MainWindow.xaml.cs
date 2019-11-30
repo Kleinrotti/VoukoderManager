@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using VoukoderManager.GUI.Models;
@@ -15,27 +16,51 @@ namespace VoukoderManager.GUI
         private List<ProgramEntry> _detectedPrograms;
         private List<ProgramEntry> _installedVoukoderComponents;
         private Lang _lang;
+        private BackgroundWorker _worker;
 
         public MainWindow()
         {
             InitializeComponent();
-            Mouse.OverrideCursor = Cursors.Wait;
             _detector = new ProgramDetector();
             _detectedPrograms = new List<ProgramEntry>();
             _installedVoukoderComponents = new List<ProgramEntry>();
             _lang = new Lang();
             InitializeLanguage();
-            _installedVoukoderComponents = _detector.GetInstalledVoukoderComponents();
-            _detectedPrograms = _detector.GetInstalledPrograms();
-            foreach (ProgramEntry s in _detectedPrograms)
+            _worker = new BackgroundWorker();
+            LoadProgramLists();
+        }
+
+        private void LoadProgramLists()
+        {
+            if (_worker.IsBusy)
             {
-                listBoxPrograms.Items.Add(s.ProgramName);
+                return;
             }
-            foreach (ProgramEntry s in _installedVoukoderComponents)
+            Mouse.OverrideCursor = Cursors.Wait;
+            _worker.DoWork += GetEntries;
+            _worker.RunWorkerCompleted += WorkCompleted;
+            _worker.RunWorkerAsync();
+
+            void GetEntries(object sender, DoWorkEventArgs args)
             {
-                listBoxVoukoderComponents.Items.Add(s.ProgramName);
+                _installedVoukoderComponents = _detector.GetInstalledVoukoderComponents();
+                _detectedPrograms = _detector.GetInstalledPrograms();
             }
-            Mouse.OverrideCursor = null;
+
+            void WorkCompleted(object sender, RunWorkerCompletedEventArgs args)
+            {
+                listBoxPrograms.Items.Clear();
+                listBoxVoukoderComponents.Items.Clear();
+                foreach (ProgramEntry s in _detectedPrograms)
+                {
+                    listBoxPrograms.Items.Add(s.ProgramName);
+                }
+                foreach (ProgramEntry s in _installedVoukoderComponents)
+                {
+                    listBoxVoukoderComponents.Items.Add(s.ProgramName);
+                }
+                Mouse.OverrideCursor = null;
+            }
         }
 
         private void InitializeLanguage()
@@ -46,20 +71,7 @@ namespace VoukoderManager.GUI
 
         private void buttonRefresh_Click(object sender, RoutedEventArgs e)
         {
-            Mouse.OverrideCursor = Cursors.Wait;
-            listBoxPrograms.Items.Clear();
-            listBoxVoukoderComponents.Items.Clear();
-            _installedVoukoderComponents = _detector.GetInstalledVoukoderComponents();
-            _detectedPrograms = _detector.GetInstalledPrograms();
-            foreach (ProgramEntry s in _detectedPrograms)
-            {
-                listBoxPrograms.Items.Add(s.ProgramName);
-            }
-            foreach (ProgramEntry s in _installedVoukoderComponents)
-            {
-                listBoxVoukoderComponents.Items.Add(s.ProgramName);
-            }
-            Mouse.OverrideCursor = null;
+            LoadProgramLists();
         }
     }
 }
