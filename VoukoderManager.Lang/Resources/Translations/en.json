@@ -4,6 +4,6 @@
   "langId": 1033,
   "translations": {
     "ui_labelPrograms": "Detected programs",
-    "ui_labelVoukoderComponents":  "Installed Voukoder components"
+    "ui_labelVoukoderComponents": "Installed Voukoder components"
   }
 }

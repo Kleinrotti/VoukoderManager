@@ -3,6 +3,9 @@ using VoukoderManager.GUI.Models;
 
 namespace VoukoderManager.GUI
 {
+    /// <summary>
+    /// Class for detecting installed programs on your operating system
+    /// </summary>
     public class ProgramDetector
     {
         private string _registryProgramPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
@@ -12,6 +15,10 @@ namespace VoukoderManager.GUI
             return null;
         }
 
+        /// <summary>
+        /// Returns a list which contains all installed programs where voukoder components are availible for
+        /// </summary>
+        /// <returns></returns>
         public List<ProgramEntry> GetInstalledPrograms()
         {
             var programs = RegistryHelper.GetPrograms(_registryProgramPath);
@@ -26,6 +33,10 @@ namespace VoukoderManager.GUI
             return list;
         }
 
+        /// <summary>
+        /// Returns a list which contains all installed Voukoder components
+        /// </summary>
+        /// <returns></returns>
         public List<ProgramEntry> GetInstalledVoukoderComponents()
         {
             var programs = RegistryHelper.GetPrograms(_registryProgramPath);

@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.Win32;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Text;
-using Microsoft.Win32;
 
 namespace VoukoderManager.Language
 {
@@ -81,7 +81,7 @@ namespace VoukoderManager.Language
         {
             using (var _registryKey = Registry.CurrentUser.OpenSubKey("Software\\VoukoderManager", true))
             {
-                if(_registryKey == null)
+                if (_registryKey == null)
                 {
                     SetDefaults();
                 }

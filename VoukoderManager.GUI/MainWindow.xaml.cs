@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Input;
 using VoukoderManager.GUI.Models;
 using VoukoderManager.Language;
 
@@ -18,6 +19,7 @@ namespace VoukoderManager.GUI
         public MainWindow()
         {
             InitializeComponent();
+            Mouse.OverrideCursor = Cursors.Wait;
             _detector = new ProgramDetector();
             _detectedPrograms = new List<ProgramEntry>();
             _installedVoukoderComponents = new List<ProgramEntry>();
@@ -33,6 +35,7 @@ namespace VoukoderManager.GUI
             {
                 listBoxVoukoderComponents.Items.Add(s.ProgramName);
             }
+            Mouse.OverrideCursor = null;
         }
 
         private void InitializeLanguage()
@@ -43,7 +46,7 @@ namespace VoukoderManager.GUI
 
         private void buttonRefresh_Click(object sender, RoutedEventArgs e)
         {
-            
+            Mouse.OverrideCursor = Cursors.Wait;
             listBoxPrograms.Items.Clear();
             listBoxVoukoderComponents.Items.Clear();
             _installedVoukoderComponents = _detector.GetInstalledVoukoderComponents();
@@ -56,6 +59,7 @@ namespace VoukoderManager.GUI
             {
                 listBoxVoukoderComponents.Items.Add(s.ProgramName);
             }
+            Mouse.OverrideCursor = null;
         }
     }
 }

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace VoukoderManager.Language
+﻿namespace VoukoderManager.Language
 {
+    /// <summary>
+    /// Language codes
+    /// </summary>
     public enum LangID
     {
         German = 1031,

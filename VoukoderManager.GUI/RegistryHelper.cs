@@ -56,6 +56,7 @@ namespace VoukoderManager.GUI
             }
             return values;
         }
+
         /// <summary>
         /// Returns the registry base key for 32bit or 64bit
         /// </summary>
