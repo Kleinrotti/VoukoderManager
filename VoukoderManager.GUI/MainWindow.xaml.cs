@@ -9,22 +9,22 @@ namespace VoukoderManager.GUI
     public partial class MainWindow : Window
     {
         private ProgramDetector _detector;
-        private List<Entry> _detectedPrograms;
-        private List<Entry> _installedVoukoderComponents;
+        private List<ProgramEntry> _detectedPrograms;
+        private List<ProgramEntry> _installedVoukoderComponents;
 
         public MainWindow()
         {
             InitializeComponent();
             _detector = new ProgramDetector();
-            _detectedPrograms = new List<Entry>();
-            _installedVoukoderComponents = new List<Entry>();
+            _detectedPrograms = new List<ProgramEntry>();
+            _installedVoukoderComponents = new List<ProgramEntry>();
             _installedVoukoderComponents = _detector.GetInstalledVoukoderComponents();
             _detectedPrograms = _detector.GetInstalledPrograms();
-            foreach (Entry s in _detectedPrograms)
+            foreach (ProgramEntry s in _detectedPrograms)
             {
                 listBoxPrograms.Items.Add(s.ProgramName);
             }
-            foreach (Entry s in _installedVoukoderComponents)
+            foreach (ProgramEntry s in _installedVoukoderComponents)
             {
                 listBoxVoukoderComponents.Items.Add(s.ProgramName);
             }
@@ -36,11 +36,11 @@ namespace VoukoderManager.GUI
             listBoxVoukoderComponents.Items.Clear();
             _installedVoukoderComponents = _detector.GetInstalledVoukoderComponents();
             _detectedPrograms = _detector.GetInstalledPrograms();
-            foreach (Entry s in _detectedPrograms)
+            foreach (ProgramEntry s in _detectedPrograms)
             {
                 listBoxPrograms.Items.Add(s.ProgramName);
             }
-            foreach (Entry s in _installedVoukoderComponents)
+            foreach (ProgramEntry s in _installedVoukoderComponents)
             {
                 listBoxVoukoderComponents.Items.Add(s.ProgramName);
             }

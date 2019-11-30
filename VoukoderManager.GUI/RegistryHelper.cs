@@ -26,9 +26,9 @@ namespace VoukoderManager.GUI
         /// <param name="registryPath"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static List<Entry> GetPrograms(string registryPath)
+        public static List<ProgramEntry> GetPrograms(string registryPath)
         {
-            List<Entry> values = new List<Entry>();
+            List<ProgramEntry> values = new List<ProgramEntry>();
             foreach (RegistryView v in _views)
             {
                 using (RegistryKey rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, v).OpenSubKey(registryPath))
@@ -39,7 +39,7 @@ namespace VoukoderManager.GUI
                         {
                             try
                             {
-                                var entry = new Entry(sk.GetValue("DisplayName").ToString(),
+                                var entry = new ProgramEntry(sk.GetValue("DisplayName").ToString(),
                                     sk.GetValue("InstallLocation").ToString(),
                                     sk.GetValue("DisplayVersion").ToString());
                                 if (!values.Exists(x => x.ProgramName.Contains(entry.ProgramName)))

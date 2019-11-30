@@ -6,16 +6,16 @@ namespace VoukoderManager.GUI
     {
         private string _registryProgramPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
 
-        public Entry GetInstalledProgram(string name)
+        public ProgramEntry GetInstalledProgram(string name)
         {
             return null;
         }
 
-        public List<Entry> GetInstalledPrograms()
+        public List<ProgramEntry> GetInstalledPrograms()
         {
             var programs = RegistryHelper.GetPrograms(_registryProgramPath);
-            List<Entry> list = new List<Entry>();
-            foreach (Entry e in programs)
+            List<ProgramEntry> list = new List<ProgramEntry>();
+            foreach (ProgramEntry e in programs)
             {
                 if (e.ProgramName.Contains("Adobe Premiere") || e.ProgramName.Contains("Adobe Media Encoder") || e.ProgramName.Contains("VEGAS Pro"))
                 {
@@ -25,11 +25,11 @@ namespace VoukoderManager.GUI
             return list;
         }
 
-        public List<Entry> GetInstalledVoukoderComponents()
+        public List<ProgramEntry> GetInstalledVoukoderComponents()
         {
             var programs = RegistryHelper.GetPrograms(_registryProgramPath);
-            List<Entry> list = new List<Entry>();
-            foreach (Entry e in programs)
+            List<ProgramEntry> list = new List<ProgramEntry>();
+            foreach (ProgramEntry e in programs)
             {
                 if (e.ProgramName.Contains("Voukoder") || e.ProgramName.Contains("connector"))
                 {
