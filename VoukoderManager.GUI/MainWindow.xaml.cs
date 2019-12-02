@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
@@ -25,9 +26,15 @@ namespace VoukoderManager.GUI
             _detectedPrograms = new List<ProgramEntry>();
             _installedVoukoderComponents = new List<ProgramEntry>();
             _lang = new Lang();
+            Lang.LanguageChanged += LanguageChanged;
             InitializeLanguage();
             _worker = new BackgroundWorker();
             LoadProgramLists();
+        }
+
+        private void LanguageChanged(object sender, LanguageChangeEventArgs e)
+        {
+            InitializeLanguage();
         }
 
         private void LoadProgramLists()
