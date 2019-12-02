@@ -17,6 +17,7 @@ namespace VoukoderManager.Language
         private static string _translation;
         private static JObject _json;
         private BackgroundWorker _worker;
+        private const string VoukoderManagerRegPath = "Software\\VoukoderManager";
 
         /// <summary>
         /// Triggers when the user selects another language
@@ -77,7 +78,7 @@ namespace VoukoderManager.Language
 
         private void SetLanguage(object sender, DoWorkEventArgs e)
         {
-            using (var _registryKey = Registry.CurrentUser.OpenSubKey("Software\\VoukoderManager", true))
+            using (var _registryKey = Registry.CurrentUser.OpenSubKey(VoukoderManagerRegPath, true))
             {
                 _registryKey.SetValue("Language", LanguageID, RegistryValueKind.DWord);
             }
@@ -86,7 +87,7 @@ namespace VoukoderManager.Language
 
         private LangID GetLanguage()
         {
-            using (var _registryKey = Registry.CurrentUser.OpenSubKey("Software\\VoukoderManager", true))
+            using (var _registryKey = Registry.CurrentUser.OpenSubKey(VoukoderManagerRegPath, true))
             {
                 if (_registryKey == null)
                 {
