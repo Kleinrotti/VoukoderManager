@@ -1,12 +1,51 @@
-﻿namespace VoukoderManager.GUI.Models
+﻿using Microsoft.Deployment.WindowsInstaller;
+using System.IO;
+
+namespace VoukoderManager.GUI.Models
 {
     public class Package
     {
         public string PackageName { get; set; }
-        //TODO: check if downloaded package (msi or exe) has a signature
-        public bool Certified { get; set; }
-        public string Path { get; set; }
-        public PackageType Type { get; set; }
 
+        public bool Certified
+        {
+            get
+            {
+                throw new System.NotImplementedException();
+            }
+        }
+
+        public string Path { get; set; }
+
+        public PackageType Type
+        {
+            get
+            {
+                var info = new FileInfo(Path).Extension;
+                if (info == ".msi")
+                    return PackageType.MSI;
+                else if (info == ".exe")
+                    return PackageType.EXE;
+                else
+                    return PackageType.NONE;
+            }
+        }
+
+        public Version Version
+        {
+            get
+            {
+                using (Database db = new Database(Path))
+                {
+                    return new Version(db.ExecuteScalar("SELECT `Value` FROM `Property` WHERE `Property` = '{0}'", "ProductVersion") as string);
+                }
+            }
+        }
+
+        public Package(string packageName, string path)
+        {
+            Path = path;
+            PackageName = packageName;
+        }
     }
 }

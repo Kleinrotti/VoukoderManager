@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
@@ -18,6 +17,7 @@ namespace VoukoderManager.GUI
         private List<ProgramEntry> _installedVoukoderComponents;
         private Lang _lang;
         private BackgroundWorker _worker;
+        private IPackageManager<Package> _packetmanager;
 
         public MainWindow()
         {
@@ -30,6 +30,15 @@ namespace VoukoderManager.GUI
             InitializeLanguage();
             _worker = new BackgroundWorker();
             LoadProgramLists();
+        }
+
+        private void MenuItemPropertiesPrograms(object sender, RoutedEventArgs e)
+        {
+            ShowInfos();
+        }
+
+        private void ShowInfos()
+        {
         }
 
         private void LanguageChanged(object sender, LanguageChangeEventArgs e)
@@ -79,6 +88,10 @@ namespace VoukoderManager.GUI
         private void buttonRefresh_Click(object sender, RoutedEventArgs e)
         {
             LoadProgramLists();
+        }
+
+        private void buttonCancel_Click(object sender, RoutedEventArgs e)
+        {
         }
     }
 }
