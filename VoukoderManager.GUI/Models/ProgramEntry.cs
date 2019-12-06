@@ -5,7 +5,7 @@
         /// <summary>
         /// Displayname of the program
         /// </summary>
-        public string ProgramName { get; set; }
+        public string DisplayName { get; set; }
 
         /// <summary>
         /// Location where the program is installed to
@@ -15,26 +15,43 @@
         /// <summary>
         /// Version of the installed program
         /// </summary>
-        public string Version { get; set; }
+        public Version DisplayVersion { get; set; }
 
         /// <summary>
         /// Determines whether it's a windows installer or not
         /// </summary>
-        public bool WindowsInstaller { get; protected set; }
+        public bool WindowsInstaller { get; set; }
+
+        public string InstallationDate { get; set; }
+        public string UninstallString { get; set; }
+        public string ModifyPath { get; set; }
+        public string Publisher { get; set; }
 
         public ProgramEntry(string programName, string installationPath, string version)
         {
-            ProgramName = programName;
+            DisplayName = programName;
             InstallationPath = installationPath;
-            Version = version;
+            DisplayVersion = new Version(version, CheckPreRelease(version));
         }
 
         public ProgramEntry(string programName, string installationPath, string version, bool windowsInstaller)
         {
-            ProgramName = programName;
+            DisplayName = programName;
             InstallationPath = installationPath;
-            Version = version;
+            DisplayVersion = new Version(version, CheckPreRelease(version));
             WindowsInstaller = windowsInstaller;
+        }
+
+        public ProgramEntry()
+        {
+        }
+
+        private bool CheckPreRelease(string version)
+        {
+            if (version.Contains("rc") || version.Contains("beta"))
+                return true;
+            else
+                return false;
         }
     }
 }

@@ -50,6 +50,9 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Octokit, Version=0.36.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Octokit.0.36.0\lib\net46\Octokit.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Security.AccessControl, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -80,7 +83,11 @@
     <Compile Include="Models\Package.cs" />
     <Compile Include="Models\PackageType.cs" />
     <Compile Include="Models\Version.cs" />
+    <Compile Include="Models\VoukoderType.cs" />
     <Compile Include="PackageManager.cs" />
+    <Compile Include="PropertyWindow.xaml.cs">
+      <DependentUpon>PropertyWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="RegistryHelper.cs" />
     <Compile Include="Models\VoukoderEntry.cs" />
     <Page Include="MainWindow.xaml">
@@ -96,6 +103,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="PropertyWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ProgramDetector.cs" />

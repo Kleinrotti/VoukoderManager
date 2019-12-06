@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Octokit;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net;
@@ -10,7 +11,7 @@ namespace VoukoderManager.GUI
     {
         private List<Package> _packages;
         private WebClient _webclient;
-        private const string _downloadPath = "test.iso";
+        private readonly string _downloadPath = Environment.GetFolderPath(Environment.SpecialFolder.InternetCache);
         public List<Package> Query { get => _packages; }
 
         public event AsyncCompletedEventHandler DownloadFinished;
@@ -27,6 +28,38 @@ namespace VoukoderManager.GUI
             _webclient.DownloadProgressChanged += DownloadProgressChanged;
             _webclient.DownloadFileCompleted += DownloadFinished;
             _webclient.DownloadFileAsync(url, _downloadPath);
+        }
+
+        public List<VoukoderEntry> GetDownloadablePackages(VoukoderType type)
+        {
+            var lst = new List<VoukoderEntry>();
+            string repo;
+            var client = new GitHubClient(new ProductHeaderValue("voukodermanager"));
+
+            if (type == VoukoderType.VoukoderCore)
+                repo = "voukoder";
+            else if (type == VoukoderType.VoukoderConnectorPremiere)
+                repo = "voukoder-connectors";
+            else if (type == VoukoderType.VoukoderConnectorVegas)
+                repo = "voukoder-connectors";
+            else
+                repo = "voukoder-connectors";
+
+            var releases = client.Repository.Release.GetAll("Vouk", repo).Result;
+            int i = 0;
+            foreach (var f in releases)
+            {
+                if (i >= 5)
+                    break;
+                var latest = f;
+                lst.Add(new VoukoderEntry
+                {
+                    Version = new Models.Version(latest.Name, latest.Prerelease),
+                    DownloadUrl = new Uri(latest.Assets[0].BrowserDownloadUrl)
+                });
+                i++;
+            }
+            return lst;
         }
 
         public void StopDownloadPackage()

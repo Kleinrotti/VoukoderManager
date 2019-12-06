@@ -9,6 +9,11 @@
         ResizeMode="CanMinimize">
     <Grid Margin="0,0,4.667,1.667">
         <ListBox HorizontalAlignment="Left" Height="268" Margin="21,75,0,0" VerticalAlignment="Top" Width="209" x:Name="listBoxPrograms">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding DisplayName}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
             <ListBox.Resources>
                 <ContextMenu x:Key="ItemContextMenu">
                     <MenuItem Header="Eigenschaften" Click="MenuItemPropertiesPrograms" Command="{Binding Path=DataContext.MoreInfo, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" />
@@ -21,7 +26,13 @@
             </ListBox.ItemContainerStyle>
         </ListBox>
         <Button Content="Refresh" Name="buttonRefresh" HorizontalAlignment="Left" Margin="194,358,0,0" VerticalAlignment="Top" Width="74" Click="buttonRefresh_Click" />
-        <ListBox HorizontalAlignment="Left" Height="268" Margin="241,75,0,0" VerticalAlignment="Top" Width="209" Name="listBoxVoukoderComponents" />
+        <ListBox HorizontalAlignment="Left" Height="268" Margin="241,75,0,0" VerticalAlignment="Top" Width="209" Name="listBoxVoukoderComponents">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding DisplayName}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
         <Label Content="Detected programs" HorizontalAlignment="Left" Margin="71,44,0,0" VerticalAlignment="Top" Name="labelPrograms" />
         <Label Content="Installed Voukoder components" HorizontalAlignment="Left" Margin="259,44,0,0" VerticalAlignment="Top" Name="labelVoukoderComponents" />
         <Button Content="Cancel" HorizontalAlignment="Left" Margin="298,358,0,0" VerticalAlignment="Top" Width="75" Name="buttonCancel" Click="buttonCancel_Click" />

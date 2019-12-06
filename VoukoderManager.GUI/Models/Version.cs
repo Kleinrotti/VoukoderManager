@@ -38,11 +38,17 @@ namespace VoukoderManager.GUI.Models
             }
         }
 
-        public bool BetaVersion { get; set; }
+        public bool PreRelease { get; set; }
 
         public Version(string version)
         {
             PackageVersion = version;
+        }
+
+        public Version(string version, bool preRelease)
+        {
+            PackageVersion = version;
+            PreRelease = preRelease;
         }
     }
 }

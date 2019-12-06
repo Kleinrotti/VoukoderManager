@@ -12,7 +12,6 @@ namespace VoukoderManager.GUI
         public static string GetValue(string registryPath, string name)
         {
             var value = GetSystemTypeKey().OpenSubKey("Software\\Adobe\\Premiere Pro\\CurrentVersion").GetValue("Plug-InsDir").ToString();
-            //localKey.Close();
             return value;
         }
 
@@ -30,6 +29,7 @@ namespace VoukoderManager.GUI
         public static List<ProgramEntry> GetPrograms(string registryPath)
         {
             List<ProgramEntry> values = new List<ProgramEntry>();
+            ProgramEntry entry = new ProgramEntry();
             foreach (RegistryView v in _views)
             {
                 using (RegistryKey rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, v).OpenSubKey(registryPath))
@@ -40,10 +40,18 @@ namespace VoukoderManager.GUI
                         {
                             try
                             {
-                                var entry = new ProgramEntry(sk.GetValue("DisplayName").ToString(),
-                                    sk.GetValue("InstallLocation").ToString(),
-                                    sk.GetValue("DisplayVersion").ToString());
-                                if (!values.Exists(x => x.ProgramName.Contains(entry.ProgramName)))
+                                entry = new ProgramEntry()
+                                {
+                                    DisplayName = sk.GetValue("DisplayName")?.ToString() ?? "",
+                                    InstallationPath = sk.GetValue("InstallLocation")?.ToString() ?? "",
+                                    DisplayVersion = new Models.Version(sk.GetValue("DisplayVersion")?.ToString() ?? ""),
+                                    UninstallString = sk.GetValue("UninstallString")?.ToString() ?? "",
+                                    Publisher = sk.GetValue("Publisher")?.ToString() ?? "",
+                                    InstallationDate = sk.GetValue("InstallDate")?.ToString() ?? "",
+                                    ModifyPath = sk.GetValue("ModifyPath")?.ToString() ?? "",
+                                    WindowsInstaller = Convert.ToBoolean(sk.GetValue("WindowsInstaller") ?? false)
+                                };
+                                if (!values.Exists(x => x.DisplayName.Contains(entry.DisplayName)))
                                 {
                                     values.Add(entry);
                                 }

@@ -17,7 +17,7 @@ namespace VoukoderManager.GUI
         private List<ProgramEntry> _installedVoukoderComponents;
         private Lang _lang;
         private BackgroundWorker _worker;
-        private IPackageManager<Package> _packetmanager;
+        private PackageManager _packetmanager;
 
         public MainWindow()
         {
@@ -39,6 +39,10 @@ namespace VoukoderManager.GUI
 
         private void ShowInfos()
         {
+            _packetmanager = new PackageManager();
+            var test = listBoxPrograms.SelectedItem;
+            var page = new PropertyWindow((ProgramEntry)test);
+            page.ShowDialog();
         }
 
         private void LanguageChanged(object sender, LanguageChangeEventArgs e)
@@ -49,9 +53,7 @@ namespace VoukoderManager.GUI
         private void LoadProgramLists()
         {
             if (_worker.IsBusy)
-            {
                 return;
-            }
             Mouse.OverrideCursor = Cursors.Wait;
             _worker.DoWork += GetEntries;
             _worker.RunWorkerCompleted += WorkCompleted;
@@ -65,16 +67,8 @@ namespace VoukoderManager.GUI
 
             void WorkCompleted(object sender, RunWorkerCompletedEventArgs args)
             {
-                listBoxPrograms.Items.Clear();
-                listBoxVoukoderComponents.Items.Clear();
-                foreach (ProgramEntry s in _detectedPrograms)
-                {
-                    listBoxPrograms.Items.Add(s.ProgramName);
-                }
-                foreach (ProgramEntry s in _installedVoukoderComponents)
-                {
-                    listBoxVoukoderComponents.Items.Add(s.ProgramName);
-                }
+                listBoxVoukoderComponents.ItemsSource = _installedVoukoderComponents;
+                listBoxPrograms.ItemsSource = _detectedPrograms;
                 Mouse.OverrideCursor = null;
             }
         }
