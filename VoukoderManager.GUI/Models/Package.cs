@@ -5,7 +5,7 @@ namespace VoukoderManager.GUI.Models
 {
     public class Package : IPackage
     {
-        public string PackageName { get; set; }
+        public string Name { get; set; }
 
         public bool Certified
         {
@@ -45,7 +45,7 @@ namespace VoukoderManager.GUI.Models
         public Package(string packageName, string path)
         {
             Path = path;
-            PackageName = packageName;
+            Name = packageName;
         }
     }
 }

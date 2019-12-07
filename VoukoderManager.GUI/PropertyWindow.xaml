@@ -19,8 +19,8 @@
                         <TextBlock FontSize="15" Text="Version:" Margin="0,20,0,5" />
                         <TextBlock FontSize="15" Text="InstallPath:" Margin="0,40,0,5" />
                         <TextBlock FontSize="15" Text="Install Date:" Margin="0,60,0,5" />
-                        <TextBlock FontSize="15" Margin="100,0,0,5" Text="{Binding DisplayName}" />
-                        <TextBlock FontSize="15" Margin="100,20,0,5" Text="{Binding DisplayVersion.PackageVersion}" />
+                        <TextBlock FontSize="15" Margin="100,0,0,5" Text="{Binding Name}" />
+                        <TextBlock FontSize="15" Margin="100,20,0,5" Text="{Binding Version.PackageVersion}" />
                         <TextBlock FontSize="15" Margin="100,40,0,5" Text="{Binding InstallationPath}" />
                         <TextBlock FontSize="15" Margin="100,60,0,5" Text="{Binding InstallationDate}" />
                     </Grid>

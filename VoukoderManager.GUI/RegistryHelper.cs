@@ -42,16 +42,16 @@ namespace VoukoderManager.GUI
                             {
                                 entry = new ProgramEntry()
                                 {
-                                    DisplayName = sk.GetValue("DisplayName")?.ToString() ?? "",
+                                    Name = sk.GetValue("DisplayName")?.ToString() ?? "",
                                     InstallationPath = sk.GetValue("InstallLocation")?.ToString() ?? "",
-                                    DisplayVersion = new Models.Version(sk.GetValue("DisplayVersion")?.ToString() ?? ""),
+                                    Version = new Models.Version(sk.GetValue("DisplayVersion")?.ToString() ?? ""),
                                     UninstallString = sk.GetValue("UninstallString")?.ToString() ?? "",
                                     Publisher = sk.GetValue("Publisher")?.ToString() ?? "",
                                     InstallationDate = sk.GetValue("InstallDate")?.ToString() ?? "",
                                     ModifyPath = sk.GetValue("ModifyPath")?.ToString() ?? "",
                                     WindowsInstaller = Convert.ToBoolean(sk.GetValue("WindowsInstaller") ?? false)
                                 };
-                                if (!values.Exists(x => x.DisplayName.Contains(entry.DisplayName)))
+                                if (!values.Exists(x => x.Name.Contains(entry.Name)))
                                 {
                                     values.Add(entry);
                                 }

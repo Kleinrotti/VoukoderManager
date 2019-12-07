@@ -25,7 +25,7 @@ namespace VoukoderManager.GUI
             List<IProgramEntry> list = new List<IProgramEntry>();
             foreach (IProgramEntry e in programs)
             {
-                if (e.DisplayName.Contains("Adobe Premiere") || e.DisplayName.Contains("Adobe Media Encoder") || e.DisplayName.Contains("VEGAS Pro"))
+                if (e.Name.Contains("Adobe Premiere") || e.Name.Contains("Adobe Media Encoder") || e.Name.Contains("VEGAS Pro"))
                 {
                     list.Add(e);
                 }
@@ -43,7 +43,7 @@ namespace VoukoderManager.GUI
             List<IProgramEntry> list = new List<IProgramEntry>();
             foreach (IProgramEntry e in programs)
             {
-                if (e.DisplayName.Contains("Voukoder") || e.DisplayName.Contains("connector"))
+                if (e.Name.Contains("Voukoder") || e.Name.Contains("connector"))
                 {
                     list.Add(e);
                 }

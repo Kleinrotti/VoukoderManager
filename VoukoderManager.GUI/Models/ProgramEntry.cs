@@ -2,9 +2,9 @@
 {
     public class ProgramEntry : IProgramEntry
     {
-        public string DisplayName { get; set; }
+        public string Name { get; set; }
         public string InstallationPath { get; set; }
-        public IVersion DisplayVersion { get; set; }
+        public IVersion Version { get; set; }
         public bool WindowsInstaller { get; set; }
         public string InstallationDate { get; set; }
         public string UninstallString { get; set; }
@@ -13,16 +13,16 @@
 
         public ProgramEntry(string programName, string installationPath, string version)
         {
-            DisplayName = programName;
+            Name = programName;
             InstallationPath = installationPath;
-            DisplayVersion = new Version(version, CheckPreRelease(version));
+            Version = new Version(version, CheckPreRelease(version));
         }
 
         public ProgramEntry(string programName, string installationPath, string version, bool windowsInstaller)
         {
-            DisplayName = programName;
+            Name = programName;
             InstallationPath = installationPath;
-            DisplayVersion = new Version(version, CheckPreRelease(version));
+            Version = new Version(version, CheckPreRelease(version));
             WindowsInstaller = windowsInstaller;
         }
 

@@ -11,7 +11,7 @@
         <ListBox HorizontalAlignment="Left" Height="268" Margin="21,75,0,0" VerticalAlignment="Top" Width="209" x:Name="listBoxPrograms">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding DisplayName}" />
+                    <TextBlock Text="{Binding Name}" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
             <ListBox.Resources>
@@ -29,7 +29,7 @@
         <ListBox HorizontalAlignment="Left" Height="268" Margin="241,75,0,0" VerticalAlignment="Top" Width="209" Name="listBoxVoukoderComponents">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding DisplayName}" />
+                    <TextBlock Text="{Binding Name}" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
