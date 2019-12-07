@@ -2,7 +2,7 @@ using System;
 
 namespace VoukoderManager.GUI.Models
 {
-    public class Version
+    public class Version : IVersion
     {
         public string PackageVersion { get; set; }
 

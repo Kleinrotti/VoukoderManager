@@ -2,7 +2,7 @@
 
 namespace VoukoderManager.GUI.Models
 {
-    public class VoukoderEntry : IVoukoderEntry
+    public interface IVoukoderEntry
     {
         public Uri DownloadUrl { get; set; }
         public string Changelog { get; set; }

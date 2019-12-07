@@ -3,7 +3,7 @@ using System.IO;
 
 namespace VoukoderManager.GUI.Models
 {
-    public class Package
+    public class Package : IPackage
     {
         public string PackageName { get; set; }
 
@@ -31,7 +31,7 @@ namespace VoukoderManager.GUI.Models
             }
         }
 
-        public Version Version
+        public IVersion Version
         {
             get
             {

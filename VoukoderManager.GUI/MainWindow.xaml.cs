@@ -13,18 +13,18 @@ namespace VoukoderManager.GUI
     public partial class MainWindow : Window
     {
         private ProgramDetector _detector;
-        private List<ProgramEntry> _detectedPrograms;
-        private List<ProgramEntry> _installedVoukoderComponents;
+        private List<IProgramEntry> _detectedPrograms;
+        private List<IProgramEntry> _installedVoukoderComponents;
         private Lang _lang;
         private BackgroundWorker _worker;
-        private PackageManager _packetmanager;
+        private IPackageManager<IPackage> _packetmanager;
 
         public MainWindow()
         {
             InitializeComponent();
             _detector = new ProgramDetector();
-            _detectedPrograms = new List<ProgramEntry>();
-            _installedVoukoderComponents = new List<ProgramEntry>();
+            _detectedPrograms = new List<IProgramEntry>();
+            _installedVoukoderComponents = new List<IProgramEntry>();
             _lang = new Lang();
             Lang.LanguageChanged += LanguageChanged;
             InitializeLanguage();

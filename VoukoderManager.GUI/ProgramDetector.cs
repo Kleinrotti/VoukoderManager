@@ -19,11 +19,11 @@ namespace VoukoderManager.GUI
         /// Returns a list which contains all installed programs where voukoder components are availible for
         /// </summary>
         /// <returns></returns>
-        public List<ProgramEntry> GetInstalledPrograms()
+        public List<IProgramEntry> GetInstalledPrograms()
         {
             var programs = RegistryHelper.GetPrograms(_registryProgramPath);
-            List<ProgramEntry> list = new List<ProgramEntry>();
-            foreach (ProgramEntry e in programs)
+            List<IProgramEntry> list = new List<IProgramEntry>();
+            foreach (IProgramEntry e in programs)
             {
                 if (e.DisplayName.Contains("Adobe Premiere") || e.DisplayName.Contains("Adobe Media Encoder") || e.DisplayName.Contains("VEGAS Pro"))
                 {
@@ -37,11 +37,11 @@ namespace VoukoderManager.GUI
         /// Returns a list which contains all installed Voukoder components
         /// </summary>
         /// <returns></returns>
-        public List<ProgramEntry> GetInstalledVoukoderComponents()
+        public List<IProgramEntry> GetInstalledVoukoderComponents()
         {
             var programs = RegistryHelper.GetPrograms(_registryProgramPath);
-            List<ProgramEntry> list = new List<ProgramEntry>();
-            foreach (ProgramEntry e in programs)
+            List<IProgramEntry> list = new List<IProgramEntry>();
+            foreach (IProgramEntry e in programs)
             {
                 if (e.DisplayName.Contains("Voukoder") || e.DisplayName.Contains("connector"))
                 {

@@ -9,14 +9,14 @@ namespace VoukoderManager.GUI
     /// </summary>
     public partial class PropertyWindow : Window
     {
-        private ProgramEntry _programEntry;
+        private IProgramEntry _programEntry;
 
         public PropertyWindow()
         {
             InitializeComponent();
         }
 
-        public PropertyWindow(ProgramEntry programEntry)
+        public PropertyWindow(IProgramEntry programEntry)
         {
             InitializeComponent();
             _programEntry = programEntry;
@@ -25,7 +25,7 @@ namespace VoukoderManager.GUI
 
         private void LoadEntry()
         {
-            List<ProgramEntry> lst = new List<ProgramEntry>();
+            List<IProgramEntry> lst = new List<IProgramEntry>();
             lst.Add(_programEntry);
             icTodoList.ItemsSource = lst;
         }

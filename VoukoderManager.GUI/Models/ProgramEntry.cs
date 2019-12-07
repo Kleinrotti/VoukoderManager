@@ -1,27 +1,11 @@
 ﻿namespace VoukoderManager.GUI.Models
 {
-    public class ProgramEntry
+    public class ProgramEntry : IProgramEntry
     {
-        /// <summary>
-        /// Displayname of the program
-        /// </summary>
         public string DisplayName { get; set; }
-
-        /// <summary>
-        /// Location where the program is installed to
-        /// </summary>
         public string InstallationPath { get; set; }
-
-        /// <summary>
-        /// Version of the installed program
-        /// </summary>
-        public Version DisplayVersion { get; set; }
-
-        /// <summary>
-        /// Determines whether it's a windows installer or not
-        /// </summary>
+        public IVersion DisplayVersion { get; set; }
         public bool WindowsInstaller { get; set; }
-
         public string InstallationDate { get; set; }
         public string UninstallString { get; set; }
         public string ModifyPath { get; set; }

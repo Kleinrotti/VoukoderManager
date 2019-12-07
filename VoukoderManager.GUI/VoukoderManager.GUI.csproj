@@ -80,6 +80,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="IPackageManager.cs" />
+    <Compile Include="Models\IPackage.cs" />
+    <Compile Include="Models\IProgramEntry.cs" />
+    <Compile Include="Models\IVersion.cs" />
+    <Compile Include="Models\IVoukoderEntry.cs" />
     <Compile Include="Models\Package.cs" />
     <Compile Include="Models\PackageType.cs" />
     <Compile Include="Models\Version.cs" />

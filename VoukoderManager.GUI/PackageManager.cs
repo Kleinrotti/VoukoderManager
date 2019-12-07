@@ -7,12 +7,12 @@ using VoukoderManager.GUI.Models;
 
 namespace VoukoderManager.GUI
 {
-    internal class PackageManager : IPackageManager<Package>
+    internal class PackageManager : IPackageManager<IPackage>
     {
-        private List<Package> _packages;
+        private List<IPackage> _packages;
         private WebClient _webclient;
         private readonly string _downloadPath = Environment.GetFolderPath(Environment.SpecialFolder.InternetCache);
-        public List<Package> Query { get => _packages; }
+        public List<IPackage> Query { get => _packages; }
 
         public event AsyncCompletedEventHandler DownloadFinished;
 
@@ -30,9 +30,9 @@ namespace VoukoderManager.GUI
             _webclient.DownloadFileAsync(url, _downloadPath);
         }
 
-        public List<VoukoderEntry> GetDownloadablePackages(VoukoderType type)
+        public List<IVoukoderEntry> GetDownloadablePackages(VoukoderType type)
         {
-            var lst = new List<VoukoderEntry>();
+            var lst = new List<IVoukoderEntry>();
             string repo;
             var client = new GitHubClient(new ProductHeaderValue("voukodermanager"));
 
@@ -71,20 +71,20 @@ namespace VoukoderManager.GUI
             _webclient.DownloadFileCompleted -= DownloadFinished;
         }
 
-        public void InstallPackage(Package package)
+        public void InstallPackage(IPackage package)
         {
         }
 
-        public void UninstallPackage(Package package)
+        public void UninstallPackage(IPackage package)
         {
         }
 
-        public void AddToQuery(Package package)
+        public void AddToQuery(IPackage package)
         {
             throw new NotImplementedException();
         }
 
-        public void RemoveFromQuery(Package package)
+        public void RemoveFromQuery(IPackage package)
         {
             throw new NotImplementedException();
         }
