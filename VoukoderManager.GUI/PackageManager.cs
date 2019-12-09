@@ -51,11 +51,11 @@ namespace VoukoderManager.GUI
             {
                 if (i >= 5)
                     break;
-                var latest = f;
                 lst.Add(new VoukoderEntry
                 {
-                    Version = new Models.Version(latest.Name, latest.Prerelease),
-                    DownloadUrl = new Uri(latest.Assets[0].BrowserDownloadUrl)
+                    Name = f.Name,
+                    Version = new Models.Version(f.Name, f.Prerelease),
+                    DownloadUrl = new Uri(f.Assets[0].BrowserDownloadUrl)
                 });
                 i++;
             }

@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 using VoukoderManager.GUI.Models;
 
 namespace VoukoderManager.GUI
@@ -9,25 +12,93 @@ namespace VoukoderManager.GUI
     /// </summary>
     public partial class PropertyWindow : Window
     {
-        private IProgramEntry _programEntry;
+        private IEntry _programEntry;
+        private List<IVoukoderEntry> _entryList;
+        private IVoukoderEntry _selectedEntry;
+        private Button _buttonInstall;
+        public event EventHandler<InstallEventArgs> InstallEvent;
 
         public PropertyWindow()
         {
             InitializeComponent();
         }
 
-        public PropertyWindow(IProgramEntry programEntry)
+        public PropertyWindow(IEntry entry)
         {
             InitializeComponent();
-            _programEntry = programEntry;
-            LoadEntry();
+            labelTitle.Content = "Properties";
+            _programEntry = entry;
+            ShowProperties();
+        }
+        
+        public PropertyWindow(List<IVoukoderEntry> entryList)
+        {
+            InitializeComponent();
+            labelTitle.Content = "Select version to install";
+            _entryList = entryList;
+            CreateInstallButton();
+            CreateFrameworkElement();
         }
 
-        private void LoadEntry()
+        private void CreateInstallButton()
         {
-            List<IProgramEntry> lst = new List<IProgramEntry>();
+            _buttonInstall = new Button
+            {
+                Content = "Install",
+                Height = 50,
+                Width = 85,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Bottom,
+                Visibility = Visibility.Visible,
+                IsEnabled = true
+            };
+            _buttonInstall.Click += _buttonInstall_Click;
+            mainGrid.Children.Add(_buttonInstall);
+        }
+
+        private void CreateFrameworkElement()
+        {
+            var test = new FrameworkElementFactory(typeof(RadioButton));
+            test.SetValue(RadioButton.ContentProperty, new Binding("Name"));
+            test.SetValue(RadioButton.IsCheckedProperty, false);
+            test.SetValue(RadioButton.GroupNameProperty, "version");
+            test.SetValue(Grid.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+            test.AddHandler(RadioButton.ClickEvent, new RoutedEventHandler(radioButtonClickEvent), true);
+            test.SetValue(RadioButton.FontSizeProperty, 15.0);
+            test.SetValue(RadioButton.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+            var template = new DataTemplate();
+            template.VisualTree = test;
+            icItems.ItemTemplate = template;
+            icItems.ItemsSource = _entryList;
+        }
+
+        private void radioButtonClickEvent(object sender, RoutedEventArgs e)
+        {
+            var t = (RadioButton)e.Source;
+            _selectedEntry = (IVoukoderEntry)t.DataContext;
+        }
+
+        private void _buttonInstall_Click(object sender, RoutedEventArgs e)
+        {
+            if (_selectedEntry == null)
+                return;
+            InstallEventArgs args = new InstallEventArgs
+            {
+                PackageToInstall = _selectedEntry
+            };
+            OnInstallRequest(args);
+            Close();
+        }
+        private void OnInstallRequest(InstallEventArgs e)
+        {
+            InstallEvent?.Invoke(this, e);
+        }
+
+        private void ShowProperties()
+        {
+            List<IEntry> lst = new List<IEntry>();
             lst.Add(_programEntry);
-            icTodoList.ItemsSource = lst;
+            icItems.ItemsSource = lst;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
@@ -36,6 +37,36 @@ namespace VoukoderManager.GUI
         {
             ShowInfos();
         }
+        private void MenuItemInstallPrograms(object sender, RoutedEventArgs e)
+        {
+            if (_worker.IsBusy)
+                return;
+            _packetmanager = new PackageManager();
+            _worker = new BackgroundWorker();
+            List<IVoukoderEntry> lst = new List<IVoukoderEntry>();
+            Mouse.OverrideCursor = Cursors.Wait;
+            _worker.DoWork += GetPackages;
+            _worker.RunWorkerCompleted += WorkCompleted;
+            _worker.RunWorkerAsync();
+            
+            void GetPackages(object sender, DoWorkEventArgs args)
+            {
+                lst = _packetmanager.GetDownloadablePackages(VoukoderType.VoukoderCore);
+            }
+
+            void WorkCompleted(object sender, RunWorkerCompletedEventArgs args)
+            {
+                Mouse.OverrideCursor = null;
+                var page = new PropertyWindow(lst);
+                page.InstallEvent += testevent;
+                page.ShowDialog();
+            }
+        }
+        private void testevent(object sender, InstallEventArgs e)
+        {
+            Console.WriteLine(e.PackageToInstall.Name);
+            _packetmanager.StartDownloadPackage(e.PackageToInstall.DownloadUrl);
+        }
 
         private void ShowInfos()
         {
@@ -54,6 +85,7 @@ namespace VoukoderManager.GUI
         {
             if (_worker.IsBusy)
                 return;
+            _worker = new BackgroundWorker();
             Mouse.OverrideCursor = Cursors.Wait;
             _worker.DoWork += GetEntries;
             _worker.RunWorkerCompleted += WorkCompleted;

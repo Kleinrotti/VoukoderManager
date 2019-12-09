@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net;
+using VoukoderManager.GUI.Models;
 
 namespace VoukoderManager.GUI
 {
@@ -14,6 +15,8 @@ namespace VoukoderManager.GUI
         public List<T> Query { get; }
 
         public void AddToQuery(T package);
+
+        public List<IVoukoderEntry> GetDownloadablePackages(VoukoderType type);
 
         public void RemoveFromQuery(T package);
 

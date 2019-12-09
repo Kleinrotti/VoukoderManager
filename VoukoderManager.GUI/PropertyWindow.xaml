@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VoukoderManager.GUI"
         mc:Ignorable="d"
-        Title="Properties" Height="266.772" Width="398.556">
-    <Grid Margin="10">
-        <ItemsControl Name="icTodoList" Grid.RowSpan="3">
+        Title="Properties" Height="266.772" Width="398.556" ResizeMode="CanMinimize">
+    <Grid Margin="0,3,3,0.333" x:Name="mainGrid">
+        <ItemsControl Name="icItems" Margin="5,22,4,4">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0,0,0,5" HorizontalAlignment="Center">
@@ -27,5 +27,6 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+        <Label Content="Label" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Top" Name="labelTitle"/>
     </Grid>
 </Window>

@@ -16,7 +16,8 @@
             </ListBox.ItemTemplate>
             <ListBox.Resources>
                 <ContextMenu x:Key="ItemContextMenu">
-                    <MenuItem Header="Eigenschaften" Click="MenuItemPropertiesPrograms" Command="{Binding Path=DataContext.MoreInfo, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" />
+                    <MenuItem Header="Install Connector" Click="MenuItemInstallPrograms" Command="{Binding Path=DataContext.MoreInfo, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" />
+                    <MenuItem Header="Properties" Click="MenuItemPropertiesPrograms" Command="{Binding Path=DataContext.MoreInfo, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" />
                 </ContextMenu>
             </ListBox.Resources>
             <ListBox.ItemContainerStyle>

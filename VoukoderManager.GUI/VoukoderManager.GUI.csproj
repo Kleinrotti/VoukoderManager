@@ -79,6 +79,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\InstallEventArgs.cs" />
     <Compile Include="IPackageManager.cs" />
     <Compile Include="Models\IEntry.cs" />
     <Compile Include="Models\IPackage.cs" />
