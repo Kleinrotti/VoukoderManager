@@ -10,7 +10,7 @@ namespace VoukoderManager.GUI.Models
         public Uri DownloadUrl { get; set; }
         public string Changelog { get; set; }
         public IVersion Version { get; set; }
-        public VoukoderType Type { get; set; }
+        public ProgramType Type { get; set; }
         public string Name { get; set; }
     }
 }

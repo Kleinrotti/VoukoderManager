@@ -27,6 +27,6 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <Label Content="Label" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Top" Name="labelTitle"/>
+        <Label Content="Label" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Top" Name="labelTitle" />
     </Grid>
 </Window>

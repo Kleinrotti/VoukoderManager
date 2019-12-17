@@ -25,8 +25,18 @@ namespace VoukoderManager.GUI
             List<IProgramEntry> list = new List<IProgramEntry>();
             foreach (IProgramEntry e in programs)
             {
-                if (e.Name.Contains("Adobe Premiere") || e.Name.Contains("Adobe Media Encoder") || e.Name.Contains("VEGAS Pro"))
+                if (e.Name.Contains("Adobe Premiere") || e.Name.Contains("Adobe Media Encoder")
+                    || e.Name.Contains("VEGAS Pro")
+                    || e.Name.Contains("Adobe After Effects"))
                 {
+                    if (e.Name.Contains("Premiere"))
+                        e.Type = ProgramType.Premiere;
+                    else if (e.Name.Contains("Encoder"))
+                        e.Type = ProgramType.Premiere;
+                    else if (e.Name.Contains("Effects"))
+                        e.Type = ProgramType.AfterEffects;
+                    else
+                        e.Type = ProgramType.VEGAS;
                     list.Add(e);
                 }
             }
@@ -43,8 +53,16 @@ namespace VoukoderManager.GUI
             List<IProgramEntry> list = new List<IProgramEntry>();
             foreach (IProgramEntry e in programs)
             {
-                if (e.Name.Contains("Voukoder") || e.Name.Contains("connector"))
+                if (e.Name.Contains("Voukoder"))
                 {
+                    if (e.Name.Contains("Premiere"))
+                        e.Type = ProgramType.VoukoderConnectorPremiere;
+                    else if (e.Name.Contains("VEGAS"))
+                        e.Type = ProgramType.VoukoderConnectorVegas;
+                    else if (e.Name.Contains("AfterEffects"))
+                        e.Type = ProgramType.VoukoderConnectorAfterEffects;
+                    else
+                        e.Type = ProgramType.VoukoderCore;
                     list.Add(e);
                 }
             }

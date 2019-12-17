@@ -5,18 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VoukoderManager.GUI"
         mc:Ignorable="d"
-        Title="Voukoder Manager" Height="464.699" Width="469.902" Icon="./Resources/logo.png"
+        Title="Voukoder Manager" Height="450" Width="470" Icon="./Resources/logo.png"
         ResizeMode="CanMinimize">
-    <Grid Margin="0,0,4.667,1.667">
-        <ListBox HorizontalAlignment="Left" Height="268" Margin="21,75,0,0" VerticalAlignment="Top" Width="209" x:Name="listBoxPrograms">
+    <Grid x:Name="mainGrid">
+        <ListBox HorizontalAlignment="Left" Height="268" Margin="21,75,0,0" VerticalAlignment="Top" Width="209" x:Name="listBoxPrograms" ContextMenuOpening="listBoxPrograms_ContextMenuOpening">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Name}" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
             <ListBox.Resources>
-                <ContextMenu x:Key="ItemContextMenu">
-                    <MenuItem Header="Install Connector" Click="MenuItemInstallPrograms" Command="{Binding Path=DataContext.MoreInfo, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" />
+                <ContextMenu x:Key="ItemContextMenu" Name="contextPrograms">
+                    <MenuItem Header="Install Connector" CommandParameter="{Binding}" x:Name="itemInstall" IsEnabled="True" Click="MenuItemInstallPrograms" Command="{Binding Path=DataContext.MoreInfo, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" />
+                    <MenuItem Header="Uninstall Connector" Name="itemUninstall" Visibility="Visible" Click="MenuItemUninstallPrograms" Command="{Binding Path=DataContext.MoreInfo, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" />
                     <MenuItem Header="Properties" Click="MenuItemPropertiesPrograms" Command="{Binding Path=DataContext.MoreInfo, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" />
                 </ContextMenu>
             </ListBox.Resources>
@@ -36,6 +37,7 @@
         </ListBox>
         <Label Content="Detected programs" HorizontalAlignment="Left" Margin="71,44,0,0" VerticalAlignment="Top" Name="labelPrograms" />
         <Label Content="Installed Voukoder components" HorizontalAlignment="Left" Margin="259,44,0,0" VerticalAlignment="Top" Name="labelVoukoderComponents" />
+        <Label Content="Test" Margin="64,379,36.667,7" Name="labelStatus" />
         <Button Content="Cancel" HorizontalAlignment="Left" Margin="298,358,0,0" VerticalAlignment="Top" Width="75" Name="buttonCancel" Click="buttonCancel_Click" />
     </Grid>
 </Window>

@@ -16,6 +16,7 @@ namespace VoukoderManager.GUI
         private List<IVoukoderEntry> _entryList;
         private IVoukoderEntry _selectedEntry;
         private Button _buttonInstall;
+
         public event EventHandler<InstallEventArgs> InstallEvent;
 
         public PropertyWindow()
@@ -30,7 +31,7 @@ namespace VoukoderManager.GUI
             _programEntry = entry;
             ShowProperties();
         }
-        
+
         public PropertyWindow(List<IVoukoderEntry> entryList)
         {
             InitializeComponent();
@@ -89,6 +90,7 @@ namespace VoukoderManager.GUI
             OnInstallRequest(args);
             Close();
         }
+
         private void OnInstallRequest(InstallEventArgs e)
         {
             InstallEvent?.Invoke(this, e);

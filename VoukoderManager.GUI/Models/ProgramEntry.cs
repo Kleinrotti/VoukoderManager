@@ -10,6 +10,7 @@
         public string UninstallString { get; set; }
         public string ModifyPath { get; set; }
         public string Publisher { get; set; }
+        public ProgramType Type { get; set; }
 
         public ProgramEntry(string programName, string installationPath, string version)
         {

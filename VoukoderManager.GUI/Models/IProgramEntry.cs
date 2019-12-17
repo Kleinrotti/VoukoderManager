@@ -31,5 +31,10 @@
         /// Publisher of the program
         /// </summary>
         public string Publisher { get; set; }
+
+        /// <summary>
+        /// Type of the component
+        /// </summary>
+        public ProgramType Type { get; set; }
     }
 }

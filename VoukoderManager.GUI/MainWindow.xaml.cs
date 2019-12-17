@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using VoukoderManager.GUI.Models;
 using VoukoderManager.Language;
@@ -18,7 +18,9 @@ namespace VoukoderManager.GUI
         private List<IProgramEntry> _installedVoukoderComponents;
         private Lang _lang;
         private BackgroundWorker _worker;
-        private IPackageManager<IPackage> _packetmanager;
+        private PackageManager _packetmanager;
+        private ProgressBar bar;
+        private IPackage pkg;
 
         public MainWindow()
         {
@@ -30,13 +32,21 @@ namespace VoukoderManager.GUI
             Lang.LanguageChanged += LanguageChanged;
             InitializeLanguage();
             _worker = new BackgroundWorker();
+            _packetmanager = new PackageManager();
+            PackageManager.InstallProgressChanged += PackageManager_InstallProgressChanged;
             LoadProgramLists();
+        }
+
+        private void PackageManager_InstallProgressChanged(object sender, ProcessStatusEventArgs e)
+        {
+            labelStatus.Content = e.StatusMessage;
         }
 
         private void MenuItemPropertiesPrograms(object sender, RoutedEventArgs e)
         {
             ShowInfos();
         }
+
         private void MenuItemInstallPrograms(object sender, RoutedEventArgs e)
         {
             if (_worker.IsBusy)
@@ -48,10 +58,11 @@ namespace VoukoderManager.GUI
             _worker.DoWork += GetPackages;
             _worker.RunWorkerCompleted += WorkCompleted;
             _worker.RunWorkerAsync();
-            
+
             void GetPackages(object sender, DoWorkEventArgs args)
             {
-                lst = _packetmanager.GetDownloadablePackages(VoukoderType.VoukoderCore);
+                //lst = _packetmanager.GetDownloadablePackages(ProgramType.VoukoderCore);
+                lst = _packetmanager.GetDownloadablePackages(ProgramType.VoukoderConnectorVegas);
             }
 
             void WorkCompleted(object sender, RunWorkerCompletedEventArgs args)
@@ -62,10 +73,54 @@ namespace VoukoderManager.GUI
                 page.ShowDialog();
             }
         }
+
+        private void MenuItemUninstallPrograms(object sender, RoutedEventArgs e)
+        {
+            if (((IProgramEntry)((MenuItem)e.Source).DataContext).Type == ProgramType.Premiere)
+            {
+                foreach (var v in _installedVoukoderComponents)
+                {
+                    if (v.Type == ProgramType.VoukoderConnectorPremiere)
+                    {
+                        _packetmanager.UninstallPackage(v);
+                    }
+                }
+            }
+        }
+
         private void testevent(object sender, InstallEventArgs e)
         {
-            Console.WriteLine(e.PackageToInstall.Name);
-            _packetmanager.StartDownloadPackage(e.PackageToInstall.DownloadUrl);
+            StartDownload(e.PackageToInstall);
+        }
+
+        private void StartDownload(IVoukoderEntry package)
+        {
+            bar = new ProgressBar
+            {
+                Visibility = Visibility.Visible,
+                IsEnabled = true,
+                Maximum = 100,
+                Minimum = 0,
+                Height = 20,
+                Width = 130,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Bottom
+            };
+            mainGrid.Children.Add(bar);
+            _packetmanager.DownloadProgressChanged += _packetmanager_DownloadProgressChanged;
+            _packetmanager.DownloadFinished += _packetmanager_DownloadFinished;
+            pkg = _packetmanager.StartDownloadPackage(package);
+        }
+
+        private void _packetmanager_DownloadFinished(object sender, AsyncCompletedEventArgs e)
+        {
+            bar.Visibility = Visibility.Hidden;
+            _packetmanager.InstallPackage(pkg);
+        }
+
+        private void _packetmanager_DownloadProgressChanged(object sender, System.Net.DownloadProgressChangedEventArgs e)
+        {
+            bar.Value = e.ProgressPercentage;
         }
 
         private void ShowInfos()
@@ -118,6 +173,43 @@ namespace VoukoderManager.GUI
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
+            _packetmanager.StopDownloadPackage();
+        }
+
+        private void listBoxPrograms_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            var type = ((IProgramEntry)((ListBox)e.Source).SelectedItem).Type;
+            bool installed = false;
+            foreach (var v in _installedVoukoderComponents)
+            {
+                if (type == ProgramType.Premiere && v.Type == ProgramType.VoukoderConnectorPremiere)
+                {
+                    installed = true;
+                }
+                else if (type == ProgramType.VEGAS && v.Type == ProgramType.VoukoderConnectorVegas)
+                {
+                    installed = true;
+                }
+                else if (type == ProgramType.AfterEffects && v.Type == ProgramType.VoukoderConnectorAfterEffects)
+                {
+                    installed = true;
+                }
+                else
+                {
+                    installed = false;
+                }
+            }
+            ContextMenu c = listBoxPrograms.FindResource("ItemContextMenu") as ContextMenu;
+            MenuItem m = c.Items[0] as MenuItem;
+            if (installed)
+                m.Visibility = Visibility.Collapsed;
+            else
+                m.Visibility = Visibility.Visible;
+            m = c.Items[1] as MenuItem;
+            if (!installed)
+                m.Visibility = Visibility.Collapsed;
+            else
+                m.Visibility = Visibility.Visible;
         }
     }
 }

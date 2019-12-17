@@ -79,8 +79,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="InstallationControl.xaml.cs">
+      <DependentUpon>InstallationControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Models\InstallEventArgs.cs" />
-    <Compile Include="IPackageManager.cs" />
     <Compile Include="Models\IEntry.cs" />
     <Compile Include="Models\IPackage.cs" />
     <Compile Include="Models\IProgramEntry.cs" />
@@ -88,14 +90,19 @@
     <Compile Include="Models\IVoukoderEntry.cs" />
     <Compile Include="Models\Package.cs" />
     <Compile Include="Models\PackageType.cs" />
+    <Compile Include="Models\ProcessStatusEventArgs.cs" />
     <Compile Include="Models\Version.cs" />
-    <Compile Include="Models\VoukoderType.cs" />
+    <Compile Include="Models\ProgramType.cs" />
     <Compile Include="PackageManager.cs" />
     <Compile Include="PropertyWindow.xaml.cs">
       <DependentUpon>PropertyWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="RegistryHelper.cs" />
     <Compile Include="Models\VoukoderEntry.cs" />
+    <Page Include="InstallationControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

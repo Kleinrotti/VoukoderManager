@@ -1,10 +1,13 @@
 ﻿namespace VoukoderManager.GUI.Models
 {
-    public enum VoukoderType
+    public enum ProgramType
     {
         VoukoderCore,
         VoukoderConnectorVegas,
         VoukoderConnectorPremiere,
-        VoukoderConnectorAfterEffects
+        VoukoderConnectorAfterEffects,
+        VEGAS,
+        Premiere,
+        AfterEffects
     }
 }
