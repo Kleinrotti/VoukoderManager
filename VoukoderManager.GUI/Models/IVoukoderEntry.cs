@@ -1,11 +1,11 @@
-﻿using System;
+﻿using System.Collections.Generic;
 
 namespace VoukoderManager.GUI.Models
 {
-    public interface IVoukoderEntry : IEntry
+    public interface IVoukoderEntry : IEntry, IDownloadEntry
     {
-        public Uri DownloadUrl { get; set; }
         public string Changelog { get; set; }
         public ProgramType Type { get; set; }
+        public List<IVoukoderEntry> Dependencies { get; }
     }
 }

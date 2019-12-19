@@ -9,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>VoukoderManager.GUI</RootNamespace>
     <AssemblyName>VoukoderManager.GUI</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -17,6 +17,7 @@
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -82,12 +83,17 @@
     <Compile Include="InstallationControl.xaml.cs">
       <DependentUpon>InstallationControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\IDownloadEntry.cs" />
     <Compile Include="Models\InstallEventArgs.cs" />
     <Compile Include="Models\IEntry.cs" />
     <Compile Include="Models\IPackage.cs" />
+    <Compile Include="Models\IPackageInstall.cs" />
     <Compile Include="Models\IProgramEntry.cs" />
+    <Compile Include="Models\IProgramUninstall.cs" />
     <Compile Include="Models\IVersion.cs" />
     <Compile Include="Models\IVoukoderEntry.cs" />
+    <Compile Include="Models\Operation.cs" />
+    <Compile Include="Models\OperationFinishedEventArgs.cs" />
     <Compile Include="Models\Package.cs" />
     <Compile Include="Models\PackageType.cs" />
     <Compile Include="Models\ProcessStatusEventArgs.cs" />
@@ -99,6 +105,7 @@
     </Compile>
     <Compile Include="RegistryHelper.cs" />
     <Compile Include="Models\VoukoderEntry.cs" />
+    <Compile Include="WebClientExtension.cs" />
     <Page Include="InstallationControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

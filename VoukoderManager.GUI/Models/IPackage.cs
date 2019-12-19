@@ -7,5 +7,7 @@
         public string Path { get; set; }
 
         public PackageType Type { get; }
+
+        public IPackage Dependency { get; set; }
     }
 }

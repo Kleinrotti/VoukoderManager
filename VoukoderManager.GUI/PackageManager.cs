@@ -48,7 +48,9 @@ namespace VoukoderManager.GUI
             _webclient.DownloadProgressChanged += DownloadProgressChanged;
             _webclient.DownloadFileCompleted += DownloadFinished;
             _webclient.DownloadFileAsync(entry.DownloadUrl, path);
-            return new Package(entry.DownloadUrl.Segments[entry.DownloadUrl.Segments.Length - 1], path);
+
+            var pkg = new Package(entry.DownloadUrl.Segments[entry.DownloadUrl.Segments.Length - 1], path);
+            return pkg;
         }
 
         private void OnInstallProgress(ProcessStatusEventArgs e)
@@ -56,7 +58,13 @@ namespace VoukoderManager.GUI
             InstallProgressChanged?.Invoke(this, e);
         }
 
-        public List<IVoukoderEntry> GetDownloadablePackages(ProgramType type)
+        /// <summary>
+        /// Retuns a list of downloadable components
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="results"></param>
+        /// <returns></returns>
+        public List<IVoukoderEntry> GetDownloadablePackages(ProgramType type, int results)
         {
             var lst = new List<IVoukoderEntry>();
             string repo;
@@ -95,14 +103,15 @@ namespace VoukoderManager.GUI
                 {
                     if (v.Name.Contains("connector"))
                     {
-                        if (i >= 5)
+                        if (i >= results)
                             break;
                         var version = v.Name.Split('.');
                         lst.Add(new VoukoderEntry
                         {
                             Name = v.Name,
                             DownloadUrl = new Uri(v.DownloadUrl),
-                            Version = new Models.Version(version[version.Length - 1])
+                            Version = new Models.Version(version[version.Length - 1]),
+                            Type = type
                         });
                         i++;
                     }
@@ -115,7 +124,7 @@ namespace VoukoderManager.GUI
                 int i = 0;
                 foreach (var f in releases)
                 {
-                    if (i >= 5)
+                    if (i >= results)
                         break;
                     lst.Add(new VoukoderEntry
                     {
@@ -127,6 +136,27 @@ namespace VoukoderManager.GUI
                 }
             }
             return lst;
+        }
+
+        public IVoukoderEntry GetLatestDownloadablePackage(ProgramType type)
+        {
+            string repo;
+            var client = new GitHubClient(new ProductHeaderValue("voukodermanager"));
+
+            if (type == ProgramType.VoukoderCore)
+            {
+                repo = "voukoder";
+                var release = client.Repository.Release.GetLatest("Vouk", repo).Result;
+                var entry = new VoukoderEntry()
+                {
+                    Name = release.Name,
+                    Version = new Models.Version(release.Name, release.Prerelease),
+                    DownloadUrl = new Uri(release.Assets[0].BrowserDownloadUrl)
+                };
+                return entry;
+            }
+            else
+                return null;
         }
 
         public void StopDownloadPackage()

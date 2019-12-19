@@ -15,6 +15,8 @@ namespace VoukoderManager.GUI.Models
             }
         }
 
+        public IPackage Dependency { get; set; }
+
         public string Path { get; set; }
 
         public PackageType Type

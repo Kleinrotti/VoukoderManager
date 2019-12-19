@@ -8,6 +8,7 @@
         VoukoderConnectorAfterEffects,
         VEGAS,
         Premiere,
-        AfterEffects
+        AfterEffects,
+        None
     }
 }
