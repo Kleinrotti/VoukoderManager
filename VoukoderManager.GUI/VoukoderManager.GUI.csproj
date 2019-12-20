@@ -83,15 +83,15 @@
     <Compile Include="InstallationControl.xaml.cs">
       <DependentUpon>InstallationControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Models\IDownloadEntry.cs" />
+    <Compile Include="Models\Interfaces\IDownloadEntry.cs" />
     <Compile Include="Models\InstallEventArgs.cs" />
-    <Compile Include="Models\IEntry.cs" />
-    <Compile Include="Models\IPackage.cs" />
-    <Compile Include="Models\IPackageInstall.cs" />
-    <Compile Include="Models\IProgramEntry.cs" />
-    <Compile Include="Models\IProgramUninstall.cs" />
-    <Compile Include="Models\IVersion.cs" />
-    <Compile Include="Models\IVoukoderEntry.cs" />
+    <Compile Include="Models\Interfaces\IEntry.cs" />
+    <Compile Include="Models\Interfaces\IPackage.cs" />
+    <Compile Include="Models\Interfaces\IPackageInstall.cs" />
+    <Compile Include="Models\Interfaces\IProgramEntry.cs" />
+    <Compile Include="Models\Interfaces\IProgramUninstall.cs" />
+    <Compile Include="Models\Interfaces\IVersion.cs" />
+    <Compile Include="Models\Interfaces\IVoukoderEntry.cs" />
     <Compile Include="Models\Operation.cs" />
     <Compile Include="Models\OperationFinishedEventArgs.cs" />
     <Compile Include="Models\Package.cs" />

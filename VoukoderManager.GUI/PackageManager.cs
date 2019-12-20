@@ -1,62 +1,14 @@
 ﻿using Octokit;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
-using System.Net;
 using VoukoderManager.GUI.Models;
 
 namespace VoukoderManager.GUI
 {
     internal class PackageManager
     {
-        private List<IPackage> _packages;
-        private WebClient _webclient;
-        public List<IPackage> Query { get => _packages; }
-
-        public event AsyncCompletedEventHandler DownloadFinished;
-
-        public event DownloadProgressChangedEventHandler DownloadProgressChanged;
-
-        public static event EventHandler<ProcessStatusEventArgs> InstallProgressChanged;
-
-        public PackageManager()
-        {
-            _webclient = new WebClient();
-        }
-
-        /// <summary>
-        /// Start download of the file. Returns the download path.
-        /// </summary>
-        /// <param name="url"></param>
-        /// <returns></returns>
-        public IPackage StartDownloadPackage(Uri url)
-        {
-            OnInstallProgress(new ProcessStatusEventArgs("Downloading files"));
-            var path = Path.GetTempPath() + url.Segments[url.Segments.Length - 1];
-            _webclient.DownloadProgressChanged += DownloadProgressChanged;
-            _webclient.DownloadFileCompleted += DownloadFinished;
-            _webclient.DownloadFileAsync(url, path);
-            return new Package(url.Segments[url.Segments.Length - 1], path);
-        }
-
-        public IPackage StartDownloadPackage(IVoukoderEntry entry)
-        {
-            OnInstallProgress(new ProcessStatusEventArgs("Downloading files"));
-            var path = Path.GetTempPath() + entry.DownloadUrl.Segments[entry.DownloadUrl.Segments.Length - 1];
-            _webclient.DownloadProgressChanged += DownloadProgressChanged;
-            _webclient.DownloadFileCompleted += DownloadFinished;
-            _webclient.DownloadFileAsync(entry.DownloadUrl, path);
-
-            var pkg = new Package(entry.DownloadUrl.Segments[entry.DownloadUrl.Segments.Length - 1], path);
-            return pkg;
-        }
-
-        private void OnInstallProgress(ProcessStatusEventArgs e)
-        {
-            InstallProgressChanged?.Invoke(this, e);
-        }
+        public List<IPackage> Query { get; private set; }
 
         /// <summary>
         /// Retuns a list of downloadable components
@@ -74,7 +26,7 @@ namespace VoukoderManager.GUI
             if (type == ProgramType.VoukoderCore)
             {
                 repo = "voukoder";
-                GetReleases();
+                return GetReleases(client, "Vouk", repo, results);
             }
             else
             {
@@ -91,49 +43,52 @@ namespace VoukoderManager.GUI
                 {
                     repopath = "premiere";
                 }
-                GetContent();
+                return GetContent(type, client, "Vouk", repo, repopath, results);
             }
+        }
 
-            void GetContent()
+        private List<IVoukoderEntry> GetContent(ProgramType type, GitHubClient client, string owner, string repo, string filepath, int results)
+        {
+            var test = client.Repository.Content.GetAllContents("Vouk", repo, filepath).Result;
+            var lst = new List<IVoukoderEntry>();
+            int i = 0;
+            foreach (var v in test)
             {
-                var test = client.Repository.Content.GetAllContents("Vouk", repo, repopath).Result;
-
-                int i = 0;
-                foreach (var v in test)
-                {
-                    if (v.Name.Contains("connector"))
-                    {
-                        if (i >= results)
-                            break;
-                        var version = v.Name.Split('.');
-                        lst.Add(new VoukoderEntry
-                        {
-                            Name = v.Name,
-                            DownloadUrl = new Uri(v.DownloadUrl),
-                            Version = new Models.Version(version[version.Length - 1]),
-                            Type = type
-                        });
-                        i++;
-                    }
-                }
-            }
-
-            void GetReleases()
-            {
-                var releases = client.Repository.Release.GetAll("Vouk", repo).Result;
-                int i = 0;
-                foreach (var f in releases)
+                if (v.Name.Contains("connector"))
                 {
                     if (i >= results)
                         break;
+                    var version = v.Name.Split('.');
                     lst.Add(new VoukoderEntry
                     {
-                        Name = f.Name,
-                        Version = new Models.Version(f.Name, f.Prerelease),
-                        DownloadUrl = new Uri(f.Assets[0].BrowserDownloadUrl)
+                        Name = v.Name,
+                        DownloadUrl = new Uri(v.DownloadUrl),
+                        Version = new Models.Version(version[version.Length - 1]),
+                        Type = type,
+                        Dependencies = new List<IVoukoderEntry>() { GetLatestDownloadablePackage(ProgramType.VoukoderCore) }
                     });
                     i++;
                 }
+            }
+            return lst;
+        }
+
+        private List<IVoukoderEntry> GetReleases(GitHubClient client, string owner, string repo, int results)
+        {
+            var lst = new List<IVoukoderEntry>();
+            var releases = client.Repository.Release.GetAll(owner, repo).Result;
+            int i = 0;
+            foreach (var f in releases)
+            {
+                if (i >= results)
+                    break;
+                lst.Add(new VoukoderEntry
+                {
+                    Name = f.Name,
+                    Version = new Models.Version(f.Name, f.Prerelease),
+                    DownloadUrl = new Uri(f.Assets[0].BrowserDownloadUrl)
+                });
+                i++;
             }
             return lst;
         }
@@ -159,20 +114,8 @@ namespace VoukoderManager.GUI
                 return null;
         }
 
-        public void StopDownloadPackage()
-        {
-            OnInstallProgress(new ProcessStatusEventArgs("Stopping download..."));
-            if (!_webclient.IsBusy)
-                return;
-            _webclient.CancelAsync();
-            _webclient.DownloadProgressChanged -= DownloadProgressChanged;
-            _webclient.DownloadFileCompleted -= DownloadFinished;
-            OnInstallProgress(new ProcessStatusEventArgs("Download stopped"));
-        }
-
         public void InstallPackage(IPackage package)
         {
-            OnInstallProgress(new ProcessStatusEventArgs("Installing: " + package.Name));
             Process p = new Process();
             var startinfo = new ProcessStartInfo("msiexec.exe")
             {
@@ -184,12 +127,10 @@ namespace VoukoderManager.GUI
             p.Start();
             p.WaitForExit();
             p.Dispose();
-            OnInstallProgress(new ProcessStatusEventArgs("Finished installation of package: " + package.Name));
         }
 
         public void UninstallPackage(IProgramEntry package)
         {
-            OnInstallProgress(new ProcessStatusEventArgs("Unistalling: " + package.Name));
             Process p = new Process();
             var startinfo = new ProcessStartInfo("msiexec.exe")
             {
@@ -201,7 +142,6 @@ namespace VoukoderManager.GUI
             p.Start();
             p.WaitForExit();
             p.Dispose();
-            OnInstallProgress(new ProcessStatusEventArgs("Finished uninstall of package: " + package.Name));
         }
 
         public void AddToQuery(IPackage package)
@@ -229,8 +169,7 @@ namespace VoukoderManager.GUI
             {
                 if (disposing)
                 {
-                    _webclient.Dispose();
-                    _packages = null;
+                    Query = null;
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.

@@ -127,7 +127,7 @@ namespace VoukoderManager.GUI
             _currentVoukoderEntry = package;
             try
             {
-                await package.StartPackageDownload();
+                await package.StartPackageDownloadWithDependencies();
             }
             catch (WebException ex) { }
         }

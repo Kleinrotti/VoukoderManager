@@ -9,6 +9,8 @@ namespace VoukoderManager.GUI.Models
 
         Task StartPackageDownload();
 
+        Task StartPackageDownloadWithDependencies();
+
         void StopPackageDownload();
     }
 }

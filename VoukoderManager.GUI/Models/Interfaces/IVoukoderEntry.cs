@@ -6,6 +6,6 @@ namespace VoukoderManager.GUI.Models
     {
         public string Changelog { get; set; }
         public ProgramType Type { get; set; }
-        public List<IVoukoderEntry> Dependencies { get; }
+        public List<IVoukoderEntry> Dependencies { get; set; }
     }
 }
