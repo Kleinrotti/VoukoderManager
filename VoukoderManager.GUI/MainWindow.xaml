@@ -37,7 +37,7 @@
         </ListBox>
         <Label Content="Detected programs" HorizontalAlignment="Left" Margin="71,44,0,0" VerticalAlignment="Top" Name="labelPrograms" />
         <Label Content="Installed Voukoder components" HorizontalAlignment="Left" Margin="259,44,0,0" VerticalAlignment="Top" Name="labelVoukoderComponents" />
-        <Label Content="Test" Margin="9,376,91.667,10" Name="labelStatus" />
+        <Label Content="Test" Margin="10,370,90.667,16" Name="labelStatus" />
         <Button Content="Cancel" HorizontalAlignment="Left" Visibility="Visible" Margin="298,358,0,0" VerticalAlignment="Top" Width="75" Name="buttonCancel" Click="buttonCancel_Click" />
     </Grid>
 </Window>

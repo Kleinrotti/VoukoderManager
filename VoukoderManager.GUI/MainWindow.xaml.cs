@@ -36,13 +36,22 @@ namespace VoukoderManager.GUI
             _worker = new BackgroundWorker();
             _packetmanager = new PackageManager();
             Operation.InstallProgressChanged += PackageManager_InstallProgressChanged;
-            VoukoderEntry.DownloadProgressChanged += _packetmanager_DownloadProgressChanged;
+            VoukoderEntry.DownloadProgressChanged += DownloadProgressChanged;
+            Package.InstallationFinished += Package_InstallationFinished;
             LoadProgramLists();
+        }
+
+        private void Package_InstallationFinished(object sender, OperationFinishedEventArgs e)
+        {
+            MessageBox.Show("Hallo");
         }
 
         private void PackageManager_InstallProgressChanged(object sender, ProcessStatusEventArgs e)
         {
-            labelStatus.Content = e.StatusMessage;
+            labelStatus.Dispatcher.Invoke(() =>
+            {
+                labelStatus.Content = e.StatusMessage;
+            });
         }
 
         private void MenuItemPropertiesPrograms(object sender, RoutedEventArgs e)
@@ -83,7 +92,7 @@ namespace VoukoderManager.GUI
             {
                 Mouse.OverrideCursor = null;
                 var page = new PropertyWindow(lst);
-                page.InstallEvent += testevent;
+                page.InstallEvent += BeginInstallation;
                 page.ShowDialog();
             }
         }
@@ -105,7 +114,7 @@ namespace VoukoderManager.GUI
             }
         }
 
-        private void testevent(object sender, InstallEventArgs e)
+        private void BeginInstallation(object sender, InstallEventArgs e)
         {
             StartDownload(e.PackageToInstall);
         }
@@ -128,17 +137,13 @@ namespace VoukoderManager.GUI
             try
             {
                 await package.StartPackageDownloadWithDependencies();
+                var tt = package as VoukoderEntry;
+                tt.DownloadedPackage.InstallPackageWithDepenencies();
             }
             catch (WebException ex) { }
         }
 
-        private void _packetmanager_DownloadFinished(object sender, AsyncCompletedEventArgs e)
-        {
-            bar.Visibility = Visibility.Hidden;
-            _packetmanager.InstallPackage(pkg);
-        }
-
-        private void _packetmanager_DownloadProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void DownloadProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             bar.Value = e.ProgressPercentage;
         }

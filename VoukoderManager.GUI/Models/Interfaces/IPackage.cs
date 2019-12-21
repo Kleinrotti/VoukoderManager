@@ -1,6 +1,8 @@
-﻿namespace VoukoderManager.GUI.Models
+﻿using System.Collections.Generic;
+
+namespace VoukoderManager.GUI.Models
 {
-    public interface IPackage : IEntry
+    public interface IPackage : IEntry, IPackageInstall
     {
         public bool Certified { get; }
 
@@ -8,6 +10,6 @@
 
         public PackageType Type { get; }
 
-        public IPackage Dependency { get; set; }
+        public List<IPackage> Dependencies { get; set; }
     }
 }

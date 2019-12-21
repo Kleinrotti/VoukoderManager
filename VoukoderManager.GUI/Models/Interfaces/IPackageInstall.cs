@@ -2,6 +2,10 @@
 {
     public interface IPackageInstall
     {
-        void InstallPackage(IPackage package);
+        public void InstallPackage();
+
+        public void InstallPackageWithDepenencies();
+
+        public void StopInstallation();
     }
 }

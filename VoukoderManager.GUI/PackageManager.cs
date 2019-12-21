@@ -49,7 +49,7 @@ namespace VoukoderManager.GUI
 
         private List<IVoukoderEntry> GetContent(ProgramType type, GitHubClient client, string owner, string repo, string filepath, int results)
         {
-            var test = client.Repository.Content.GetAllContents("Vouk", repo, filepath).Result;
+            var test = client.Repository.Content.GetAllContents(owner, repo, filepath).Result;
             var lst = new List<IVoukoderEntry>();
             int i = 0;
             foreach (var v in test)
@@ -114,21 +114,6 @@ namespace VoukoderManager.GUI
                 return null;
         }
 
-        public void InstallPackage(IPackage package)
-        {
-            Process p = new Process();
-            var startinfo = new ProcessStartInfo("msiexec.exe")
-            {
-                UseShellExecute = true,
-                Arguments = @" /i " + package.Path + @" /qn /log install.log",
-                Verb = "runas"
-            };
-            p.StartInfo = startinfo;
-            p.Start();
-            p.WaitForExit();
-            p.Dispose();
-        }
-
         public void UninstallPackage(IProgramEntry package)
         {
             Process p = new Process();
@@ -142,21 +127,6 @@ namespace VoukoderManager.GUI
             p.Start();
             p.WaitForExit();
             p.Dispose();
-        }
-
-        public void AddToQuery(IPackage package)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void RemoveFromQuery(IPackage package)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ProcessQuery()
-        {
-            throw new NotImplementedException();
         }
 
         #region IDisposable Support
