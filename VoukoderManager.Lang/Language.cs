@@ -27,10 +27,9 @@ namespace VoukoderManager.Language
         public Lang()
         {
             _worker = new BackgroundWorker();
-            Initialize();
         }
 
-        private void Initialize()
+        public void Initialize()
         {
             var id = GetLanguage();
             switch (id)
@@ -72,7 +71,9 @@ namespace VoukoderManager.Language
             using (var _registryKey = Registry.CurrentUser.OpenSubKey("Software", true))
             {
                 _registryKey.CreateSubKey("VoukoderManager");
-                _registryKey.SetValue("Language", LangID.English, RegistryValueKind.DWord);
+                var key = _registryKey.OpenSubKey("VoukoderManager", true);
+                key.SetValue("Language", LangID.English, RegistryValueKind.DWord);
+                key.Dispose();
             }
         }
 
@@ -87,15 +88,16 @@ namespace VoukoderManager.Language
 
         private LangID GetLanguage()
         {
-            using (var _registryKey = Registry.CurrentUser.OpenSubKey(VoukoderManagerRegPath, true))
+            var _registryKey = Registry.CurrentUser.OpenSubKey(VoukoderManagerRegPath, true);
+
+            if (_registryKey == null || _registryKey.GetValue("Language") == null)
             {
-                if (_registryKey == null)
-                {
-                    SetDefaults();
-                }
-                var id = (LangID)_registryKey.GetValue("Language");
-                return id;
+                SetDefaults();
             }
+            _registryKey = Registry.CurrentUser.OpenSubKey(VoukoderManagerRegPath, true);
+            var id = (LangID)_registryKey.GetValue("Language");
+            _registryKey.Dispose();
+            return id;
         }
 
         /// <summary>

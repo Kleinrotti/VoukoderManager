@@ -24,10 +24,11 @@ namespace VoukoderManager.GUI
 
         public MainWindow()
         {
+            _lang = new Lang();
+            _lang.Initialize();
             InitializeComponent();
             _detectedPrograms = new List<IProgramEntry>();
             _installedVoukoderComponents = new List<IProgramEntry>();
-            _lang = new Lang();
             Lang.LanguageChanged += LanguageChanged;
             InitializeLanguage();
             _worker = new BackgroundWorker();
