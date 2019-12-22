@@ -14,20 +14,17 @@ namespace VoukoderManager.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private ProgramDetector _detector;
         private List<IProgramEntry> _detectedPrograms;
         private List<IProgramEntry> _installedVoukoderComponents;
         private Lang _lang;
         private BackgroundWorker _worker;
         private PackageManager _packetmanager;
         private ProgressBar bar;
-        private IPackage pkg;
         private IVoukoderEntry _currentVoukoderEntry;
 
         public MainWindow()
         {
             InitializeComponent();
-            _detector = new ProgramDetector();
             _detectedPrograms = new List<IProgramEntry>();
             _installedVoukoderComponents = new List<IProgramEntry>();
             _lang = new Lang();
@@ -38,12 +35,18 @@ namespace VoukoderManager.GUI
             Operation.InstallProgressChanged += PackageManager_InstallProgressChanged;
             VoukoderEntry.DownloadProgressChanged += DownloadProgressChanged;
             Package.InstallationFinished += Package_InstallationFinished;
+            ProgramEntry.UninstallationFinished += ProgramEntry_UninstallationFinished;
+            LoadProgramLists();
+        }
+
+        private void ProgramEntry_UninstallationFinished(object sender, OperationFinishedEventArgs e)
+        {
             LoadProgramLists();
         }
 
         private void Package_InstallationFinished(object sender, OperationFinishedEventArgs e)
         {
-            MessageBox.Show("Hallo");
+            LoadProgramLists();
         }
 
         private void PackageManager_InstallProgressChanged(object sender, ProcessStatusEventArgs e)
@@ -102,15 +105,15 @@ namespace VoukoderManager.GUI
             var clickedtype = ((IProgramEntry)((MenuItem)e.Source).DataContext).Type;
             if (clickedtype == ProgramType.Premiere)
             {
-                _packetmanager.UninstallPackage(_installedVoukoderComponents.Find(i => i.Type == ProgramType.VoukoderConnectorPremiere));
+                _installedVoukoderComponents.Find(i => i.Type == ProgramType.VoukoderConnectorPremiere).UninstallPackage();
             }
             else if (clickedtype == ProgramType.AfterEffects)
             {
-                _packetmanager.UninstallPackage(_installedVoukoderComponents.Find(i => i.Type == ProgramType.VoukoderConnectorAfterEffects));
+                _installedVoukoderComponents.Find(i => i.Type == ProgramType.VoukoderConnectorAfterEffects).UninstallPackage();
             }
             else if (clickedtype == ProgramType.VEGAS)
             {
-                _packetmanager.UninstallPackage(_installedVoukoderComponents.Find(i => i.Type == ProgramType.VoukoderConnectorVegas));
+                _installedVoukoderComponents.Find(i => i.Type == ProgramType.VoukoderConnectorVegas).UninstallPackage();
             }
         }
 
@@ -136,9 +139,8 @@ namespace VoukoderManager.GUI
             _currentVoukoderEntry = package;
             try
             {
-                await package.StartPackageDownloadWithDependencies();
-                var tt = package as VoukoderEntry;
-                tt.DownloadedPackage.InstallPackageWithDepenencies();
+                var pkg = await package.StartPackageDownloadWithDependencies() as Package;
+                pkg.InstallPackageWithDepenencies();
             }
             catch (WebException ex) { }
         }
@@ -173,8 +175,8 @@ namespace VoukoderManager.GUI
 
             void GetEntries(object sender, DoWorkEventArgs args)
             {
-                _installedVoukoderComponents = _detector.GetInstalledVoukoderComponents();
-                _detectedPrograms = _detector.GetInstalledPrograms();
+                _installedVoukoderComponents = ProgramDetector.GetInstalledVoukoderComponents();
+                _detectedPrograms = ProgramDetector.GetInstalledPrograms();
             }
 
             void WorkCompleted(object sender, RunWorkerCompletedEventArgs args)
@@ -235,6 +237,11 @@ namespace VoukoderManager.GUI
                 m.Visibility = Visibility.Collapsed;
             else
                 m.Visibility = Visibility.Visible;
+        }
+
+        private void itemVoukoderUninstall_Click(object sender, RoutedEventArgs e)
+        {
+            ((IProgramEntry)((MenuItem)e.Source).DataContext).UninstallPackage();
         }
     }
 }

@@ -25,7 +25,7 @@ namespace VoukoderManager.GUI.Models
 
         public static event EventHandler<ProgressChangedEventArgs> DownloadProgressChanged;
 
-        public async Task StartPackageDownload()
+        public async Task<IPackage> StartPackageDownload()
         {
             OnInstallProgress(new ProcessStatusEventArgs("Downloading files..."));
             packagePath = Path.GetTempPath() + DownloadUrl.Segments[DownloadUrl.Segments.Length - 1];
@@ -34,11 +34,12 @@ namespace VoukoderManager.GUI.Models
                 ProgressChangedEventArgs a = new ProgressChangedEventArgs(t.Item2, this);
                 OnDownloadProgressChanged(a);
             }));
-            DownloadedPackage = new Package(Name, packagePath);
+            var pkg = new Package(Name, packagePath);
             OnInstallProgress(new ProcessStatusEventArgs("Download finished"));
+            return pkg;
         }
 
-        public async Task StartPackageDownloadWithDependencies()
+        public async Task<IPackage> StartPackageDownloadWithDependencies()
         {
             OnInstallProgress(new ProcessStatusEventArgs($"Downloading package {Name}..."));
             packagePath = Path.GetTempPath() + DownloadUrl.Segments[DownloadUrl.Segments.Length - 1];
@@ -52,18 +53,22 @@ namespace VoukoderManager.GUI.Models
             List<IPackage> dep = new List<IPackage>();
             foreach (var v in Dependencies)
             {
-                OnInstallProgress(new ProcessStatusEventArgs($"Downloading package dependency  {v.Type} {v.Name}..."));
-                packagePath = Path.GetTempPath() + v.DownloadUrl.Segments[v.DownloadUrl.Segments.Length - 1];
-                await _webclient.DownloadFileTaskAsync(v.DownloadUrl, packagePath, new Progress<Tuple<long, int, long>>(t =>
+                if (!ProgramDetector.IsVoukoderComponentInstalled(v))
                 {
-                    ProgressChangedEventArgs a = new ProgressChangedEventArgs(t.Item2, this);
-                    OnDownloadProgressChanged(a);
-                }));
-                dep.Add(new Package(v.Name, packagePath));
+                    OnInstallProgress(new ProcessStatusEventArgs($"Downloading package dependency  {v.Type} {v.Name}..."));
+                    packagePath = Path.GetTempPath() + v.DownloadUrl.Segments[v.DownloadUrl.Segments.Length - 1];
+                    await _webclient.DownloadFileTaskAsync(v.DownloadUrl, packagePath, new Progress<Tuple<long, int, long>>(t =>
+                    {
+                        ProgressChangedEventArgs a = new ProgressChangedEventArgs(t.Item2, this);
+                        OnDownloadProgressChanged(a);
+                    }));
+                    dep.Add(new Package(v.Name, packagePath));
+                }
             }
             p.Dependencies = dep;
             DownloadedPackage = p;
             OnInstallProgress(new ProcessStatusEventArgs("Download finished"));
+            return p;
         }
 
         private void OnDownloadProgressChanged(ProgressChangedEventArgs e)

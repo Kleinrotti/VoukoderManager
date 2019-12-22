@@ -2,6 +2,8 @@
 {
     public interface IProgramUninstall
     {
-        void UninstallPackage(IProgramEntry programEntry);
+        void UninstallPackage();
+
+        void StopUninstallPackage();
     }
 }

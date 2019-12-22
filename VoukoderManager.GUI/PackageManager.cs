@@ -1,7 +1,6 @@
 ﻿using Octokit;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using VoukoderManager.GUI.Models;
 
 namespace VoukoderManager.GUI
@@ -112,21 +111,6 @@ namespace VoukoderManager.GUI
             }
             else
                 return null;
-        }
-
-        public void UninstallPackage(IProgramEntry package)
-        {
-            Process p = new Process();
-            var startinfo = new ProcessStartInfo("msiexec.exe")
-            {
-                UseShellExecute = true,
-                Arguments = package.UninstallString.Split(' ')[1],
-                Verb = "runas"
-            };
-            p.StartInfo = startinfo;
-            p.Start();
-            p.WaitForExit();
-            p.Dispose();
         }
 
         #region IDisposable Support

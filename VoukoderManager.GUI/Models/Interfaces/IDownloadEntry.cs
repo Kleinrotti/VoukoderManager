@@ -7,9 +7,9 @@ namespace VoukoderManager.GUI.Models
     {
         public Uri DownloadUrl { get; set; }
 
-        Task StartPackageDownload();
+        Task<IPackage> StartPackageDownload();
 
-        Task StartPackageDownloadWithDependencies();
+        Task<IPackage> StartPackageDownloadWithDependencies();
 
         void StopPackageDownload();
     }

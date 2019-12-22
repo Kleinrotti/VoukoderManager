@@ -8,18 +8,13 @@ namespace VoukoderManager.GUI
     /// </summary>
     public class ProgramDetector
     {
-        private string _registryProgramPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
-
-        public ProgramEntry GetInstalledProgram(string name)
-        {
-            return null;
-        }
+        private static string _registryProgramPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
 
         /// <summary>
         /// Returns a list which contains all installed programs where voukoder components are availible for
         /// </summary>
         /// <returns></returns>
-        public List<IProgramEntry> GetInstalledPrograms()
+        public static List<IProgramEntry> GetInstalledPrograms()
         {
             var programs = RegistryHelper.GetPrograms(_registryProgramPath);
             List<IProgramEntry> list = new List<IProgramEntry>();
@@ -47,7 +42,7 @@ namespace VoukoderManager.GUI
         /// Returns a list which contains all installed Voukoder components
         /// </summary>
         /// <returns></returns>
-        public List<IProgramEntry> GetInstalledVoukoderComponents()
+        public static List<IProgramEntry> GetInstalledVoukoderComponents()
         {
             var programs = RegistryHelper.GetPrograms(_registryProgramPath);
             List<IProgramEntry> list = new List<IProgramEntry>();
@@ -67,6 +62,19 @@ namespace VoukoderManager.GUI
                 }
             }
             return list;
+        }
+
+        public static bool IsVoukoderComponentInstalled(IVoukoderEntry entry)
+        {
+            var cpn = GetInstalledVoukoderComponents();
+            foreach (var v in cpn)
+            {
+                if (v.Type == entry.Type)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

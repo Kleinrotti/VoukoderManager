@@ -77,6 +77,8 @@ namespace VoukoderManager.GUI.Models
                 OnInstallProgress(new ProcessStatusEventArgs($"Cancelled installation of package {Name}"));
             else
                 InstallationFinished?.Invoke(this, new OperationFinishedEventArgs(e.Error, e.Cancelled, this));
+            _worker.DoWork -= ExecuteProcess;
+            _worker.RunWorkerCompleted -= WorkerCompleted;
         }
 
         private void ExecuteProcess(object sender, DoWorkEventArgs e)

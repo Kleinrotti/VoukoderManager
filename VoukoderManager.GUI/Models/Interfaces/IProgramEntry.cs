@@ -1,6 +1,6 @@
 ﻿namespace VoukoderManager.GUI.Models
 {
-    public interface IProgramEntry : IEntry
+    public interface IProgramEntry : IEntry, IProgramUninstall
     {
         /// <summary>
         /// Location where the program is installed to
