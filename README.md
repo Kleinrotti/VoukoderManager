@@ -5,4 +5,4 @@
 ### GUI based program to install/uninstall voukoder components
 
 **Requirements:**
-<br><a href="https://dotnet.microsoft.com/download/dotnet-framework/net48" style="font-size:18pt;".NET Framework 4.8</a></p>
+<br><a href="https://dotnet.microsoft.com/download/dotnet-framework/net48" style="font-size:18pt;">.NET Framework 4.8</a></p>
