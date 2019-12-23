@@ -4,10 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:VoukoderManager.GUI"
-             mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="470">
-    <Grid x:Name="mainGrid">
-        <ProgressBar x:Name="barProgress" Width="250" Height="30" Margin="110,381,110,39">
-        </ProgressBar>
+             mc:Ignorable="d" d:DesignWidth="470" Height="430.243">
+    <Grid x:Name="mainGrid" Background="WhiteSmoke">
+        <ProgressBar x:Name="barProgress" Height="30" Margin="62,314,85,86" Value="0" Visibility="Hidden"/>
+        <ListBox Name="listBoxStatus" HorizontalAlignment="Left" Height="285" Margin="62,24,0,0" VerticalAlignment="Top" Width="323"/>
+        <Button Content="Return" HorizontalAlignment="Left" Height="38" Margin="154,355,0,0" VerticalAlignment="Top" Width="143" Click="Button_Click"/>
     </Grid>
 </UserControl>

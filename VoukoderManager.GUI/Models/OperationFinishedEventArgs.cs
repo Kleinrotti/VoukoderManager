@@ -19,5 +19,10 @@ namespace VoukoderManager.GUI.Models
         {
             Entry = entry;
         }
+
+        public override string ToString()
+        {
+            return $"Operation finished of package {Entry.Name} Cancelled: {Cancelled.ToString()}";
+        }
     }
 }

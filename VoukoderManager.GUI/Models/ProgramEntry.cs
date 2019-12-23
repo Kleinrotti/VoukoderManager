@@ -65,8 +65,8 @@ namespace VoukoderManager.GUI.Models
 
         private void ExecuteProcess(object sender, DoWorkEventArgs e)
         {
-            Process p = new Process();
             OnInstallProgress(new ProcessStatusEventArgs($"Starting uninstall of package {Name}"));
+            Process p = new Process();
             var startinfo = new ProcessStartInfo("msiexec.exe")
             {
                 UseShellExecute = true,

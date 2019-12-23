@@ -21,6 +21,7 @@ namespace VoukoderManager.GUI
         private PackageManager _packetmanager;
         private ProgressBar bar;
         private IVoukoderEntry _currentVoukoderEntry;
+        private InstallationControl _InstallControl;
 
         public MainWindow()
         {
@@ -33,8 +34,6 @@ namespace VoukoderManager.GUI
             InitializeLanguage();
             _worker = new BackgroundWorker();
             _packetmanager = new PackageManager();
-            Operation.InstallProgressChanged += PackageManager_InstallProgressChanged;
-            VoukoderEntry.DownloadProgressChanged += DownloadProgressChanged;
             Package.InstallationFinished += Package_InstallationFinished;
             ProgramEntry.UninstallationFinished += ProgramEntry_UninstallationFinished;
             LoadProgramLists();
@@ -48,14 +47,6 @@ namespace VoukoderManager.GUI
         private void Package_InstallationFinished(object sender, OperationFinishedEventArgs e)
         {
             LoadProgramLists();
-        }
-
-        private void PackageManager_InstallProgressChanged(object sender, ProcessStatusEventArgs e)
-        {
-            labelStatus.Dispatcher.Invoke(() =>
-            {
-                labelStatus.Content = e.StatusMessage;
-            });
         }
 
         private void MenuItemPropertiesPrograms(object sender, RoutedEventArgs e)
@@ -96,6 +87,8 @@ namespace VoukoderManager.GUI
             {
                 Mouse.OverrideCursor = null;
                 var page = new PropertyWindow(lst);
+                page.Owner = this;
+                page.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 page.InstallEvent += BeginInstallation;
                 page.ShowDialog();
             }
@@ -103,6 +96,9 @@ namespace VoukoderManager.GUI
 
         private void MenuItemUninstallPrograms(object sender, RoutedEventArgs e)
         {
+            _InstallControl = new InstallationControl();
+            _InstallControl.CloseControl += _InstallControl_CloseControl;
+            mainGrid.Children.Add(_InstallControl);
             var clickedtype = ((IProgramEntry)((MenuItem)e.Source).DataContext).Type;
             if (clickedtype == ProgramType.Premiere)
             {
@@ -125,18 +121,9 @@ namespace VoukoderManager.GUI
 
         private async void StartDownload(IVoukoderEntry package)
         {
-            bar = new ProgressBar
-            {
-                Visibility = Visibility.Visible,
-                IsEnabled = true,
-                Maximum = 100,
-                Minimum = 0,
-                Height = 20,
-                Width = 130,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Bottom
-            };
-            mainGrid.Children.Add(bar);
+            _InstallControl = new InstallationControl();
+            _InstallControl.CloseControl += _InstallControl_CloseControl;
+            mainGrid.Children.Add(_InstallControl);
             _currentVoukoderEntry = package;
             try
             {
@@ -146,9 +133,10 @@ namespace VoukoderManager.GUI
             catch (WebException ex) { }
         }
 
-        private void DownloadProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void _InstallControl_CloseControl(object sender, System.EventArgs e)
         {
-            bar.Value = e.ProgressPercentage;
+            mainGrid.Children.Remove(_InstallControl);
+            _InstallControl.CloseControl -= _InstallControl_CloseControl;
         }
 
         private void ShowInfos()
@@ -243,6 +231,9 @@ namespace VoukoderManager.GUI
         private void itemVoukoderUninstall_Click(object sender, RoutedEventArgs e)
         {
             ((IProgramEntry)((MenuItem)e.Source).DataContext).UninstallPackage();
+            _InstallControl = new InstallationControl();
+            _InstallControl.CloseControl += _InstallControl_CloseControl;
+            mainGrid.Children.Add(_InstallControl);
         }
     }
 }
