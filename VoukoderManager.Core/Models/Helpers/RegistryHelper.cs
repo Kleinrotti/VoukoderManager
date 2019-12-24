@@ -1,9 +1,9 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using VoukoderManager.GUI.Models;
+using VoukoderManager.Core.Models;
 
-namespace VoukoderManager.GUI
+namespace VoukoderManager.Core
 {
     public static class RegistryHelper
     {

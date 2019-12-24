@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace VoukoderManager.GUI.Models
+namespace VoukoderManager.Core.Models
 {
     public interface IDownloadEntry
     {
-        public Uri DownloadUrl { get; set; }
+        Uri DownloadUrl { get; set; }
 
         Task<IPackage> StartPackageDownload();
 

@@ -5,7 +5,7 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace VoukoderManager.GUI.Models
+namespace VoukoderManager.Core.Models
 {
     /// <summary>
     /// Describes a downloadable Voukoder component

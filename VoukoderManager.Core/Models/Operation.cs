@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace VoukoderManager.GUI.Models
+namespace VoukoderManager.Core.Models
 {
     /// <summary>
     /// Provides events for derived classes to update the progress

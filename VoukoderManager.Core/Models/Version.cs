@@ -1,6 +1,6 @@
 using System;
 
-namespace VoukoderManager.GUI.Models
+namespace VoukoderManager.Core.Models
 {
     public class Version : IVersion
     {

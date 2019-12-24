@@ -1,4 +1,4 @@
-﻿namespace VoukoderManager.GUI.Models
+﻿namespace VoukoderManager.Core.Models
 {
     public enum PackageType
     {

@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace VoukoderManager.GUI
+namespace VoukoderManager.Core
 {
     public static class WebClientExtension
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using VoukoderManager.GUI.Models;
+using VoukoderManager.Core.Models;
 
-namespace VoukoderManager.GUI
+namespace VoukoderManager.Core
 {
     /// <summary>
     /// Class for detecting installed programs on your operating system

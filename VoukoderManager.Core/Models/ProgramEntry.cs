@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 
-namespace VoukoderManager.GUI.Models
+namespace VoukoderManager.Core.Models
 {
     public class ProgramEntry : Operation, IProgramEntry
     {

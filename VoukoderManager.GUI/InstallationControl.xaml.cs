@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Controls;
-using VoukoderManager.GUI.Models;
+using VoukoderManager.Core.Models;
 
 namespace VoukoderManager.GUI
 {

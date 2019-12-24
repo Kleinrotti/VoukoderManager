@@ -4,7 +4,8 @@ using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using VoukoderManager.GUI.Models;
+using VoukoderManager.Core.Models;
+using VoukoderManager.Core;
 using VoukoderManager.Language;
 
 namespace VoukoderManager.GUI
@@ -19,7 +20,6 @@ namespace VoukoderManager.GUI
         private Lang _lang;
         private BackgroundWorker _worker;
         private PackageManager _packetmanager;
-        private ProgressBar bar;
         private IVoukoderEntry _currentVoukoderEntry;
         private InstallationControl _InstallControl;
 
@@ -77,7 +77,7 @@ namespace VoukoderManager.GUI
                 {
                     lst = _packetmanager.GetDownloadablePackages(ProgramType.VoukoderConnectorPremiere, 5);
                 }
-                else if (clickedtype == ProgramType.VoukoderConnectorAfterEffects)
+                else if (clickedtype == ProgramType.AfterEffects)
                 {
                     lst = _packetmanager.GetDownloadablePackages(ProgramType.VoukoderConnectorAfterEffects, 5);
                 }

@@ -1,11 +1,11 @@
 ﻿using Octokit;
 using System;
 using System.Collections.Generic;
-using VoukoderManager.GUI.Models;
+using VoukoderManager.Core.Models;
 
-namespace VoukoderManager.GUI
+namespace VoukoderManager.Core
 {
-    internal class PackageManager
+    public class PackageManager
     {
         public List<IPackage> Query { get; private set; }
 

@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 
-namespace VoukoderManager.GUI.Models
+namespace VoukoderManager.Core.Models
 {
     public class Package : Operation, IPackage
     {
