@@ -2,12 +2,12 @@
 {
     public interface IVersion
     {
-         string PackageVersion { get; set; }
+        string PackageVersion { get; set; }
 
-         int Major { get; }
+        int Major { get; }
 
-         int Minor { get; }
+        int Minor { get; }
 
-         bool PreRelease { get; set; }
+        bool PreRelease { get; set; }
     }
 }

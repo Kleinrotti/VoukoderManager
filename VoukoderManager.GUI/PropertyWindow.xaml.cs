@@ -36,6 +36,7 @@ namespace VoukoderManager.GUI
         {
             InitializeComponent();
             labelTitle.Content = "Select version to install";
+            labelTitle.FontSize = 18.0;
             _entryList = entryList;
             CreateInstallButton();
             CreateFrameworkElement();
@@ -47,7 +48,8 @@ namespace VoukoderManager.GUI
             {
                 Content = "Install",
                 Height = 50,
-                Width = 85,
+                Width = 100,
+                FontSize = 17.0,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Bottom,
                 Visibility = Visibility.Visible,
@@ -65,8 +67,8 @@ namespace VoukoderManager.GUI
             test.SetValue(RadioButton.GroupNameProperty, "version");
             test.SetValue(Grid.HorizontalAlignmentProperty, HorizontalAlignment.Center);
             test.AddHandler(RadioButton.ClickEvent, new RoutedEventHandler(radioButtonClickEvent), true);
-            test.SetValue(RadioButton.FontSizeProperty, 15.0);
-            test.SetValue(RadioButton.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+            test.SetValue(RadioButton.FontSizeProperty, 17.0);
+            test.SetValue(RadioButton.HorizontalAlignmentProperty, HorizontalAlignment.Center);
             var template = new DataTemplate();
             template.VisualTree = test;
             icItems.ItemTemplate = template;

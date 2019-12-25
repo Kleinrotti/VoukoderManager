@@ -38,6 +38,7 @@
             <ListBox.Resources>
                 <ContextMenu x:Key="ItemContextMenuVoukoder" Name="contextVoukoder">
                     <MenuItem Header="Uninstall component" Name="itemVoukoderUninstall" Visibility="Visible" Click="itemVoukoderUninstall_Click" Command="{Binding Path=DataContext.MoreInfo, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" />
+                    <MenuItem Header="Properties" Name="itemVoukoderProperties" Click="itemVoukoderProperties_Click" Command="{Binding Path=DataContext.MoreInfo, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" />
                 </ContextMenu>
             </ListBox.Resources>
             <ListBox.ItemContainerStyle>

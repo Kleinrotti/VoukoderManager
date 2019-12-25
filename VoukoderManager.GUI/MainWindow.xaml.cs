@@ -4,8 +4,8 @@ using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using VoukoderManager.Core.Models;
 using VoukoderManager.Core;
+using VoukoderManager.Core.Models;
 using VoukoderManager.Language;
 
 namespace VoukoderManager.GUI
@@ -51,7 +51,7 @@ namespace VoukoderManager.GUI
 
         private void MenuItemPropertiesPrograms(object sender, RoutedEventArgs e)
         {
-            ShowInfos();
+            ShowInfos((IProgramEntry)listBoxPrograms.SelectedItem);
         }
 
         private void MenuItemInstallPrograms(object sender, RoutedEventArgs e)
@@ -139,11 +139,9 @@ namespace VoukoderManager.GUI
             _InstallControl.CloseControl -= _InstallControl_CloseControl;
         }
 
-        private void ShowInfos()
+        private void ShowInfos(IEntry entry)
         {
-            _packetmanager = new PackageManager();
-            var test = listBoxPrograms.SelectedItem;
-            var page = new PropertyWindow((ProgramEntry)test);
+            var page = new PropertyWindow(entry);
             page.ShowDialog();
         }
 
@@ -234,6 +232,11 @@ namespace VoukoderManager.GUI
             _InstallControl = new InstallationControl();
             _InstallControl.CloseControl += _InstallControl_CloseControl;
             mainGrid.Children.Add(_InstallControl);
+        }
+
+        private void itemVoukoderProperties_Click(object sender, RoutedEventArgs e)
+        {
+            ShowInfos((IProgramEntry)listBoxVoukoderComponents.SelectedItem);
         }
     }
 }

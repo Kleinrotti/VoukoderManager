@@ -8,8 +8,8 @@ namespace VoukoderManager.Core.Models
 
         string Path { get; set; }
 
-         PackageType Type { get; }
+        PackageType Type { get; }
 
-         List<IPackage> Dependencies { get; set; }
+        List<IPackage> Dependencies { get; set; }
     }
 }
