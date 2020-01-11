@@ -1,9 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
 using VoukoderManager.Core;
 using VoukoderManager.Core.Models;
 using VoukoderManager.Language;
@@ -22,6 +26,37 @@ namespace VoukoderManager.GUI
         private PackageManager _packetmanager;
         private IVoukoderEntry _currentVoukoderEntry;
         private InstallationControl _InstallControl;
+
+        private readonly Border _gridBorder = new Border
+        {
+            BorderBrush = new SolidColorBrush(Colors.Black),
+            BorderThickness = new Thickness(0),
+            CornerRadius = new CornerRadius(0),
+            Effect = new DropShadowEffect
+            {
+                Color = Colors.Black,
+                ShadowDepth = 0,
+            },
+        };
+
+        private readonly Image _voukoderLogo = new Image
+        {
+            Source = new BitmapImage(new Uri(@"/Resources/logo.png", UriKind.Relative)),
+            Height = 30,
+            Width = 30,
+            VerticalAlignment = VerticalAlignment.Top,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            Margin = new Thickness(10)
+        };
+
+        private readonly Label _logoLabel = new Label
+        {
+            Content = "oukoder for",
+            Width = 80,
+            VerticalAlignment = VerticalAlignment.Top,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            Margin = new Thickness(38, 8, 0, 0)
+        };
 
         public MainWindow()
         {
@@ -170,6 +205,7 @@ namespace VoukoderManager.GUI
             {
                 listBoxVoukoderComponents.ItemsSource = _installedVoukoderComponents;
                 listBoxPrograms.ItemsSource = _detectedPrograms;
+                itemVoukoderTest.VoukoderData = _detectedPrograms[0];
                 Mouse.OverrideCursor = null;
             }
         }
@@ -196,21 +232,23 @@ namespace VoukoderManager.GUI
             bool installed = false;
             foreach (var v in _installedVoukoderComponents)
             {
-                if (type == ProgramType.Premiere && v.Type == ProgramType.VoukoderConnectorPremiere)
+                switch (type)
                 {
-                    installed = true;
-                }
-                else if (type == ProgramType.VEGAS && v.Type == ProgramType.VoukoderConnectorVegas)
-                {
-                    installed = true;
-                }
-                else if (type == ProgramType.AfterEffects && v.Type == ProgramType.VoukoderConnectorAfterEffects)
-                {
-                    installed = true;
-                }
-                else
-                {
-                    installed = false;
+                    case ProgramType.Premiere when v.Type == ProgramType.VoukoderConnectorPremiere:
+                        installed = true;
+                        break;
+
+                    case ProgramType.VEGAS when v.Type == ProgramType.VoukoderConnectorVegas:
+                        installed = true;
+                        break;
+
+                    case ProgramType.AfterEffects when v.Type == ProgramType.VoukoderConnectorAfterEffects:
+                        installed = true;
+                        break;
+
+                    default:
+                        installed = false;
+                        break;
                 }
             }
             ContextMenu c = listBoxPrograms.FindResource("ItemContextMenu") as ContextMenu;
@@ -237,6 +275,22 @@ namespace VoukoderManager.GUI
         private void itemVoukoderProperties_Click(object sender, RoutedEventArgs e)
         {
             ShowInfos((IProgramEntry)listBoxVoukoderComponents.SelectedItem);
+        }
+
+        private void buttonExit_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void buttonMinimize_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void gridMove_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                this.DragMove();
         }
     }
 }

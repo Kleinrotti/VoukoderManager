@@ -50,5 +50,10 @@ namespace VoukoderManager.Core.Models
             PackageVersion = version;
             PreRelease = preRelease;
         }
+
+        public int CompareTo(IVersion obj)
+        {
+            return PackageVersion.CompareTo(obj.PackageVersion);
+        }
     }
 }

@@ -7,7 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoukoderManager.GUI", "Vouk
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VoukoderManager.Lang", "VoukoderManager.Lang\VoukoderManager.Lang.csproj", "{33C89440-B46C-48EF-AE80-15267C2CE567}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoukoderManager.Core", "VoukoderManager.Core\VoukoderManager.Core.csproj", "{C454820F-9287-4F21-B991-826A24FF08E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VoukoderManager.Core", "VoukoderManager.Core\VoukoderManager.Core.csproj", "{C454820F-9287-4F21-B991-826A24FF08E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoukoderManager.Controls", "VoukoderManager.Controls\VoukoderManager.Controls.csproj", "{D9411103-127A-4CC4-95EA-635C38846BAA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{C454820F-9287-4F21-B991-826A24FF08E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C454820F-9287-4F21-B991-826A24FF08E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C454820F-9287-4F21-B991-826A24FF08E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9411103-127A-4CC4-95EA-635C38846BAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9411103-127A-4CC4-95EA-635C38846BAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9411103-127A-4CC4-95EA-635C38846BAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9411103-127A-4CC4-95EA-635C38846BAA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

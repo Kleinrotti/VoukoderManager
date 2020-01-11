@@ -9,6 +9,7 @@
         VEGAS,
         Premiere,
         AfterEffects,
+        MediaEncoder,
         None
     }
 }

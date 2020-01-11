@@ -1,4 +1,6 @@
-﻿namespace VoukoderManager.Core.Models
+﻿using System.Windows.Media.Imaging;
+
+namespace VoukoderManager.Core.Models
 {
     public interface IProgramEntry : IEntry, IProgramUninstall
     {
@@ -36,5 +38,10 @@
         /// Type of the component
         /// </summary>
         ProgramType Type { get; set; }
+
+        /// <summary>
+        /// Programlogo
+        /// </summary>
+        BitmapImage Logo { get; }
     }
 }

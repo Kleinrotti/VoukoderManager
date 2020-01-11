@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Windows.Media.Imaging;
 
 namespace VoukoderManager.Core.Models
 {
@@ -15,6 +16,37 @@ namespace VoukoderManager.Core.Models
         public string ModifyPath { get; set; }
         public string Publisher { get; set; }
         public ProgramType Type { get; set; }
+
+        public BitmapImage Logo
+        {
+            get
+            {
+                if (Type == ProgramType.MediaEncoder)
+                    return ToImage(VoukoderManager.Core.Properties.Resources.me_logo);
+                else if (Type == ProgramType.AfterEffects)
+                    return ToImage(VoukoderManager.Core.Properties.Resources.ae_logo);
+                else if (Type == ProgramType.Premiere)
+                    return ToImage(VoukoderManager.Core.Properties.Resources.premiere_logo);
+                else if (Type == ProgramType.VEGAS)
+                    return ToImage(VoukoderManager.Core.Properties.Resources.vegas_logo);
+                else
+                    return null;
+            }
+        }
+
+        private BitmapImage ToImage(byte[] array)
+        {
+            using (var ms = new System.IO.MemoryStream(array))
+            {
+                var image = new BitmapImage();
+                image.BeginInit();
+                image.CacheOption = BitmapCacheOption.OnLoad; // here
+                image.StreamSource = ms;
+                image.EndInit();
+                return image;
+            }
+        }
+
         private static BackgroundWorker _worker = new BackgroundWorker();
 
         public static event EventHandler<OperationFinishedEventArgs> UninstallationFinished;

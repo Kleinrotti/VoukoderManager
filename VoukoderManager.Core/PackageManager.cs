@@ -113,6 +113,31 @@ namespace VoukoderManager.Core
                 return null;
         }
 
+        //public IVoukoderEntry GetUpdate(IProgramEntry entry)
+        //{
+        //    string repo;
+        //    var client = new GitHubClient(new ProductHeaderValue("voukodermanager"));
+
+        //    if (entry.Type == ProgramType.VoukoderCore)
+        //    {
+        //        repo = "voukoder";
+        //        var release = client.Repository.Release.GetLatest("Vouk", repo).Result;
+        //        if (entry.Version == release.TagName)
+        //        {
+        //            var entr = new VoukoderEntry()
+        //            {
+        //                Name = release.Name,
+        //                Version = new Models.Version(release.TagName, release.Prerelease),
+        //                DownloadUrl = new Uri(release.Assets[0].BrowserDownloadUrl)
+        //            };
+        //        }
+        //        return entr;
+        //    }
+        //    else
+        //    {
+        //    }
+        //}
+
         #region IDisposable Support
 
         private bool disposedValue = false; // To detect redundant calls

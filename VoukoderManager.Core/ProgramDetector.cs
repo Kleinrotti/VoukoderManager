@@ -26,8 +26,8 @@ namespace VoukoderManager.Core
                 {
                     if (e.Name.Contains("Premiere"))
                         e.Type = ProgramType.Premiere;
-                    else if (e.Name.Contains("Encoder"))
-                        e.Type = ProgramType.Premiere;
+                    else if (e.Name.Contains("Media Encoder"))
+                        e.Type = ProgramType.MediaEncoder;
                     else if (e.Name.Contains("Effects"))
                         e.Type = ProgramType.AfterEffects;
                     else

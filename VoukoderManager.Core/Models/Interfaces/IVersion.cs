@@ -1,6 +1,8 @@
-﻿namespace VoukoderManager.Core.Models
+﻿using System;
+
+namespace VoukoderManager.Core.Models
 {
-    public interface IVersion
+    public interface IVersion : IComparable<IVersion>
     {
         string PackageVersion { get; set; }
 

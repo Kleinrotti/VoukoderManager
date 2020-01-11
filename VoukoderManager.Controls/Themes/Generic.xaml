@@ -1,0 +1,42 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:VoukoderManager.Controls">
+
+    <Style x:Key="{x:Type local:VoukoderItemControl}" TargetType="{x:Type local:VoukoderItemControl}">
+        <Setter Property="Width" Value="680" />
+        <Setter Property="Height" Value="145" />
+        <Setter Property="BorderBrush" Value="Black" />
+        <Setter Property="BorderThickness" Value="0.5" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:VoukoderItemControl}">
+                    <Border BorderBrush="Black" CornerRadius="0" BorderThickness="0">
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="0" />
+                        </Border.Effect>
+                        <Grid x:Name="gridOuter" HorizontalAlignment="Left" Width="680" Background="#FFFFFF">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="45" />
+                                <RowDefinition Height="100" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Image Grid.Row="0" Margin="10" Source="./Resources/logo.png" Height="30" Width="30" VerticalAlignment="Top" HorizontalAlignment="Left" />
+                            <Label Grid.Row="0" Content="oukoder for" Width="80" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="38,8,0,0" />
+                            <TextBlock x:Name="PART_ProgramLabel" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="15" Style="{DynamicResource MaterialDesignCaptionTextBlock}" />
+                            <Image x:Name="PART_ProgramLogo" Height="70" Width="70" Grid.Row="1" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Bottom" />
+                            <StackPanel Grid.Row="2" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                <Button x:Name="PART_InstallButton" Width="100" FontSize="12" Height="22" Content="Install" Background="White" />
+                                <Button x:Name="PART_UninstallButton" Width="100" FontSize="12" Height="22" Content="Uninstall" Background="White" />
+                                <Button x:Name="PART_PropertiesButton" Width="100" FontSize="12" Height="22" Content="Properties" Background="White" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

@@ -5,11 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VoukoderManager.GUI"
         xmlns:my="clr-namespace:VoukoderManager.GUI"
-        mc:Ignorable="d"
-        Title="Voukoder Manager" Height="450" Width="470" Icon="./Resources/logo.png"
-        ResizeMode="CanMinimize">
-    <Grid x:Name="mainGrid" Background="WhiteSmoke">
-        <ListBox HorizontalAlignment="Left" Height="268" Margin="21,75,0,0" VerticalAlignment="Top" Width="209" x:Name="listBoxPrograms" ContextMenuOpening="listBoxPrograms_ContextMenuOpening">
+        xmlns:controls="clr-namespace:VoukoderManager.Controls;assembly=VoukoderManager.Controls"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Medium"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        Title="" Height="720" Width="1280" Icon="./Resources/logo.png">
+    <Grid x:Name="mainGrid" Background="#F6F6F6">
+        <Grid x:Name="gridMove" Background="Transparent" VerticalAlignment="Top" HorizontalAlignment="Left" Height="30" Width="1170" MouseDown="gridMove_MouseDown" />
+        <Button Content="X" FontSize="20" Name="buttonExit" Click="buttonExit_Click" Style="{DynamicResource MaterialDesignFlatButton}" Height="Auto" Width="Auto" Foreground="Red" VerticalAlignment="Top" HorizontalAlignment="Right" />
+        <Button Content="-" FontSize="20" Name="buttonMinimize" Click="buttonMinimize_Click"  Style="{DynamicResource MaterialDesignFlatButton}" Height="Auto" Width="Auto" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,0,46,0" />
+        <ListBox Visibility="Collapsed" HorizontalAlignment="Left" Height="268" Margin="103,132,0,0" VerticalAlignment="Top" Width="209" x:Name="listBoxPrograms" ContextMenuOpening="listBoxPrograms_ContextMenuOpening">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Name}" />
@@ -28,8 +40,8 @@
                 </Style>
             </ListBox.ItemContainerStyle>
         </ListBox>
-        <Button Content="Refresh" Name="buttonRefresh" HorizontalAlignment="Left" Margin="194,358,0,0" VerticalAlignment="Top" Width="74" Click="buttonRefresh_Click" />
-        <ListBox HorizontalAlignment="Left" Height="268" Margin="241,75,0,0" VerticalAlignment="Top" Width="209" Name="listBoxVoukoderComponents">
+        <Button Content="Refresh" Visibility="Collapsed" Name="buttonRefresh" HorizontalAlignment="Left" Margin="317,399,0,0" VerticalAlignment="Top" Width="82" Click="buttonRefresh_Click" />
+        <ListBox Visibility="Collapsed" HorizontalAlignment="Left" Height="268" Margin="428,132,0,0" VerticalAlignment="Top" Width="209" Name="listBoxVoukoderComponents">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Name}" />
@@ -47,15 +59,65 @@
                 </Style>
             </ListBox.ItemContainerStyle>
         </ListBox>
-        <Label Content="Detected programs" HorizontalAlignment="Left" Margin="71,44,0,0" VerticalAlignment="Top" Name="labelPrograms" />
-        <Label Content="Installed Voukoder components" HorizontalAlignment="Left" Margin="259,44,0,0" VerticalAlignment="Top" Name="labelVoukoderComponents" />
+        <Label Visibility="Collapsed" Content="Detected programs" HorizontalAlignment="Left" Margin="148,101,0,0" VerticalAlignment="Top" Name="labelPrograms" />
+        <Label Visibility="Collapsed" Content="Installed Voukoder components" HorizontalAlignment="Left" Margin="447,101,0,0" VerticalAlignment="Top" Name="labelVoukoderComponents" />
         <Button Content="Cancel" HorizontalAlignment="Left" Visibility="Hidden" Margin="298,358,0,0" VerticalAlignment="Top" Width="75" Name="buttonCancel" Click="buttonCancel_Click" />
-        <DockPanel HorizontalAlignment="Left" Height="28" LastChildFill="False" VerticalAlignment="Top" Width="465" Margin="0,0,-0.333,0">
+        <DockPanel Visibility="Collapsed" HorizontalAlignment="Left" Height="28" LastChildFill="False" VerticalAlignment="Top" Width="465" Margin="0,0,-0.333,0">
             <Menu DockPanel.Dock="Top" Height="28" Margin="0,0,0.333,0">
-                <MenuItem Header="_File" Height="28" Width="40">
+                <MenuItem Header="_File" Height="28" Width="88">
                     <MenuItem Header="_Exit" />
                 </MenuItem>
             </Menu>
         </DockPanel>
+        <Label Content="Voukoder Manager" FontSize="30" Margin="30" FontWeight="Regular" HorizontalAlignment="Left" x:Name="labelTop" />
+        <Button Content="Installed" Foreground="#3399FF" Margin="6,97,1152,555" FontSize="18" FontWeight="Regular" x:Name="buttonInstalled" Width="Auto" Height="Auto">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Border Background="{TemplateBinding Background}" BorderBrush="Transparent">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="#3399FF" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+        <Button Content="Availible" Margin="128,97,1030,555" FontSize="18" FontWeight="Regular" x:Name="buttonAvailible" Width="Auto" Height="Auto">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Border Background="{TemplateBinding Background}" BorderBrush="Transparent">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="#3399FF" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+        <Border BorderBrush="Black" CornerRadius="0" Margin="-1,140,374,0" BorderThickness="0.4">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel x:Name="stackpanelPrograms" Margin="20" HorizontalAlignment="Left" local:MarginSetter.Margin="10">
+                    <controls:VoukoderItemControl Name="itemVoukoderTest" />
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
     </Grid>
 </Window>
