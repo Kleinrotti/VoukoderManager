@@ -16,52 +16,12 @@
         FontFamily="{DynamicResource MaterialDesignFont}"
         WindowStyle="None"
         ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
         Title="" Height="720" Width="1280" Icon="./Resources/logo.png">
     <Grid x:Name="mainGrid" Background="#F6F6F6">
         <Grid x:Name="gridMove" Background="Transparent" VerticalAlignment="Top" HorizontalAlignment="Left" Height="30" Width="1170" MouseDown="gridMove_MouseDown" />
         <Button Content="X" FontSize="20" Name="buttonExit" Click="buttonExit_Click" Style="{DynamicResource MaterialDesignFlatButton}" Height="Auto" Width="Auto" Foreground="Red" VerticalAlignment="Top" HorizontalAlignment="Right" />
         <Button Content="-" FontSize="20" Name="buttonMinimize" Click="buttonMinimize_Click"  Style="{DynamicResource MaterialDesignFlatButton}" Height="Auto" Width="Auto" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,0,46,0" />
-        <ListBox Visibility="Collapsed" HorizontalAlignment="Left" Height="268" Margin="103,132,0,0" VerticalAlignment="Top" Width="209" x:Name="listBoxPrograms" ContextMenuOpening="listBoxPrograms_ContextMenuOpening">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Name}" />
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-            <ListBox.Resources>
-                <ContextMenu x:Key="ItemContextMenu" Name="contextPrograms">
-                    <MenuItem Header="Install Connector" CommandParameter="{Binding}" x:Name="itemInstall" IsEnabled="True" Click="MenuItemInstallPrograms" Command="{Binding Path=DataContext.MoreInfo, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" />
-                    <MenuItem Header="Uninstall Connector" Name="itemUninstall" Visibility="Visible" Click="MenuItemUninstallPrograms" Command="{Binding Path=DataContext.MoreInfo, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" />
-                    <MenuItem Header="Properties" Click="MenuItemPropertiesPrograms" Command="{Binding Path=DataContext.MoreInfo, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" />
-                </ContextMenu>
-            </ListBox.Resources>
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="{x:Type ListBoxItem}">
-                    <Setter Property="ContextMenu" Value="{StaticResource ItemContextMenu}" />
-                </Style>
-            </ListBox.ItemContainerStyle>
-        </ListBox>
-        <Button Content="Refresh" Visibility="Collapsed" Name="buttonRefresh" HorizontalAlignment="Left" Margin="317,399,0,0" VerticalAlignment="Top" Width="82" Click="buttonRefresh_Click" />
-        <ListBox Visibility="Collapsed" HorizontalAlignment="Left" Height="268" Margin="428,132,0,0" VerticalAlignment="Top" Width="209" Name="listBoxVoukoderComponents">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Name}" />
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-            <ListBox.Resources>
-                <ContextMenu x:Key="ItemContextMenuVoukoder" Name="contextVoukoder">
-                    <MenuItem Header="Uninstall component" Name="itemVoukoderUninstall" Visibility="Visible" Click="itemVoukoderUninstall_Click" Command="{Binding Path=DataContext.MoreInfo, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" />
-                    <MenuItem Header="Properties" Name="itemVoukoderProperties" Click="itemVoukoderProperties_Click" Command="{Binding Path=DataContext.MoreInfo, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" />
-                </ContextMenu>
-            </ListBox.Resources>
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="{x:Type ListBoxItem}">
-                    <Setter Property="ContextMenu" Value="{StaticResource ItemContextMenuVoukoder}" />
-                </Style>
-            </ListBox.ItemContainerStyle>
-        </ListBox>
-        <Label Visibility="Collapsed" Content="Detected programs" HorizontalAlignment="Left" Margin="148,101,0,0" VerticalAlignment="Top" Name="labelPrograms" />
-        <Label Visibility="Collapsed" Content="Installed Voukoder components" HorizontalAlignment="Left" Margin="447,101,0,0" VerticalAlignment="Top" Name="labelVoukoderComponents" />
-        <Button Content="Cancel" HorizontalAlignment="Left" Visibility="Hidden" Margin="298,358,0,0" VerticalAlignment="Top" Width="75" Name="buttonCancel" Click="buttonCancel_Click" />
         <DockPanel Visibility="Collapsed" HorizontalAlignment="Left" Height="28" LastChildFill="False" VerticalAlignment="Top" Width="465" Margin="0,0,-0.333,0">
             <Menu DockPanel.Dock="Top" Height="28" Margin="0,0,0.333,0">
                 <MenuItem Header="_File" Height="28" Width="88">
@@ -70,7 +30,7 @@
             </Menu>
         </DockPanel>
         <Label Content="Voukoder Manager" FontSize="30" Margin="30" FontWeight="Regular" HorizontalAlignment="Left" x:Name="labelTop" />
-        <Button Content="Installed" Foreground="#3399FF" Margin="6,97,1152,555" FontSize="18" FontWeight="Regular" x:Name="buttonInstalled" Width="Auto" Height="Auto">
+        <Button Content="Installed" Foreground="#3399FF" Margin="6,97,1152,555" FontSize="18" FontWeight="Regular" x:Name="buttonInstalled" Width="Auto" Height="Auto" Click="buttonInstalled_Click">
             <Button.Style>
                 <Style TargetType="{x:Type Button}">
                     <Setter Property="Background" Value="Transparent" />
@@ -91,7 +51,7 @@
                 </Style>
             </Button.Style>
         </Button>
-        <Button Content="Availible" Margin="128,97,1030,555" FontSize="18" FontWeight="Regular" x:Name="buttonAvailible" Width="Auto" Height="Auto">
+        <Button Content="Availible" Margin="128,97,1030,555" FontSize="18" FontWeight="Regular" x:Name="buttonAvailible" Width="Auto" Height="Auto" Click="buttonAvailible_Click">
             <Button.Style>
                 <Style TargetType="{x:Type Button}">
                     <Setter Property="Background" Value="Transparent" />
@@ -112,12 +72,7 @@
                 </Style>
             </Button.Style>
         </Button>
-        <Border BorderBrush="Black" CornerRadius="0" Margin="-1,140,374,0" BorderThickness="0.4">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <StackPanel x:Name="stackpanelPrograms" Margin="20" HorizontalAlignment="Left" local:MarginSetter.Margin="10">
-                    <controls:VoukoderItemControl Name="itemVoukoderTest" />
-                </StackPanel>
-            </ScrollViewer>
-        </Border>
+        <Frame Name="framePages" Margin="-1,143,408,0" NavigationUIVisibility="Hidden" BorderBrush="Black" BorderThickness="1">
+        </Frame>
     </Grid>
 </Window>

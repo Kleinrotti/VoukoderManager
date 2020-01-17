@@ -43,5 +43,7 @@ namespace VoukoderManager.Core.Models
         /// Programlogo
         /// </summary>
         BitmapImage Logo { get; }
+
+        IProgramEntry VoukoderConnector { get; set; }
     }
 }

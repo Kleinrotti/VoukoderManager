@@ -16,6 +16,7 @@ namespace VoukoderManager.Core.Models
         public string ModifyPath { get; set; }
         public string Publisher { get; set; }
         public ProgramType Type { get; set; }
+        public IProgramEntry VoukoderConnector { get; set; }
 
         public BitmapImage Logo
         {

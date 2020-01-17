@@ -1,6 +1,7 @@
 ﻿using Octokit;
 using System;
 using System.Collections.Generic;
+using System.Windows.Input;
 using VoukoderManager.Core.Models;
 
 namespace VoukoderManager.Core
@@ -17,6 +18,7 @@ namespace VoukoderManager.Core
         /// <returns></returns>
         public List<IVoukoderEntry> GetDownloadablePackages(ProgramType type, int results)
         {
+            Mouse.OverrideCursor = Cursors.Wait;
             var lst = new List<IVoukoderEntry>();
             string repo;
             string repopath;
@@ -25,16 +27,18 @@ namespace VoukoderManager.Core
             if (type == ProgramType.VoukoderCore)
             {
                 repo = "voukoder";
-                return GetReleases(client, "Vouk", repo, results);
+                var re = GetReleases(client, "Vouk", repo, results);
+                Mouse.OverrideCursor = null;
+                return re;
             }
             else
             {
                 repo = "voukoder-connectors";
-                if (type == ProgramType.VoukoderConnectorVegas)
+                if (type == ProgramType.VEGAS)
                 {
                     repopath = "vegas";
                 }
-                else if (type == ProgramType.VoukoderConnectorAfterEffects)
+                else if (type == ProgramType.AfterEffects)
                 {
                     repopath = "aftereffects";
                 }
@@ -42,7 +46,9 @@ namespace VoukoderManager.Core
                 {
                     repopath = "premiere";
                 }
-                return GetContent(type, client, "Vouk", repo, repopath, results);
+                var content = GetContent(type, client, "Vouk", repo, repopath, results);
+                Mouse.OverrideCursor = null;
+                return content;
             }
         }
 
@@ -50,13 +56,13 @@ namespace VoukoderManager.Core
         {
             var test = client.Repository.Content.GetAllContents(owner, repo, filepath).Result;
             var lst = new List<IVoukoderEntry>();
-            int i = 0;
-            foreach (var v in test)
+            int entries = test.Count;
+
+            while (results > 0)
             {
+                var v = test[entries - 1];
                 if (v.Name.Contains("connector"))
                 {
-                    if (i >= results)
-                        break;
                     var version = v.Name.Split('.');
                     lst.Add(new VoukoderEntry
                     {
@@ -66,8 +72,9 @@ namespace VoukoderManager.Core
                         Type = type,
                         Dependencies = new List<IVoukoderEntry>() { GetLatestDownloadablePackage(ProgramType.VoukoderCore) }
                     });
-                    i++;
                 }
+                entries--;
+                results--;
             }
             return lst;
         }

@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using VoukoderManager.Core.Models;
 
-namespace VoukoderManager.GUI
+namespace VoukoderManager.Controls
 {
     /// <summary>
     /// Interaction logic for PropertyWindow.xaml
