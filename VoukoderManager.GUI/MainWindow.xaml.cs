@@ -1,9 +1,6 @@
-﻿using System.Net;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using VoukoderManager.Core.Models;
 using VoukoderManager.Language;
 
 namespace VoukoderManager.GUI
@@ -14,8 +11,6 @@ namespace VoukoderManager.GUI
     public partial class MainWindow : Window
     {
         private Lang _lang;
-        private IVoukoderEntry _currentVoukoderEntry;
-        private InstallationControl _InstallControl;
         private ComponentPage _installedPage;
         private ComponentPage _availiblePage;
 
@@ -30,46 +25,8 @@ namespace VoukoderManager.GUI
             framePages.Navigate(_installedPage);
         }
 
-        private void BeginInstallation(object sender, InstallEventArgs e)
-        {
-            StartDownload(e.PackageToInstall);
-        }
-
-        private async void StartDownload(IVoukoderEntry package)
-        {
-            _InstallControl = new InstallationControl();
-            _InstallControl.CloseControl += _InstallControl_CloseControl;
-            mainGrid.Children.Add(_InstallControl);
-            _currentVoukoderEntry = package;
-            try
-            {
-                var pkg = await package.StartPackageDownloadWithDependencies() as Package;
-                pkg.InstallPackageWithDepenencies();
-            }
-            catch (WebException ex) { }
-        }
-
-        private void _InstallControl_CloseControl(object sender, System.EventArgs e)
-        {
-            mainGrid.Children.Remove(_InstallControl);
-            _InstallControl.CloseControl -= _InstallControl_CloseControl;
-        }
-
         private void LanguageChanged(object sender, LanguageChangeEventArgs e)
         {
-        }
-
-        private void buttonCancel_Click(object sender, RoutedEventArgs e)
-        {
-            _currentVoukoderEntry.StopPackageDownload();
-        }
-
-        private void itemVoukoderUninstall_Click(object sender, RoutedEventArgs e)
-        {
-            ((IProgramEntry)((MenuItem)e.Source).DataContext).UninstallPackage();
-            _InstallControl = new InstallationControl();
-            _InstallControl.CloseControl += _InstallControl_CloseControl;
-            mainGrid.Children.Add(_InstallControl);
         }
 
         private void buttonExit_Click(object sender, RoutedEventArgs e)
