@@ -15,38 +15,9 @@ namespace VoukoderManager.Core.Models
         public string UninstallString { get; set; }
         public string ModifyPath { get; set; }
         public string Publisher { get; set; }
-        public ProgramType Type { get; set; }
+        public ProgramType ComponentType { get; set; }
         public IProgramEntry VoukoderConnector { get; set; }
-
-        public BitmapImage Logo
-        {
-            get
-            {
-                if (Type == ProgramType.MediaEncoder)
-                    return ToImage(VoukoderManager.Core.Properties.Resources.me_logo);
-                else if (Type == ProgramType.AfterEffects)
-                    return ToImage(VoukoderManager.Core.Properties.Resources.ae_logo);
-                else if (Type == ProgramType.Premiere)
-                    return ToImage(VoukoderManager.Core.Properties.Resources.premiere_logo);
-                else if (Type == ProgramType.VEGAS)
-                    return ToImage(VoukoderManager.Core.Properties.Resources.vegas_logo);
-                else
-                    return null;
-            }
-        }
-
-        private BitmapImage ToImage(byte[] array)
-        {
-            using (var ms = new System.IO.MemoryStream(array))
-            {
-                var image = new BitmapImage();
-                image.BeginInit();
-                image.CacheOption = BitmapCacheOption.OnLoad; // here
-                image.StreamSource = ms;
-                image.EndInit();
-                return image;
-            }
-        }
+        private bool _cancelled;
 
         private static BackgroundWorker _worker = new BackgroundWorker();
 
@@ -71,6 +42,38 @@ namespace VoukoderManager.Core.Models
         {
         }
 
+        public BitmapImage Logo
+        {
+            get
+            {
+                if (ComponentType == ProgramType.MediaEncoder)
+                    return ToImage(VoukoderManager.Core.Properties.Resources.me_logo);
+                else if (ComponentType == ProgramType.AfterEffects)
+                    return ToImage(VoukoderManager.Core.Properties.Resources.ae_logo);
+                else if (ComponentType == ProgramType.Premiere)
+                    return ToImage(VoukoderManager.Core.Properties.Resources.premiere_logo);
+                else if (ComponentType == ProgramType.VEGAS)
+                    return ToImage(VoukoderManager.Core.Properties.Resources.vegas_logo);
+                else
+                    return null;
+            }
+        }
+
+        private BitmapImage ToImage(byte[] array)
+        {
+            using (var ms = new System.IO.MemoryStream(array))
+            {
+                var image = new BitmapImage();
+                image.BeginInit();
+                image.DecodePixelWidth = 70;
+                image.DecodePixelHeight = 70;
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.StreamSource = ms;
+                image.EndInit();
+                return image;
+            }
+        }
+
         private bool CheckPreRelease(string version)
         {
             if (version.Contains("rc") || version.Contains("beta"))
@@ -82,9 +85,9 @@ namespace VoukoderManager.Core.Models
         private void WorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Cancelled)
-                OnInstallProgress(new ProcessStatusEventArgs($"Cancelled installation of package {Name}"));
+                OnOperationStatusChanged(new ProcessStatusEventArgs($"Cancelled installation of package {Name}", ComponentType));
             else
-                UninstallationFinished?.Invoke(this, new OperationFinishedEventArgs(e.Error, e.Cancelled, this));
+                UninstallationFinished?.Invoke(this, new OperationFinishedEventArgs(e.Error, _cancelled, this));
             _worker.DoWork -= ExecuteProcess;
             _worker.RunWorkerCompleted -= WorkerCompleted;
         }
@@ -98,7 +101,7 @@ namespace VoukoderManager.Core.Models
 
         private void ExecuteProcess(object sender, DoWorkEventArgs e)
         {
-            OnInstallProgress(new ProcessStatusEventArgs($"Starting uninstall of package {Name}"));
+            OnOperationStatusChanged(new ProcessStatusEventArgs($"Starting uninstall of package {Name}", ComponentType));
             Process p = new Process();
             var startinfo = new ProcessStartInfo("msiexec.exe")
             {
@@ -107,10 +110,18 @@ namespace VoukoderManager.Core.Models
                 Verb = "runas"
             };
             p.StartInfo = startinfo;
-            p.Start();
-            p.WaitForExit();
-            p.Dispose();
-            OnInstallProgress(new ProcessStatusEventArgs($"Finished uninstall of package {Name}"));
+            try
+            {
+                p.Start();
+                p.WaitForExit();
+                p.Dispose();
+                OnOperationStatusChanged(new ProcessStatusEventArgs($"Finished uninstall of package {Name}", ComponentType));
+            }
+            catch (Win32Exception ex)
+            {
+                _cancelled = true;
+                OnOperationStatusChanged(new ProcessStatusEventArgs(ex.Message, ComponentType));
+            }
         }
 
         public void StopUninstallPackage()

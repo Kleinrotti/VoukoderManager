@@ -12,10 +12,9 @@ namespace VoukoderManager.Controls
     [TemplatePart(Name = VoukoderItemControl.ElementUpdateButton, Type = typeof(Button))]
     [TemplatePart(Name = VoukoderItemControl.ElementInstallButton, Type = typeof(Button))]
     [TemplatePart(Name = VoukoderItemControl.ElementProgressBar, Type = typeof(ProgressBar))]
+    [TemplatePart(Name = VoukoderItemControl.ElementTextBlockStatus, Type = typeof(TextBlock))]
     public class VoukoderItemControl : Control
     {
-        #region Constants
-
         private const string ElementProgramLabel = "PART_ProgramLabel";
         private const string ElementProgramLogo = "PART_ProgramLogo";
         private const string ElementPropertiesButton = "PART_PropertiesButton";
@@ -23,10 +22,7 @@ namespace VoukoderManager.Controls
         private const string ElementUpdateButton = "PART_UpdateButton";
         private const string ElementInstallButton = "PART_InstallButton";
         private const string ElementProgressBar = "PART_BarProgress";
-
-        #endregion Constants
-
-        #region Data
+        private const string ElementTextBlockStatus = "PART_TextBlockStatus";
 
         private ProgressBar _barProgress;
         private Button _buttonProperties;
@@ -35,12 +31,9 @@ namespace VoukoderManager.Controls
         private Button _buttonInstall;
         private Image _programLogo;
         private TextBlock _programName;
+        private TextBlock _textBlockStatus;
         private IProgramEntry _entry { get; set; }
         private IProgramEntry _voukoderEntry { get; set; }
-
-        #endregion Data
-
-        #region Ctor
 
         static VoukoderItemControl()
         {
@@ -49,9 +42,31 @@ namespace VoukoderManager.Controls
 
         public VoukoderItemControl()
         {
+            Operation.OperationStatus += Operation_InstallProgressChanged;
         }
 
-        #endregion Ctor
+        private void Operation_InstallProgressChanged(object sender, ProcessStatusEventArgs e)
+        {
+            if (_entry.VoukoderConnector != null)
+            {
+                if (e.ComponentType == _entry.VoukoderConnector.ComponentType)
+                    UpdateStatusTextBlock(e.StatusMessage);
+            }
+            else
+            {
+                if (e.ComponentType == _entry.ComponentType)
+                    UpdateStatusTextBlock(e.StatusMessage);
+            }
+        }
+
+        private void UpdateStatusTextBlock(string statusMessage)
+        {
+            _textBlockStatus.Dispatcher.Invoke(() =>
+            {
+                _textBlockStatus.Visibility = Visibility.Visible;
+                _textBlockStatus.Text = statusMessage;
+            });
+        }
 
         public override void OnApplyTemplate()
         {
@@ -73,6 +88,7 @@ namespace VoukoderManager.Controls
                 _buttonUninstall.Click += _buttonUninstall_Click;
             _programLogo = GetTemplateChild(ElementProgramLogo) as Image;
             _programName = GetTemplateChild(ElementProgramLabel) as TextBlock;
+            _textBlockStatus = GetTemplateChild(ElementTextBlockStatus) as TextBlock;
             _barProgress = GetTemplateChild(ElementProgressBar) as ProgressBar;
             _programName.Text = _entry.Name;
             _programLogo.Source = _entry.Logo;
@@ -144,11 +160,16 @@ namespace VoukoderManager.Controls
 
         private void _buttonUninstall_Click(object sender, RoutedEventArgs e)
         {
+            _entry.VoukoderConnector.UninstallPackage();
         }
 
         private void _buttonProperties_Click(object sender, RoutedEventArgs e)
         {
-            PropertyWindow w = new PropertyWindow(_entry.VoukoderConnector);
+            PropertyWindow w = new PropertyWindow(_entry.VoukoderConnector)
+            {
+                Owner = Window.GetWindow(this),
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
             w.ShowDialog();
         }
 
@@ -159,13 +180,36 @@ namespace VoukoderManager.Controls
         private void _buttonInstall_Click(object sender, RoutedEventArgs e)
         {
             PackageManager p = new PackageManager();
-            var lst = p.GetDownloadablePackages(_entry.Type, 5);
+            var lst = p.GetDownloadablePackages(_entry.ComponentType, 5);
+            if (lst == null)
+            {
+                MessageBox.Show("Couldn't receive list");
+                return;
+            }
             PropertyWindow w = new PropertyWindow(lst)
             {
                 Owner = Window.GetWindow(this),
-                WindowStartupLocation = WindowStartupLocation.CenterOwner
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
             };
+            w.InstallEvent += W_InstallEvent;
             w.ShowDialog();
+        }
+
+        private void W_InstallEvent(object sender, InstallEventArgs e)
+        {
+            DownloadPackage(e.PackageToInstall);
+        }
+
+        private async void DownloadPackage(IGitHubEntry entry)
+        {
+            VoukoderEntry.DownloadProgressChanged += VoukoderEntry_DownloadProgressChanged;
+            var t = await entry.StartPackageDownloadWithDependencies();
+            t.InstallPackageWithDepenencies();
+        }
+
+        private void VoukoderEntry_DownloadProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+        {
+            UpdateStatusTextBlock($"Downloading: {e.ProgressPercentage}%");
         }
     }
 }

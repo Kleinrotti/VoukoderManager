@@ -13,8 +13,8 @@ namespace VoukoderManager.Controls
     public partial class PropertyWindow : Window
     {
         private IEntry _programEntry;
-        private List<IVoukoderEntry> _entryList;
-        private IVoukoderEntry _selectedEntry;
+        private List<IGitHubEntry> _entryList;
+        private IGitHubEntry _selectedEntry;
         private Button _buttonInstall;
 
         public event EventHandler<InstallEventArgs> InstallEvent;
@@ -32,7 +32,7 @@ namespace VoukoderManager.Controls
             ShowProperties();
         }
 
-        public PropertyWindow(List<IVoukoderEntry> entryList)
+        public PropertyWindow(List<IGitHubEntry> entryList)
         {
             InitializeComponent();
             labelTitle.Content = "Select version to install";
@@ -78,7 +78,7 @@ namespace VoukoderManager.Controls
         private void radioButtonClickEvent(object sender, RoutedEventArgs e)
         {
             var t = (RadioButton)e.Source;
-            _selectedEntry = (IVoukoderEntry)t.DataContext;
+            _selectedEntry = (IGitHubEntry)t.DataContext;
         }
 
         private void _buttonInstall_Click(object sender, RoutedEventArgs e)

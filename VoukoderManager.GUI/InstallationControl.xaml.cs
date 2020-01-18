@@ -12,7 +12,7 @@ namespace VoukoderManager.GUI
         public InstallationControl()
         {
             InitializeComponent();
-            Operation.InstallProgressChanged += Operation_InstallProgressChanged;
+            Operation.OperationStatus += Operation_InstallProgressChanged;
             ProgramEntry.UninstallationFinished += ProgramEntry_UninstallationFinished;
             VoukoderEntry.DownloadProgressChanged += VoukoderEntry_DownloadProgressChanged;
         }
@@ -40,7 +40,7 @@ namespace VoukoderManager.GUI
 
         private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            Operation.InstallProgressChanged -= Operation_InstallProgressChanged;
+            Operation.OperationStatus -= Operation_InstallProgressChanged;
             ProgramEntry.UninstallationFinished -= ProgramEntry_UninstallationFinished;
             VoukoderEntry.DownloadProgressChanged -= VoukoderEntry_DownloadProgressChanged;
             CloseControl?.Invoke(this, e);

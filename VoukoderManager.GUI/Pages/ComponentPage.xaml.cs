@@ -25,6 +25,26 @@ namespace VoukoderManager.GUI
             _isInstalledPage = isInstalledPage;
             _worker = new BackgroundWorker();
             this.Unloaded += ComponentPage_Unloaded;
+            this.Loaded += ComponentPage_Loaded;
+            ProgramEntry.UninstallationFinished += ProgramEntry_UninstallationFinished;
+            Package.InstallationFinished += Package_InstallationFinished;
+            LoadProgramLists();
+        }
+
+        private void Package_InstallationFinished(object sender, OperationFinishedEventArgs e)
+        {
+            LoadProgramLists();
+        }
+
+        private void ProgramEntry_UninstallationFinished(object sender, OperationFinishedEventArgs e)
+        {
+            if (!e.Cancelled)
+                LoadProgramLists();
+        }
+
+        private void ComponentPage_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            Trace.WriteLine("ComponentPage loaded");
             LoadProgramLists();
         }
 
@@ -47,7 +67,6 @@ namespace VoukoderManager.GUI
         {
             if (_worker.IsBusy)
                 return;
-            _worker = new BackgroundWorker();
             Mouse.OverrideCursor = Cursors.Wait;
             _worker.DoWork += GetEntries;
             _worker.RunWorkerCompleted += WorkCompleted;
@@ -60,6 +79,8 @@ namespace VoukoderManager.GUI
 
             void WorkCompleted(object sender, RunWorkerCompletedEventArgs args)
             {
+                _worker.DoWork -= GetEntries;
+                _worker.RunWorkerCompleted -= WorkCompleted;
                 stackpanelPrograms.Children.Clear();
                 _voukoderItemControls = new List<VoukoderItemControl>();
                 foreach (var v in _detectedPrograms)
@@ -93,7 +114,7 @@ namespace VoukoderManager.GUI
                     }
                     l.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center;
                     l.VerticalAlignment = System.Windows.VerticalAlignment.Center;
-                    l.FontSize = 25;
+                    l.FontSize = 22;
                     stackpanelPrograms.Children.Add(l);
                 }
                 Mouse.OverrideCursor = null;
@@ -102,7 +123,7 @@ namespace VoukoderManager.GUI
                 {
                     var i = new VoukoderItemControl
                     {
-                        Name = "item" + entry.Type.ToString(),
+                        Name = "item" + entry.ComponentType.ToString(),
                         VoukoderProgramData = entry,
                         Margin = new System.Windows.Thickness(0, 10, 0, 0)
                     };

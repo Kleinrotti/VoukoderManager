@@ -11,26 +11,18 @@ namespace VoukoderManager.Core.Models
     {
         public string Name { get; set; }
         public List<IPackage> Dependencies { get; set; }
+        public string Path { get; set; }
+        public ProgramType ComponentType { get; set; }
         private static BackgroundWorker _worker = new BackgroundWorker();
         private bool _installDependencies;
-
-        public static event EventHandler<OperationFinishedEventArgs> InstallationFinished;
-
-        public Package()
-        {
-            _worker.DoWork += ExecuteProcess;
-            _worker.RunWorkerCompleted += WorkerCompleted;
-        }
 
         public bool Certified
         {
             get
             {
-                throw new System.NotImplementedException();
+                throw new NotImplementedException();
             }
         }
-
-        public string Path { get; set; }
 
         public PackageType Type
         {
@@ -57,10 +49,19 @@ namespace VoukoderManager.Core.Models
             }
         }
 
-        public Package(string packageName, string path)
+        public static event EventHandler<OperationFinishedEventArgs> InstallationFinished;
+
+        public Package()
+        {
+            _worker.DoWork += ExecuteProcess;
+            _worker.RunWorkerCompleted += WorkerCompleted;
+        }
+
+        public Package(string packageName, string path, ProgramType type)
         {
             Path = path;
             Name = packageName;
+            ComponentType = type;
         }
 
         public void InstallPackage()
@@ -74,7 +75,7 @@ namespace VoukoderManager.Core.Models
         private void WorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Cancelled)
-                OnInstallProgress(new ProcessStatusEventArgs($"Cancelled installation of package {Name}"));
+                OnOperationStatusChanged(new ProcessStatusEventArgs($"Cancelled installation of package {Name}", ComponentType));
             else
                 InstallationFinished?.Invoke(this, new OperationFinishedEventArgs(e.Error, e.Cancelled, this));
             _worker.DoWork -= ExecuteProcess;
@@ -84,7 +85,7 @@ namespace VoukoderManager.Core.Models
         private void ExecuteProcess(object sender, DoWorkEventArgs e)
         {
             Process p = new Process();
-            OnInstallProgress(new ProcessStatusEventArgs($"Starting installation of package {Name}"));
+            OnOperationStatusChanged(new ProcessStatusEventArgs($"Starting installation of package {Name}", ComponentType));
             var startinfo = new ProcessStartInfo("msiexec.exe")
             {
                 UseShellExecute = true,
@@ -92,25 +93,32 @@ namespace VoukoderManager.Core.Models
                 Verb = "runas"
             };
             p.StartInfo = startinfo;
-            p.Start();
-            p.WaitForExit();
-            if (!_installDependencies)
+            try
             {
-                p.Dispose();
-                OnInstallProgress(new ProcessStatusEventArgs($"Finished installation of package {Name}"));
-            }
-            else
-            {
-                foreach (var v in Dependencies)
+                p.Start();
+                p.WaitForExit();
+                if (!_installDependencies || Dependencies.Count == 0)
                 {
-                    OnInstallProgress(new ProcessStatusEventArgs($"Starting installation of package dependency{v.Name}"));
-                    startinfo.Arguments = @" /i " + v.Path + @" /qn /log install.log";
-                    p.StartInfo = startinfo;
-                    p.Start();
-                    p.WaitForExit();
-                    OnInstallProgress(new ProcessStatusEventArgs($"Finished installation of package dependency {v.Name}"));
+                    OnOperationStatusChanged(new ProcessStatusEventArgs($"Finished installation of package {Name}", ComponentType));
+                    p.Dispose();
                 }
-                p.Dispose();
+                else
+                {
+                    foreach (var v in Dependencies)
+                    {
+                        OnOperationStatusChanged(new ProcessStatusEventArgs($"Starting installation of package dependency {v.Name}", ComponentType));
+                        startinfo.Arguments = @" /i " + v.Path + @" /qn /log install.log";
+                        p.StartInfo = startinfo;
+                        p.Start();
+                        p.WaitForExit();
+                        OnOperationStatusChanged(new ProcessStatusEventArgs($"Finished installation of package dependency {v.Name}", ComponentType));
+                    }
+                    p.Dispose();
+                }
+            }
+            catch (Win32Exception ex)
+            {
+                OnOperationStatusChanged(new ProcessStatusEventArgs(ex.Message, ComponentType));
             }
         }
 

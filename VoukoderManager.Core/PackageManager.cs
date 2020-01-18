@@ -8,7 +8,12 @@ namespace VoukoderManager.Core
 {
     public class PackageManager
     {
-        public List<IPackage> Query { get; private set; }
+        private GitHubClient _client;
+
+        public PackageManager()
+        {
+            _client = new GitHubClient(new ProductHeaderValue("voukodermanager"));
+        }
 
         /// <summary>
         /// Retuns a list of downloadable components
@@ -16,18 +21,17 @@ namespace VoukoderManager.Core
         /// <param name="type"></param>
         /// <param name="results"></param>
         /// <returns></returns>
-        public List<IVoukoderEntry> GetDownloadablePackages(ProgramType type, int results)
+        public List<IGitHubEntry> GetDownloadablePackages(ProgramType type, int results)
         {
             Mouse.OverrideCursor = Cursors.Wait;
-            var lst = new List<IVoukoderEntry>();
+            var lst = new List<IGitHubEntry>();
             string repo;
             string repopath;
-            var client = new GitHubClient(new ProductHeaderValue("voukodermanager"));
 
             if (type == ProgramType.VoukoderCore)
             {
                 repo = "voukoder";
-                var re = GetReleases(client, "Vouk", repo, results);
+                var re = GetReleases(_client, "Vouk", repo, results);
                 Mouse.OverrideCursor = null;
                 return re;
             }
@@ -46,78 +50,97 @@ namespace VoukoderManager.Core
                 {
                     repopath = "premiere";
                 }
-                var content = GetContent(type, client, "Vouk", repo, repopath, results);
+                var content = GetContent(type, _client, "Vouk", repo, repopath, results);
                 Mouse.OverrideCursor = null;
                 return content;
             }
         }
 
-        private List<IVoukoderEntry> GetContent(ProgramType type, GitHubClient client, string owner, string repo, string filepath, int results)
+        private List<IGitHubEntry> GetContent(ProgramType type, GitHubClient client, string owner, string repo, string filepath, int results)
         {
-            var test = client.Repository.Content.GetAllContents(owner, repo, filepath).Result;
-            var lst = new List<IVoukoderEntry>();
-            int entries = test.Count;
-
-            while (results > 0)
+            try
             {
-                var v = test[entries - 1];
-                if (v.Name.Contains("connector"))
+                var test = client.Repository.Content.GetAllContents(owner, repo, filepath).Result;
+                var lst = new List<IGitHubEntry>();
+                int entries = test.Count;
+
+                while (results > 0)
                 {
-                    var version = v.Name.Split('.');
+                    var v = test[entries - 1];
+                    if (v.Name.Contains("connector"))
+                    {
+                        var version = v.Name.Split('.');
+                        lst.Add(new VoukoderEntry
+                        {
+                            Name = v.Name,
+                            DownloadUrl = new Uri(v.DownloadUrl),
+                            Version = new Models.Version(version[version.Length - 1]),
+                            ComponentType = type,
+                            Dependencies = new List<IGitHubEntry>() { GetLatestDownloadablePackage(ProgramType.VoukoderCore) }
+                        });
+                    }
+                    entries--;
+                    results--;
+                }
+                return lst;
+            }
+            catch (AggregateException)
+            {
+                return null;
+            }
+        }
+
+        private List<IGitHubEntry> GetReleases(GitHubClient client, string owner, string repo, int results)
+        {
+            var lst = new List<IGitHubEntry>();
+            try
+            {
+                var releases = client.Repository.Release.GetAll(owner, repo).Result;
+                int i = 0;
+                foreach (var f in releases)
+                {
+                    if (i >= results)
+                        break;
                     lst.Add(new VoukoderEntry
                     {
-                        Name = v.Name,
-                        DownloadUrl = new Uri(v.DownloadUrl),
-                        Version = new Models.Version(version[version.Length - 1]),
-                        Type = type,
-                        Dependencies = new List<IVoukoderEntry>() { GetLatestDownloadablePackage(ProgramType.VoukoderCore) }
+                        Name = f.Name,
+                        Version = new Models.Version(f.Name, f.Prerelease),
+                        DownloadUrl = new Uri(f.Assets[0].BrowserDownloadUrl)
                     });
+                    i++;
                 }
-                entries--;
-                results--;
+                return lst;
             }
-            return lst;
-        }
-
-        private List<IVoukoderEntry> GetReleases(GitHubClient client, string owner, string repo, int results)
-        {
-            var lst = new List<IVoukoderEntry>();
-            var releases = client.Repository.Release.GetAll(owner, repo).Result;
-            int i = 0;
-            foreach (var f in releases)
+            catch (AggregateException)
             {
-                if (i >= results)
-                    break;
-                lst.Add(new VoukoderEntry
-                {
-                    Name = f.Name,
-                    Version = new Models.Version(f.Name, f.Prerelease),
-                    DownloadUrl = new Uri(f.Assets[0].BrowserDownloadUrl)
-                });
-                i++;
+                return null;
             }
-            return lst;
         }
 
-        public IVoukoderEntry GetLatestDownloadablePackage(ProgramType type)
+        public IGitHubEntry GetLatestDownloadablePackage(ProgramType type)
         {
             string repo;
-            var client = new GitHubClient(new ProductHeaderValue("voukodermanager"));
-
-            if (type == ProgramType.VoukoderCore)
+            try
             {
-                repo = "voukoder";
-                var release = client.Repository.Release.GetLatest("Vouk", repo).Result;
-                var entry = new VoukoderEntry()
+                if (type == ProgramType.VoukoderCore)
                 {
-                    Name = release.Name,
-                    Version = new Models.Version(release.Name, release.Prerelease),
-                    DownloadUrl = new Uri(release.Assets[0].BrowserDownloadUrl)
-                };
-                return entry;
+                    repo = "voukoder";
+                    var release = _client.Repository.Release.GetLatest("Vouk", repo).Result;
+                    var entry = new VoukoderEntry()
+                    {
+                        Name = release.Name,
+                        Version = new Models.Version(release.Name, release.Prerelease),
+                        DownloadUrl = new Uri(release.Assets[0].BrowserDownloadUrl)
+                    };
+                    return entry;
+                }
+                else
+                    return null;
             }
-            else
+            catch (AggregateException)
+            {
                 return null;
+            }
         }
 
         //public IVoukoderEntry GetUpdate(IProgramEntry entry)
@@ -155,7 +178,6 @@ namespace VoukoderManager.Core
             {
                 if (disposing)
                 {
-                    Query = null;
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.

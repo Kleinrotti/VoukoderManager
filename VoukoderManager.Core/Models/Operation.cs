@@ -7,11 +7,11 @@ namespace VoukoderManager.Core.Models
     /// </summary>
     public abstract class Operation
     {
-        public static event EventHandler<ProcessStatusEventArgs> InstallProgressChanged;
+        public static event EventHandler<ProcessStatusEventArgs> OperationStatus;
 
-        protected void OnInstallProgress(ProcessStatusEventArgs e)
+        protected void OnOperationStatusChanged(ProcessStatusEventArgs e)
         {
-            InstallProgressChanged?.Invoke(this, e);
+            OperationStatus?.Invoke(this, e);
         }
     }
 }

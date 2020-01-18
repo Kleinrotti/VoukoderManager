@@ -37,7 +37,7 @@ namespace VoukoderManager.Core.Models
         /// <summary>
         /// Type of the component
         /// </summary>
-        ProgramType Type { get; set; }
+        ProgramType ComponentType { get; set; }
 
         /// <summary>
         /// Programlogo

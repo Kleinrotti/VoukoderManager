@@ -26,25 +26,25 @@ namespace VoukoderManager.Core
                 {
                     if (e.Name.Contains("Premiere"))
                     {
-                        e.Type = ProgramType.Premiere;
+                        e.ComponentType = ProgramType.Premiere;
                         if (includeConnector)
                             e.VoukoderConnector = GetVoukoderConnector(ProgramType.VoukoderConnectorPremiere);
                     }
                     else if (e.Name.Contains("Media Encoder"))
                     {
-                        e.Type = ProgramType.MediaEncoder;
+                        e.ComponentType = ProgramType.MediaEncoder;
                         if (includeConnector)
                             e.VoukoderConnector = GetVoukoderConnector(ProgramType.VoukoderConnectorPremiere);
                     }
                     else if (e.Name.Contains("Effects"))
                     {
-                        e.Type = ProgramType.AfterEffects;
+                        e.ComponentType = ProgramType.AfterEffects;
                         if (includeConnector)
                             e.VoukoderConnector = GetVoukoderConnector(ProgramType.VoukoderConnectorAfterEffects);
                     }
                     else
                     {
-                        e.Type = ProgramType.VEGAS;
+                        e.ComponentType = ProgramType.VEGAS;
                         if (includeConnector)
                             e.VoukoderConnector = GetVoukoderConnector(ProgramType.VoukoderConnectorVegas);
                     }
@@ -62,15 +62,15 @@ namespace VoukoderManager.Core
                 if (e.Name.Contains("Voukoder"))
                 {
                     if (e.Name.Contains("Premiere"))
-                        e.Type = ProgramType.VoukoderConnectorPremiere;
+                        e.ComponentType = ProgramType.VoukoderConnectorPremiere;
                     else if (e.Name.Contains("VEGAS"))
-                        e.Type = ProgramType.VoukoderConnectorVegas;
+                        e.ComponentType = ProgramType.VoukoderConnectorVegas;
                     else if (e.Name.Contains("AfterEffects"))
-                        e.Type = ProgramType.VoukoderConnectorAfterEffects;
+                        e.ComponentType = ProgramType.VoukoderConnectorAfterEffects;
                     else
-                        e.Type = ProgramType.VoukoderCore;
+                        e.ComponentType = ProgramType.VoukoderCore;
 
-                    if (e.Type == connectorType)
+                    if (e.ComponentType == connectorType)
                         return e;
                 }
             }
@@ -90,25 +90,25 @@ namespace VoukoderManager.Core
                 if (e.Name.Contains("Voukoder"))
                 {
                     if (e.Name.Contains("Premiere"))
-                        e.Type = ProgramType.VoukoderConnectorPremiere;
+                        e.ComponentType = ProgramType.VoukoderConnectorPremiere;
                     else if (e.Name.Contains("VEGAS"))
-                        e.Type = ProgramType.VoukoderConnectorVegas;
+                        e.ComponentType = ProgramType.VoukoderConnectorVegas;
                     else if (e.Name.Contains("AfterEffects"))
-                        e.Type = ProgramType.VoukoderConnectorAfterEffects;
+                        e.ComponentType = ProgramType.VoukoderConnectorAfterEffects;
                     else
-                        e.Type = ProgramType.VoukoderCore;
+                        e.ComponentType = ProgramType.VoukoderCore;
                     list.Add(e);
                 }
             }
             return list;
         }
 
-        public static bool IsVoukoderComponentInstalled(IVoukoderEntry entry)
+        public static bool IsVoukoderComponentInstalled(IGitHubEntry entry)
         {
             var cpn = GetInstalledVoukoderComponents();
             foreach (var v in cpn)
             {
-                if (v.Type == entry.Type)
+                if (v.ComponentType == entry.ComponentType)
                 {
                     return true;
                 }

@@ -4,5 +4,6 @@
     {
         string Name { get; set; }
         IVersion Version { get; }
+        ProgramType ComponentType { get; set; }
     }
 }
