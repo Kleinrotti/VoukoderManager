@@ -27,14 +27,14 @@ namespace VoukoderManager.Core.Models
         {
             Name = programName;
             InstallationPath = installationPath;
-            Version = new Version(version, CheckPreRelease(version));
+            Version = new Version(version);
         }
 
         public ProgramEntry(string programName, string installationPath, string version, bool windowsInstaller)
         {
             Name = programName;
             InstallationPath = installationPath;
-            Version = new Version(version, CheckPreRelease(version));
+            Version = new Version(version);
             WindowsInstaller = windowsInstaller;
         }
 
@@ -72,14 +72,6 @@ namespace VoukoderManager.Core.Models
                 image.EndInit();
                 return image;
             }
-        }
-
-        private bool CheckPreRelease(string version)
-        {
-            if (version.Contains("rc") || version.Contains("beta"))
-                return true;
-            else
-                return false;
         }
 
         private void WorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

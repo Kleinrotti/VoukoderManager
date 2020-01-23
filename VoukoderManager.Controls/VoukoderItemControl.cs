@@ -34,6 +34,7 @@ namespace VoukoderManager.Controls
         private TextBlock _textBlockStatus;
         private IProgramEntry _entry { get; set; }
         private IProgramEntry _voukoderEntry { get; set; }
+        private IGitHubEntry _update;
 
         static VoukoderItemControl()
         {
@@ -101,7 +102,7 @@ namespace VoukoderManager.Controls
             {
                 _buttonProperties.Visibility = Visibility.Visible;
                 _buttonUninstall.Visibility = Visibility.Visible;
-                _buttonUpdate.Visibility = Visibility.Visible;
+                CheckForUpdate();
             }
         }
 
@@ -175,6 +176,7 @@ namespace VoukoderManager.Controls
 
         private void _buttonUpdate_Click(object sender, RoutedEventArgs e)
         {
+            DownloadPackage(_update);
         }
 
         private void _buttonInstall_Click(object sender, RoutedEventArgs e)
@@ -193,6 +195,7 @@ namespace VoukoderManager.Controls
             };
             w.InstallEvent += W_InstallEvent;
             w.ShowDialog();
+            w.InstallEvent -= W_InstallEvent;
         }
 
         private void W_InstallEvent(object sender, InstallEventArgs e)
@@ -205,11 +208,26 @@ namespace VoukoderManager.Controls
             VoukoderEntry.DownloadProgressChanged += VoukoderEntry_DownloadProgressChanged;
             var t = await entry.StartPackageDownloadWithDependencies();
             t.InstallPackageWithDepenencies();
+            VoukoderEntry.DownloadProgressChanged -= VoukoderEntry_DownloadProgressChanged;
         }
 
         private void VoukoderEntry_DownloadProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
         {
             UpdateStatusTextBlock($"Downloading: {e.ProgressPercentage}%");
+        }
+
+        private void CheckForUpdate()
+        {
+            if (_entry.VoukoderConnector != null)
+            {
+                var p = new PackageManager();
+                var update = p.GetUpdate(_entry.VoukoderConnector);
+                if (update != null)
+                {
+                    _update = update;
+                    _buttonUpdate.Visibility = Visibility.Visible;
+                }
+            }
         }
     }
 }

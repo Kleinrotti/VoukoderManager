@@ -10,6 +10,8 @@ namespace VoukoderManager.Core.Models
 
         int Minor { get; }
 
-        bool PreRelease { get; set; }
+        int Patch { get; }
+
+        bool PreRelease { get; }
     }
 }

@@ -7,6 +7,9 @@ namespace VoukoderManager.Core.Models
     /// </summary>
     public abstract class Operation
     {
+        /// <summary>
+        /// Current status message of a installation process
+        /// </summary>
         public static event EventHandler<ProcessStatusEventArgs> OperationStatus;
 
         protected void OnOperationStatusChanged(ProcessStatusEventArgs e)

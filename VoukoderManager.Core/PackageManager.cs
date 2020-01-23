@@ -1,6 +1,7 @@
 ﻿using Octokit;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Input;
 using VoukoderManager.Core.Models;
 
@@ -50,17 +51,17 @@ namespace VoukoderManager.Core
                 {
                     repopath = "premiere";
                 }
-                var content = GetContent(type, _client, "Vouk", repo, repopath, results);
+                var content = GetContent(type, "Vouk", repo, repopath, results);
                 Mouse.OverrideCursor = null;
                 return content;
             }
         }
 
-        private List<IGitHubEntry> GetContent(ProgramType type, GitHubClient client, string owner, string repo, string filepath, int results)
+        private List<IGitHubEntry> GetContent(ProgramType type, string owner, string repo, string filepath, int results)
         {
             try
             {
-                var test = client.Repository.Content.GetAllContents(owner, repo, filepath).Result;
+                var test = _client.Repository.Content.GetAllContents(owner, repo, filepath).Result;
                 var lst = new List<IGitHubEntry>();
                 int entries = test.Count;
 
@@ -69,12 +70,13 @@ namespace VoukoderManager.Core
                     var v = test[entries - 1];
                     if (v.Name.Contains("connector"))
                     {
-                        var version = v.Name.Split('.');
+                        var version = v.Name.Where(Char.IsDigit).ToArray();
+
                         lst.Add(new VoukoderEntry
                         {
                             Name = v.Name,
                             DownloadUrl = new Uri(v.DownloadUrl),
-                            Version = new Models.Version(version[version.Length - 1]),
+                            Version = new Models.Version(string.Join(".", version)),
                             ComponentType = type,
                             Dependencies = new List<IGitHubEntry>() { GetLatestDownloadablePackage(ProgramType.VoukoderCore) }
                         });
@@ -104,7 +106,7 @@ namespace VoukoderManager.Core
                     lst.Add(new VoukoderEntry
                     {
                         Name = f.Name,
-                        Version = new Models.Version(f.Name, f.Prerelease),
+                        Version = new Models.Version(f.Name),
                         DownloadUrl = new Uri(f.Assets[0].BrowserDownloadUrl)
                     });
                     i++;
@@ -129,7 +131,7 @@ namespace VoukoderManager.Core
                     var entry = new VoukoderEntry()
                     {
                         Name = release.Name,
-                        Version = new Models.Version(release.Name, release.Prerelease),
+                        Version = new Models.Version(release.Name),
                         DownloadUrl = new Uri(release.Assets[0].BrowserDownloadUrl)
                     };
                     return entry;
@@ -143,30 +145,50 @@ namespace VoukoderManager.Core
             }
         }
 
-        //public IVoukoderEntry GetUpdate(IProgramEntry entry)
-        //{
-        //    string repo;
-        //    var client = new GitHubClient(new ProductHeaderValue("voukodermanager"));
+        public IGitHubEntry GetUpdate(IProgramEntry entry)
+        {
+            string repo;
 
-        //    if (entry.Type == ProgramType.VoukoderCore)
-        //    {
-        //        repo = "voukoder";
-        //        var release = client.Repository.Release.GetLatest("Vouk", repo).Result;
-        //        if (entry.Version == release.TagName)
-        //        {
-        //            var entr = new VoukoderEntry()
-        //            {
-        //                Name = release.Name,
-        //                Version = new Models.Version(release.TagName, release.Prerelease),
-        //                DownloadUrl = new Uri(release.Assets[0].BrowserDownloadUrl)
-        //            };
-        //        }
-        //        return entr;
-        //    }
-        //    else
-        //    {
-        //    }
-        //}
+            if (entry.ComponentType == ProgramType.VoukoderCore)
+            {
+                repo = "voukoder";
+                var release = _client.Repository.Release.GetLatest("Vouk", repo).Result;
+                if (entry.Version.ToString().CompareTo(release.ToString()) < 0)
+                {
+                    var entr = new VoukoderEntry()
+                    {
+                        Name = release.Name,
+                        Version = new Models.Version(release.TagName),
+                        DownloadUrl = new Uri(release.Assets[0].BrowserDownloadUrl)
+                    };
+                    if (entry.Version.CompareTo(entr.Version) < 0)
+                        return entr;
+                }
+                return null;
+            }
+            else
+            {
+                repo = "voukoder-connectors";
+                string repopath;
+                if (entry.ComponentType == ProgramType.VoukoderConnectorVegas)
+                {
+                    repopath = "vegas";
+                }
+                else if (entry.ComponentType == ProgramType.VoukoderConnectorAfterEffects)
+                {
+                    repopath = "aftereffects";
+                }
+                else
+                {
+                    repopath = "premiere";
+                }
+                var content = GetContent(entry.ComponentType, "Vouk", repo, repopath, 1);
+                if (entry.Version.CompareTo(content[0].Version) < 0)
+                    return content[0];
+                else
+                    return null;
+            }
+        }
 
         #region IDisposable Support
 

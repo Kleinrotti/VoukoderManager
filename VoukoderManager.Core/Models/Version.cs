@@ -38,17 +38,33 @@ namespace VoukoderManager.Core.Models
             }
         }
 
-        public bool PreRelease { get; set; }
+        public int Patch
+        {
+            get
+            {
+                try
+                {
+                    var s = PackageVersion.Split('.');
+                    return Convert.ToInt32(s[2]);
+                }
+                catch (Exception ex)
+                {
+                    return 0;
+                }
+            }
+        }
+
+        public bool PreRelease
+        {
+            get
+            {
+                return PackageVersion.Contains("rc") || PackageVersion.Contains("beta");
+            }
+        }
 
         public Version(string version)
         {
             PackageVersion = version;
-        }
-
-        public Version(string version, bool preRelease)
-        {
-            PackageVersion = version;
-            PreRelease = preRelease;
         }
 
         public int CompareTo(IVersion obj)
