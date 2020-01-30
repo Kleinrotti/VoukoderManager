@@ -26,8 +26,8 @@ namespace VoukoderManager.GUI
             _worker = new BackgroundWorker();
             this.Unloaded += ComponentPage_Unloaded;
             this.Loaded += ComponentPage_Loaded;
-            ProgramEntry.UninstallationFinished += ProgramEntry_UninstallationFinished;
-            Package.InstallationFinished += Package_InstallationFinished;
+            VKProgramEntry.UninstallationFinished += ProgramEntry_UninstallationFinished;
+            VKPackage.InstallationFinished += Package_InstallationFinished;
             LoadProgramLists();
         }
 
@@ -85,16 +85,17 @@ namespace VoukoderManager.GUI
                 _voukoderItemControls = new List<VoukoderItemControl>();
                 foreach (var v in _detectedPrograms)
                 {
+                    var vv = v as VKProgramEntry;
                     if (_isInstalledPage)
                     {
-                        if (v.VoukoderConnector != null)
+                        if (v.VoukoderComponent != null && !vv.Hide)
                         {
                             AddItem(v);
                         }
                     }
                     else
                     {
-                        if (v.VoukoderConnector == null)
+                        if (v.VoukoderComponent == null && !vv.Hide)
                         {
                             AddItem(v);
                         }

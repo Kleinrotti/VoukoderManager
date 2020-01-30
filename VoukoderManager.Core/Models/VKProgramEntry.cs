@@ -5,44 +5,35 @@ using System.Windows.Media.Imaging;
 
 namespace VoukoderManager.Core.Models
 {
-    public class ProgramEntry : Operation, IProgramEntry
+    public class VKProgramEntry : VKEntry, IProgramEntry
     {
-        public string Name { get; set; }
         public string InstallationPath { get; set; }
-        public IVersion Version { get; set; }
         public bool WindowsInstaller { get; set; }
         public string InstallationDate { get; set; }
         public string UninstallString { get; set; }
         public string ModifyPath { get; set; }
         public string Publisher { get; set; }
-        public ProgramType ComponentType { get; set; }
-        public IProgramEntry VoukoderConnector { get; set; }
+        public IProgramEntry VoukoderComponent { get; set; }
         private bool _cancelled;
 
         private static BackgroundWorker _worker = new BackgroundWorker();
 
+        public VKProgramEntry(string name, IVersion version) : base(name, version)
+        {
+            Name = name;
+            Version = version;
+        }
+
+        public VKProgramEntry(string name, IVersion version, string installationPath) : base(name, version)
+        {
+            Name = name;
+            InstallationPath = installationPath;
+            Version = version;
+        }
+
         public static event EventHandler<OperationFinishedEventArgs> UninstallationFinished;
 
-        public ProgramEntry(string programName, string installationPath, string version)
-        {
-            Name = programName;
-            InstallationPath = installationPath;
-            Version = new Version(version);
-        }
-
-        public ProgramEntry(string programName, string installationPath, string version, bool windowsInstaller)
-        {
-            Name = programName;
-            InstallationPath = installationPath;
-            Version = new Version(version);
-            WindowsInstaller = windowsInstaller;
-        }
-
-        public ProgramEntry()
-        {
-        }
-
-        public BitmapImage Logo
+        public virtual BitmapImage Logo
         {
             get
             {
@@ -84,7 +75,7 @@ namespace VoukoderManager.Core.Models
             _worker.RunWorkerCompleted -= WorkerCompleted;
         }
 
-        public void UninstallPackage()
+        public virtual void UninstallPackage()
         {
             _worker.DoWork += ExecuteProcess;
             _worker.RunWorkerCompleted += WorkerCompleted;
@@ -116,7 +107,7 @@ namespace VoukoderManager.Core.Models
             }
         }
 
-        public void StopUninstallPackage()
+        public virtual void StopUninstallPackage()
         {
             _worker.CancelAsync();
         }

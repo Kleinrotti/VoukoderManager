@@ -5,6 +5,7 @@ namespace VoukoderManager.Core.Models
     public class Version : IVersion
     {
         public string PackageVersion { get; set; }
+        private bool _preRelease;
 
         public int Major
         {
@@ -58,13 +59,19 @@ namespace VoukoderManager.Core.Models
         {
             get
             {
-                return PackageVersion.Contains("rc") || PackageVersion.Contains("beta");
+                return _preRelease;
             }
         }
 
         public Version(string version)
         {
             PackageVersion = version;
+        }
+
+        public Version(string version, bool preRelease)
+        {
+            PackageVersion = version;
+            _preRelease = preRelease;
         }
 
         public int CompareTo(IVersion obj)

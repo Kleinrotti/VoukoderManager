@@ -10,22 +10,22 @@ namespace VoukoderManager.Core.Models
     /// <summary>
     /// Describes a downloadable Voukoder component
     /// </summary>
-    public class VoukoderEntry : Operation, IGitHubEntry
+    public class VKGithubEntry : VKEntry, IGitHubEntry
     {
         public Uri DownloadUrl { get; set; }
         public string Changelog { get; set; }
-        public IVersion Version { get; set; }
-        public ProgramType ComponentType { get; set; }
-        public string Name { get; set; }
         private WebClient _webclient = new WebClient();
         private string packagePath = String.Empty;
-        public List<IGitHubEntry> Dependencies { get; set; }
 
-        public IPackage DownloadedPackage { get; private set; }
+        public VKGithubEntry(string name, IVersion version) : base(name, version)
+        {
+        }
+
+        public List<IGitHubEntry> Dependencies { get; set; }
 
         public static event EventHandler<ProgressChangedEventArgs> DownloadProgressChanged;
 
-        public async Task<IPackage> StartPackageDownload()
+        public virtual async Task<IPackage> StartPackageDownload()
         {
             OnOperationStatusChanged(new ProcessStatusEventArgs("Downloading files...", ComponentType));
             packagePath = Path.GetTempPath() + DownloadUrl.Segments[DownloadUrl.Segments.Length - 1];
@@ -34,12 +34,12 @@ namespace VoukoderManager.Core.Models
                 ProgressChangedEventArgs a = new ProgressChangedEventArgs(t.Item2, this);
                 OnDownloadProgressChanged(a);
             }));
-            var pkg = new Package(Name, packagePath, ComponentType);
+            var pkg = new VKPackage(Name, Version, packagePath, ComponentType);
             OnOperationStatusChanged(new ProcessStatusEventArgs("Download finished", ComponentType));
             return pkg;
         }
 
-        public async Task<IPackage> StartPackageDownloadWithDependencies()
+        public virtual async Task<IPackage> StartPackageDownloadWithDependencies()
         {
             OnOperationStatusChanged(new ProcessStatusEventArgs($"Downloading package {Name}...", ComponentType));
             packagePath = Path.GetTempPath() + DownloadUrl.Segments[DownloadUrl.Segments.Length - 1];
@@ -48,26 +48,28 @@ namespace VoukoderManager.Core.Models
                 ProgressChangedEventArgs a = new ProgressChangedEventArgs(t.Item2, this);
                 OnDownloadProgressChanged(a);
             }));
-            var p = new Package(Name, packagePath, ComponentType);
+            var p = new VKPackage(Name, Version, packagePath, ComponentType);
 
             //Download all depencencies
-            List<IPackage> dep = new List<IPackage>();
-            foreach (var v in Dependencies)
+            if (Dependencies != null)
             {
-                if (!ProgramDetector.IsVoukoderComponentInstalled(v))
+                List<IPackage> dep = new List<IPackage>();
+                foreach (var v in Dependencies)
                 {
-                    OnOperationStatusChanged(new ProcessStatusEventArgs($"Downloading package dependency  {v.ComponentType} {v.Name}...", ComponentType));
-                    packagePath = Path.GetTempPath() + v.DownloadUrl.Segments[v.DownloadUrl.Segments.Length - 1];
-                    await _webclient.DownloadFileTaskAsync(v.DownloadUrl, packagePath, new Progress<Tuple<long, int, long>>(t =>
+                    if (!ProgramDetector.IsVoukoderComponentInstalled(v))
                     {
-                        ProgressChangedEventArgs a = new ProgressChangedEventArgs(t.Item2, this);
-                        OnDownloadProgressChanged(a);
-                    }));
-                    dep.Add(new Package(v.Name, packagePath, v.ComponentType));
+                        OnOperationStatusChanged(new ProcessStatusEventArgs($"Downloading package dependency  {v.ComponentType} {v.Name}...", ComponentType));
+                        packagePath = Path.GetTempPath() + v.DownloadUrl.Segments[v.DownloadUrl.Segments.Length - 1];
+                        await _webclient.DownloadFileTaskAsync(v.DownloadUrl, packagePath, new Progress<Tuple<long, int, long>>(t =>
+                        {
+                            ProgressChangedEventArgs a = new ProgressChangedEventArgs(t.Item2, this);
+                            OnDownloadProgressChanged(a);
+                        }));
+                        dep.Add(new VKPackage(v.Name, v.Version, packagePath, v.ComponentType));
+                    }
                 }
+                p.Dependencies = dep;
             }
-            p.Dependencies = dep;
-            DownloadedPackage = p;
             OnOperationStatusChanged(new ProcessStatusEventArgs("Download finished", ComponentType));
             return p;
         }
@@ -77,7 +79,7 @@ namespace VoukoderManager.Core.Models
             DownloadProgressChanged?.Invoke(this, e);
         }
 
-        public void StopPackageDownload()
+        public virtual void StopPackageDownload()
         {
             OnOperationStatusChanged(new ProcessStatusEventArgs("Stopping download...", ComponentType));
             if (!_webclient.IsBusy)

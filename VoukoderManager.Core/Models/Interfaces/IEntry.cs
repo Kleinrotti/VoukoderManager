@@ -2,7 +2,7 @@
 {
     public interface IEntry
     {
-        string Name { get; set; }
+        string Name { get; }
         IVersion Version { get; }
         ProgramType ComponentType { get; set; }
     }

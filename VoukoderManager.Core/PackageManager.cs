@@ -10,6 +10,7 @@ namespace VoukoderManager.Core
     public class PackageManager
     {
         private GitHubClient _client;
+        public static bool AllowPreReleaseVersion { get; set; } = false;
 
         public PackageManager()
         {
@@ -71,15 +72,13 @@ namespace VoukoderManager.Core
                     if (v.Name.Contains("connector"))
                     {
                         var version = v.Name.Where(Char.IsDigit).ToArray();
-
-                        lst.Add(new VoukoderEntry
+                        var vkentry = new VKGithubEntry(v.Name, new Models.Version(string.Join(".", version)))
                         {
-                            Name = v.Name,
                             DownloadUrl = new Uri(v.DownloadUrl),
-                            Version = new Models.Version(string.Join(".", version)),
                             ComponentType = type,
-                            Dependencies = new List<IGitHubEntry>() { GetLatestDownloadablePackage(ProgramType.VoukoderCore) }
-                        });
+                            Dependencies = new List<IGitHubEntry>() { GetLatestDownloadableCorePackage(ProgramType.VoukoderCore) }
+                        };
+                        lst.Add(vkentry);
                     }
                     entries--;
                     results--;
@@ -88,7 +87,7 @@ namespace VoukoderManager.Core
             }
             catch (AggregateException)
             {
-                return null;
+                throw;
             }
         }
 
@@ -103,23 +102,21 @@ namespace VoukoderManager.Core
                 {
                     if (i >= results)
                         break;
-                    lst.Add(new VoukoderEntry
-                    {
-                        Name = f.Name,
-                        Version = new Models.Version(f.Name),
-                        DownloadUrl = new Uri(f.Assets[0].BrowserDownloadUrl)
-                    });
+
+                    var vkentry = new VKGithubEntry(f.Name, new Models.Version(f.Name));
+                    vkentry.DownloadUrl = new Uri(f.Assets[0].BrowserDownloadUrl);
+                    lst.Add(vkentry);
                     i++;
                 }
                 return lst;
             }
             catch (AggregateException)
             {
-                return null;
+                throw;
             }
         }
 
-        public IGitHubEntry GetLatestDownloadablePackage(ProgramType type)
+        public IGitHubEntry GetLatestDownloadableCorePackage(ProgramType type)
         {
             string repo;
             try
@@ -128,10 +125,8 @@ namespace VoukoderManager.Core
                 {
                     repo = "voukoder";
                     var release = _client.Repository.Release.GetLatest("Vouk", repo).Result;
-                    var entry = new VoukoderEntry()
+                    var entry = new VKGithubEntry(release.Name, new Models.Version(release.Name))
                     {
-                        Name = release.Name,
-                        Version = new Models.Version(release.Name),
                         DownloadUrl = new Uri(release.Assets[0].BrowserDownloadUrl)
                     };
                     return entry;
@@ -141,52 +136,56 @@ namespace VoukoderManager.Core
             }
             catch (AggregateException)
             {
-                return null;
+                throw;
             }
         }
 
         public IGitHubEntry GetUpdate(IProgramEntry entry)
         {
             string repo;
-
-            if (entry.ComponentType == ProgramType.VoukoderCore)
+            if (entry == null)
+                return null;
+            try
             {
-                repo = "voukoder";
-                var release = _client.Repository.Release.GetLatest("Vouk", repo).Result;
-                if (entry.Version.ToString().CompareTo(release.ToString()) < 0)
+                if (entry.ComponentType == ProgramType.VoukoderCore)
                 {
-                    var entr = new VoukoderEntry()
+                    repo = "voukoder";
+                    var release = _client.Repository.Release.GetLatest("Vouk", repo).Result;
+
+                    var entr = new VKGithubEntry(release.Name, new Models.Version(release.TagName))
                     {
-                        Name = release.Name,
-                        Version = new Models.Version(release.TagName),
                         DownloadUrl = new Uri(release.Assets[0].BrowserDownloadUrl)
                     };
                     if (entry.Version.CompareTo(entr.Version) < 0)
                         return entr;
-                }
-                return null;
-            }
-            else
-            {
-                repo = "voukoder-connectors";
-                string repopath;
-                if (entry.ComponentType == ProgramType.VoukoderConnectorVegas)
-                {
-                    repopath = "vegas";
-                }
-                else if (entry.ComponentType == ProgramType.VoukoderConnectorAfterEffects)
-                {
-                    repopath = "aftereffects";
-                }
-                else
-                {
-                    repopath = "premiere";
-                }
-                var content = GetContent(entry.ComponentType, "Vouk", repo, repopath, 1);
-                if (entry.Version.CompareTo(content[0].Version) < 0)
-                    return content[0];
-                else
                     return null;
+                }
+                else
+                {
+                    repo = "voukoder-connectors";
+                    string repopath;
+                    if (entry.ComponentType == ProgramType.VoukoderConnectorVegas)
+                    {
+                        repopath = "vegas";
+                    }
+                    else if (entry.ComponentType == ProgramType.VoukoderConnectorAfterEffects)
+                    {
+                        repopath = "aftereffects";
+                    }
+                    else
+                    {
+                        repopath = "premiere";
+                    }
+                    var content = GetContent(entry.ComponentType, "Vouk", repo, repopath, 1);
+                    if (entry.Version.CompareTo(content[0].Version) < 0)
+                        return content[0];
+                    else
+                        return null;
+                }
+            }
+            catch (AggregateException ex)
+            {
+                throw;
             }
         }
 

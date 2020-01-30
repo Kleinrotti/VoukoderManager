@@ -35,15 +35,10 @@ namespace VoukoderManager.Core.Models
         string Publisher { get; set; }
 
         /// <summary>
-        /// Type of the component
-        /// </summary>
-        ProgramType ComponentType { get; set; }
-
-        /// <summary>
         /// Programlogo
         /// </summary>
         BitmapImage Logo { get; }
 
-        IProgramEntry VoukoderConnector { get; set; }
+        IProgramEntry VoukoderComponent { get; set; }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using VoukoderManager.Core.Models;
 
 namespace VoukoderManager.Core
 {
@@ -9,9 +8,15 @@ namespace VoukoderManager.Core
     {
         private static List<RegistryView> _views;
 
-        public static string GetValue(string registryPath, string name)
+        /// <summary>
+        /// Get a value from registry for the given key path and value name
+        /// </summary>
+        /// <param name="registryPath"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static string GetHKEYLocalValue(string registryPath, string name)
         {
-            var value = GetSystemTypeKey().OpenSubKey("Software\\Adobe\\Premiere Pro\\CurrentVersion").GetValue("Plug-InsDir").ToString();
+            var value = GetSystemTypeKey.OpenSubKey(registryPath).GetValue(name).ToString();
             return value;
         }
 
@@ -26,10 +31,10 @@ namespace VoukoderManager.Core
         /// <param name="registryPath"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static List<ProgramEntry> GetPrograms(string registryPath)
+        public static List<RegistryEntry> GetPrograms(string registryPath)
         {
-            List<ProgramEntry> values = new List<ProgramEntry>();
-            ProgramEntry entry = new ProgramEntry();
+            List<RegistryEntry> values = new List<RegistryEntry>();
+            RegistryEntry entry;
             foreach (RegistryView v in _views)
             {
                 using (RegistryKey rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, v).OpenSubKey(registryPath))
@@ -40,18 +45,18 @@ namespace VoukoderManager.Core
                         {
                             try
                             {
-                                entry = new ProgramEntry()
-                                {
-                                    Name = sk.GetValue("DisplayName")?.ToString() ?? "",
-                                    InstallationPath = sk.GetValue("InstallLocation")?.ToString() ?? "",
-                                    Version = new Models.Version(sk.GetValue("DisplayVersion")?.ToString() ?? ""),
-                                    UninstallString = sk.GetValue("UninstallString")?.ToString() ?? "",
-                                    Publisher = sk.GetValue("Publisher")?.ToString() ?? "",
-                                    InstallationDate = sk.GetValue("InstallDate")?.ToString() ?? "",
-                                    ModifyPath = sk.GetValue("ModifyPath")?.ToString() ?? "",
-                                    WindowsInstaller = Convert.ToBoolean(sk.GetValue("WindowsInstaller") ?? false)
-                                };
-                                if (!values.Exists(x => x.Name.Contains(entry.Name)))
+                                entry = new RegistryEntry();
+                                entry.DisplayName = sk.GetValue("DisplayName")?.ToString() ?? "";
+                                entry.DisplayVersion = sk.GetValue("DisplayVersion")?.ToString() ?? "";
+                                entry.PreRelease = entry.DisplayName.Contains("rc") || entry.DisplayName.Contains("beta");
+                                entry.InstallationPath = sk.GetValue("InstallLocation")?.ToString() ?? "";
+                                entry.UninstallString = sk.GetValue("UninstallString")?.ToString() ?? "";
+                                entry.Publisher = sk.GetValue("Publisher")?.ToString() ?? "";
+                                entry.InstallationDate = sk.GetValue("InstallDate")?.ToString() ?? "";
+                                entry.ModifyPath = sk.GetValue("ModifyPath")?.ToString() ?? "";
+                                entry.WindowsInstaller = Convert.ToBoolean(sk.GetValue("WindowsInstaller") ?? false);
+
+                                if (!values.Exists(x => x.DisplayName.Contains(entry.DisplayName)))
                                 {
                                     values.Add(entry);
                                 }
@@ -69,12 +74,15 @@ namespace VoukoderManager.Core
         /// Returns the registry base key for 32bit or 64bit
         /// </summary>
         /// <returns></returns>
-        private static RegistryKey GetSystemTypeKey()
+        private static RegistryKey GetSystemTypeKey
         {
-            if (Environment.Is64BitOperatingSystem)
-                return RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
-            else
-                return RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
+            get
+            {
+                if (Environment.Is64BitOperatingSystem)
+                    return RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
+                else
+                    return RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
+            }
         }
     }
 }

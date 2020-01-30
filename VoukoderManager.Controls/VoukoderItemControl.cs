@@ -34,7 +34,8 @@ namespace VoukoderManager.Controls
         private TextBlock _textBlockStatus;
         private IProgramEntry _entry { get; set; }
         private IProgramEntry _voukoderEntry { get; set; }
-        private IGitHubEntry _update;
+        private IGitHubEntry _connectorUpdate;
+        private IGitHubEntry _coreUpdate;
 
         static VoukoderItemControl()
         {
@@ -43,14 +44,14 @@ namespace VoukoderManager.Controls
 
         public VoukoderItemControl()
         {
-            Operation.OperationStatus += Operation_InstallProgressChanged;
+            VKEntry.OperationStatus += Operation_InstallProgressChanged;
         }
 
         private void Operation_InstallProgressChanged(object sender, ProcessStatusEventArgs e)
         {
-            if (_entry.VoukoderConnector != null)
+            if (_entry.VoukoderComponent != null)
             {
-                if (e.ComponentType == _entry.VoukoderConnector.ComponentType)
+                if (e.ComponentType == _entry.VoukoderComponent.ComponentType)
                     UpdateStatusTextBlock(e.StatusMessage);
             }
             else
@@ -94,7 +95,7 @@ namespace VoukoderManager.Controls
             _programName.Text = _entry.Name;
             _programLogo.Source = _entry.Logo;
 
-            if (_entry.VoukoderConnector == null)
+            if (_entry.VoukoderComponent == null)
             {
                 _buttonInstall.Visibility = Visibility.Visible;
             }
@@ -161,12 +162,12 @@ namespace VoukoderManager.Controls
 
         private void _buttonUninstall_Click(object sender, RoutedEventArgs e)
         {
-            _entry.VoukoderConnector.UninstallPackage();
+            _entry.VoukoderComponent.UninstallPackage();
         }
 
         private void _buttonProperties_Click(object sender, RoutedEventArgs e)
         {
-            PropertyWindow w = new PropertyWindow(_entry.VoukoderConnector)
+            PropertyWindow w = new PropertyWindow(_entry.VoukoderComponent)
             {
                 Owner = Window.GetWindow(this),
                 WindowStartupLocation = WindowStartupLocation.CenterOwner
@@ -176,7 +177,22 @@ namespace VoukoderManager.Controls
 
         private void _buttonUpdate_Click(object sender, RoutedEventArgs e)
         {
-            DownloadPackage(_update);
+            if (_connectorUpdate != null)
+            {
+                var msb = MessageBox.Show("Are you sure to update: " + _connectorUpdate.ComponentType.ToString() +
+                    " to version: " + _connectorUpdate.Version.PackageVersion +
+                    "?", "Update", MessageBoxButton.YesNo);
+                if (msb == MessageBoxResult.Yes)
+                    DownloadPackage(_connectorUpdate);
+            }
+            if (_coreUpdate != null)
+            {
+                var msb = MessageBox.Show("Are you sure to update: " + _coreUpdate.ComponentType.ToString() +
+                    " to version: " + _coreUpdate.Version.PackageVersion +
+                    "?", "Update Core", MessageBoxButton.YesNo);
+                if (msb == MessageBoxResult.Yes)
+                    DownloadPackage(_coreUpdate);
+            }
         }
 
         private void _buttonInstall_Click(object sender, RoutedEventArgs e)
@@ -185,7 +201,7 @@ namespace VoukoderManager.Controls
             var lst = p.GetDownloadablePackages(_entry.ComponentType, 5);
             if (lst == null)
             {
-                MessageBox.Show("Couldn't receive list");
+                MessageBox.Show("Couldn't receive list, maybe too many API requests");
                 return;
             }
             PropertyWindow w = new PropertyWindow(lst)
@@ -205,10 +221,10 @@ namespace VoukoderManager.Controls
 
         private async void DownloadPackage(IGitHubEntry entry)
         {
-            VoukoderEntry.DownloadProgressChanged += VoukoderEntry_DownloadProgressChanged;
+            VKGithubEntry.DownloadProgressChanged += VoukoderEntry_DownloadProgressChanged;
             var t = await entry.StartPackageDownloadWithDependencies();
             t.InstallPackageWithDepenencies();
-            VoukoderEntry.DownloadProgressChanged -= VoukoderEntry_DownloadProgressChanged;
+            VKGithubEntry.DownloadProgressChanged -= VoukoderEntry_DownloadProgressChanged;
         }
 
         private void VoukoderEntry_DownloadProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
@@ -218,14 +234,22 @@ namespace VoukoderManager.Controls
 
         private void CheckForUpdate()
         {
-            if (_entry.VoukoderConnector != null)
+            if (_entry.VoukoderComponent != null)
             {
                 var p = new PackageManager();
-                var update = p.GetUpdate(_entry.VoukoderConnector);
+                var update = p.GetUpdate(_entry.VoukoderComponent);
                 if (update != null)
                 {
-                    _update = update;
+                    _connectorUpdate = update;
+                    _buttonUpdate.Content = "Update";
                     _buttonUpdate.Visibility = Visibility.Visible;
+                }
+                var update2 = p.GetUpdate(_entry.VoukoderComponent.VoukoderComponent);
+                if (update2 != null)
+                {
+                    _coreUpdate = update2;
+                    _buttonUpdate.Visibility = Visibility.Visible;
+                    _buttonUpdate.Content = "Update Core";
                 }
             }
         }

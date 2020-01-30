@@ -10,8 +10,6 @@ namespace VoukoderManager.Core.Models
 
         PackageType Type { get; }
 
-        ProgramType ComponentType { get; }
-
         List<IPackage> Dependencies { get; set; }
     }
 }

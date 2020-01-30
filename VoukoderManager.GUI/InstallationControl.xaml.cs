@@ -12,9 +12,9 @@ namespace VoukoderManager.GUI
         public InstallationControl()
         {
             InitializeComponent();
-            Operation.OperationStatus += Operation_InstallProgressChanged;
-            ProgramEntry.UninstallationFinished += ProgramEntry_UninstallationFinished;
-            VoukoderEntry.DownloadProgressChanged += VoukoderEntry_DownloadProgressChanged;
+            VKEntry.OperationStatus += Operation_InstallProgressChanged;
+            VKProgramEntry.UninstallationFinished += ProgramEntry_UninstallationFinished;
+            VKGithubEntry.DownloadProgressChanged += VoukoderEntry_DownloadProgressChanged;
         }
 
         public event EventHandler<EventArgs> CloseControl;
@@ -40,9 +40,9 @@ namespace VoukoderManager.GUI
 
         private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            Operation.OperationStatus -= Operation_InstallProgressChanged;
-            ProgramEntry.UninstallationFinished -= ProgramEntry_UninstallationFinished;
-            VoukoderEntry.DownloadProgressChanged -= VoukoderEntry_DownloadProgressChanged;
+            VKEntry.OperationStatus -= Operation_InstallProgressChanged;
+            VKProgramEntry.UninstallationFinished -= ProgramEntry_UninstallationFinished;
+            VKGithubEntry.DownloadProgressChanged -= VoukoderEntry_DownloadProgressChanged;
             CloseControl?.Invoke(this, e);
         }
     }

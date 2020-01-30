@@ -7,16 +7,31 @@ using System.IO;
 
 namespace VoukoderManager.Core.Models
 {
-    public class Package : Operation, IPackage
+    public class VKPackage : VKEntry, IPackage
     {
-        public string Name { get; set; }
-        public List<IPackage> Dependencies { get; set; }
-        public string Path { get; set; }
-        public ProgramType ComponentType { get; set; }
-        private static BackgroundWorker _worker = new BackgroundWorker();
-        private bool _installDependencies;
+        public virtual List<IPackage> Dependencies { get; set; }
+        public virtual string Path { get; set; }
+        protected static BackgroundWorker _worker = new BackgroundWorker();
+        protected bool _installDependencies;
+        protected virtual string installArguments { get { return @" /i " + Path + @" /qn"; } }
+        protected string msiExec = "msiexec.exe";
 
-        public bool Certified
+        public VKPackage(string name, IVersion version) : base(name, version)
+        {
+            Name = name;
+            Version = version;
+            _worker.DoWork += ExecuteProcess;
+            _worker.RunWorkerCompleted += WorkerCompleted;
+        }
+
+        public VKPackage(string name, IVersion version, string path, ProgramType type) : base(name, version)
+        {
+            Path = path;
+            Name = name;
+            ComponentType = type;
+        }
+
+        public virtual bool Certified
         {
             get
             {
@@ -24,7 +39,7 @@ namespace VoukoderManager.Core.Models
             }
         }
 
-        public PackageType Type
+        public virtual PackageType Type
         {
             get
             {
@@ -38,7 +53,7 @@ namespace VoukoderManager.Core.Models
             }
         }
 
-        public IVersion Version
+        public override IVersion Version
         {
             get
             {
@@ -51,20 +66,7 @@ namespace VoukoderManager.Core.Models
 
         public static event EventHandler<OperationFinishedEventArgs> InstallationFinished;
 
-        public Package()
-        {
-            _worker.DoWork += ExecuteProcess;
-            _worker.RunWorkerCompleted += WorkerCompleted;
-        }
-
-        public Package(string packageName, string path, ProgramType type)
-        {
-            Path = path;
-            Name = packageName;
-            ComponentType = type;
-        }
-
-        public void InstallPackage()
+        public virtual void InstallPackage()
         {
             _installDependencies = false;
             _worker.DoWork += ExecuteProcess;
@@ -84,20 +86,20 @@ namespace VoukoderManager.Core.Models
 
         private void ExecuteProcess(object sender, DoWorkEventArgs e)
         {
-            Process p = new Process();
-            OnOperationStatusChanged(new ProcessStatusEventArgs($"Starting installation of package {Name}", ComponentType));
-            var startinfo = new ProcessStartInfo("msiexec.exe")
-            {
-                UseShellExecute = true,
-                Arguments = @" /i " + Path + @" /qn /log install.log",
-                Verb = "runas"
-            };
-            p.StartInfo = startinfo;
             try
             {
+                Process p = new Process();
+                OnOperationStatusChanged(new ProcessStatusEventArgs($"Starting installation of package {Name}", ComponentType));
+                var startinfo = new ProcessStartInfo(msiExec)
+                {
+                    UseShellExecute = true,
+                    Arguments = installArguments,
+                    Verb = "runas"
+                };
+                p.StartInfo = startinfo;
                 p.Start();
                 p.WaitForExit();
-                if (!_installDependencies || Dependencies.Count == 0)
+                if (!_installDependencies || Dependencies.Count < 0)
                 {
                     OnOperationStatusChanged(new ProcessStatusEventArgs($"Finished installation of package {Name}", ComponentType));
                     p.Dispose();
@@ -107,7 +109,7 @@ namespace VoukoderManager.Core.Models
                     foreach (var v in Dependencies)
                     {
                         OnOperationStatusChanged(new ProcessStatusEventArgs($"Starting installation of package dependency {v.Name}", ComponentType));
-                        startinfo.Arguments = @" /i " + v.Path + @" /qn /log install.log";
+                        startinfo.Arguments = @" /i " + v.Path + @" /qn";
                         p.StartInfo = startinfo;
                         p.Start();
                         p.WaitForExit();
@@ -122,7 +124,7 @@ namespace VoukoderManager.Core.Models
             }
         }
 
-        public void InstallPackageWithDepenencies()
+        public virtual void InstallPackageWithDepenencies()
         {
             _installDependencies = true;
             _worker.DoWork += ExecuteProcess;
@@ -130,7 +132,7 @@ namespace VoukoderManager.Core.Models
             _worker.RunWorkerAsync();
         }
 
-        public void StopInstallation()
+        public virtual void StopInstallation()
         {
             _worker.CancelAsync();
         }
