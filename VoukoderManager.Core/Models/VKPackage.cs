@@ -13,8 +13,27 @@ namespace VoukoderManager.Core.Models
         public virtual string Path { get; set; }
         protected static BackgroundWorker _worker = new BackgroundWorker();
         protected bool _installDependencies;
-        protected virtual string installArguments { get { return @" /i " + Path + @" /qn"; } }
+
+        protected virtual string InstallArguments
+        {
+            get
+            {
+                if (ComponentType == ProgramType.VoukoderConnectorVegas || ComponentType == ProgramType.VEGAS)
+                    return @" /i " + Path + @" VEGASDIR=""" + PluginsPath + @""" /qn";
+                else
+                    return @" /i " + Path + @" TGTDIR=""" + PluginsPath + @""" /qn";
+            }
+        }
+
         protected string msiExec = "msiexec.exe";
+
+        protected virtual string PluginsPath
+        {
+            get
+            {
+                return ProgramDetector.GetPluginsDir(this.ComponentType);
+            }
+        }
 
         public VKPackage(string name, IVersion version) : base(name, version)
         {
@@ -86,6 +105,7 @@ namespace VoukoderManager.Core.Models
 
         private void ExecuteProcess(object sender, DoWorkEventArgs e)
         {
+            Console.WriteLine(InstallArguments);
             try
             {
                 Process p = new Process();
@@ -93,7 +113,7 @@ namespace VoukoderManager.Core.Models
                 var startinfo = new ProcessStartInfo(msiExec)
                 {
                     UseShellExecute = true,
-                    Arguments = installArguments,
+                    Arguments = InstallArguments,
                     Verb = "runas"
                 };
                 p.StartInfo = startinfo;
