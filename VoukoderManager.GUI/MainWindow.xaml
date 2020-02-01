@@ -24,6 +24,8 @@
             </Menu>
         </DockPanel>
         <Label Content="Voukoder Manager" FontSize="30" Margin="30" FontWeight="Regular" HorizontalAlignment="Left" x:Name="labelTop" />
+        <Label Content="Remaining requests: " Margin="15,0" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
+        <Label Content="{Binding RemainingRequests}" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
         <Button Content="Installed" Foreground="#3399FF" Margin="6,97,1152,555" FontSize="18" FontWeight="Regular" x:Name="buttonInstalled" Width="Auto" Height="Auto" Click="buttonInstalled_Click">
             <Button.Style>
                 <Style TargetType="{x:Type Button}">

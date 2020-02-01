@@ -1,6 +1,7 @@
 ﻿using Octokit;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 using VoukoderManager.Core.Models;
@@ -9,10 +10,19 @@ namespace VoukoderManager.Core
 {
     public class PackageManager
     {
-        private GitHubClient _client;
+        private static readonly GitHubClient _client;
         public static bool AllowPreReleaseVersion { get; set; } = false;
 
-        public PackageManager()
+        public static int RemainingApiRequests { get { return _client.GetLastApiInfo().RateLimit.Remaining; } }
+
+        public static event EventHandler<ApiRequestEventArgs> ApiRequestUsed;
+
+        private void OnRequest(object sender, ApiRequestEventArgs e)
+        {
+            ApiRequestUsed?.Invoke(sender, e);
+        }
+
+        static PackageManager()
         {
             _client = new GitHubClient(new ProductHeaderValue("voukodermanager"));
         }
@@ -63,6 +73,7 @@ namespace VoukoderManager.Core
             try
             {
                 var test = _client.Repository.Content.GetAllContents(owner, repo, filepath).Result;
+                OnRequest(this, new ApiRequestEventArgs(_client.GetLastApiInfo()));
                 var lst = new List<IGitHubEntry>();
                 int entries = test.Count;
 
@@ -97,6 +108,7 @@ namespace VoukoderManager.Core
             try
             {
                 var releases = client.Repository.Release.GetAll(owner, repo).Result;
+                OnRequest(this, new ApiRequestEventArgs(_client.GetLastApiInfo()));
                 int i = 0;
                 foreach (var f in releases)
                 {
@@ -125,6 +137,7 @@ namespace VoukoderManager.Core
                 {
                     repo = "voukoder";
                     var release = _client.Repository.Release.GetLatest("Vouk", repo).Result;
+                    OnRequest(this, new ApiRequestEventArgs(_client.GetLastApiInfo()));
                     var entry = new VKGithubEntry(release.Name, new Models.Version(release.Name))
                     {
                         DownloadUrl = new Uri(release.Assets[0].BrowserDownloadUrl)
@@ -151,6 +164,7 @@ namespace VoukoderManager.Core
                 {
                     repo = "voukoder";
                     var release = _client.Repository.Release.GetLatest("Vouk", repo).Result;
+                    OnRequest(this, new ApiRequestEventArgs(_client.GetLastApiInfo()));
 
                     var entr = new VKGithubEntry(release.Name, new Models.Version(release.TagName))
                     {
@@ -185,7 +199,10 @@ namespace VoukoderManager.Core
             }
             catch (AggregateException ex)
             {
-                throw;
+                var v = _client.GetLastApiInfo();
+                Trace.WriteLine("API Limit resets at: " + v.RateLimit.Reset.ToLocalTime());
+                return null;
+                //throw;
             }
         }
 

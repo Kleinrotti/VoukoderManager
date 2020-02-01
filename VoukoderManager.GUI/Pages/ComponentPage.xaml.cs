@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
 using VoukoderManager.Controls;
@@ -16,13 +18,29 @@ namespace VoukoderManager.GUI
     {
         private BackgroundWorker _worker;
         private List<IProgramEntry> _detectedPrograms;
-        private List<VoukoderItemControl> _voukoderItemControls;
+        private ObservableCollection<VoukoderItemControl> _voukoderItemControls;
+
+        public ObservableCollection<VoukoderItemControl> VoukoderItemControls
+        {
+            get
+            {
+                return _voukoderItemControls;
+            }
+            set
+            {
+                _voukoderItemControls = value;
+            }
+        }
+
         private bool _isInstalledPage;
 
         public ComponentPage(bool isInstalledPage)
         {
             InitializeComponent();
+            DataContext = this;
             _isInstalledPage = isInstalledPage;
+            _voukoderItemControls = new ObservableCollection<VoukoderItemControl>();
+            _voukoderItemControls = new ObservableCollection<VoukoderItemControl>();
             _worker = new BackgroundWorker();
             this.Unloaded += ComponentPage_Unloaded;
             this.Loaded += ComponentPage_Loaded;
@@ -81,8 +99,6 @@ namespace VoukoderManager.GUI
             {
                 _worker.DoWork -= GetEntries;
                 _worker.RunWorkerCompleted -= WorkCompleted;
-                stackpanelPrograms.Children.Clear();
-                _voukoderItemControls = new List<VoukoderItemControl>();
                 foreach (var v in _detectedPrograms)
                 {
                     var vv = v as VKProgramEntry;
@@ -102,7 +118,7 @@ namespace VoukoderManager.GUI
                     }
                 }
 
-                if (_voukoderItemControls.Count < 1)
+                if (VoukoderItemControls.Count < 1)
                 {
                     Label l = new Label();
                     if (_isInstalledPage)
@@ -128,8 +144,9 @@ namespace VoukoderManager.GUI
                         VoukoderProgramData = entry,
                         Margin = new System.Windows.Thickness(0, 10, 0, 0)
                     };
-                    _voukoderItemControls.Add(i);
-                    stackpanelPrograms.Children.Add(i);
+                    //only add to collection if not existing
+                    if (!VoukoderItemControls.Any(x => x.Name == "item" + entry.ComponentType.ToString()))
+                        VoukoderItemControls.Add(i);
                 }
             }
         }

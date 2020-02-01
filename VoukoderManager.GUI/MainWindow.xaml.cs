@@ -1,6 +1,9 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using VoukoderManager.Core;
 using VoukoderManager.Language;
 
 namespace VoukoderManager.GUI
@@ -8,21 +11,59 @@ namespace VoukoderManager.GUI
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private Lang _lang;
         private ComponentPage _installedPage;
         private ComponentPage _availiblePage;
+        private int _requests = 0;
+
+        public int RemainingRequests
+        {
+            get { return _requests; }
+            set
+            {
+                _requests = value;
+                OnPropertyChanged();
+            }
+        }
 
         public MainWindow()
         {
             _lang = new Lang();
             _lang.Initialize();
             InitializeComponent();
+            DataContext = this;
             Lang.LanguageChanged += LanguageChanged;
+            PackageManager.ApiRequestUsed += PackageManager_ApiRequestUsed;
             _installedPage = new ComponentPage(true);
             _availiblePage = new ComponentPage(false);
             framePages.Navigate(_installedPage);
+        }
+
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Raises this object's PropertyChanged event.
+        /// </summary>
+        /// <param name="propertyName">The property that has a new value.</param>
+        protected void OnPropertyChanged([CallerMemberName]string propertyName = null)
+        {
+            PropertyChangedEventHandler handler = this.PropertyChanged;
+            if (handler != null)
+            {
+                var e = new PropertyChangedEventArgs(propertyName);
+                handler(this, e);
+            }
+        }
+
+        #endregion INotifyPropertyChanged Members
+
+        private void PackageManager_ApiRequestUsed(object sender, ApiRequestEventArgs e)
+        {
+            RemainingRequests = e.Remaining;
         }
 
         private void LanguageChanged(object sender, LanguageChangeEventArgs e)

@@ -11,6 +11,7 @@
     <Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel x:Name="stackpanelPrograms" Margin="20" HorizontalAlignment="Left">
+                <ItemsControl ItemsSource="{Binding VoukoderItemControls}" />
             </StackPanel>
         </ScrollViewer>
     </Grid>

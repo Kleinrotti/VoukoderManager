@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using VoukoderManager.Core;
 using VoukoderManager.Core.Models;
@@ -33,9 +34,10 @@ namespace VoukoderManager.Controls
         private TextBlock _programName;
         private TextBlock _textBlockStatus;
         private IProgramEntry _entry { get; set; }
-        private IProgramEntry _voukoderEntry { get; set; }
         private IGitHubEntry _connectorUpdate;
-        private IGitHubEntry _coreUpdate;
+        private static IGitHubEntry _coreUpdate;
+        private bool _updateSearchDone;
+        private static bool _updateSearchCoreDone;
 
         static VoukoderItemControl()
         {
@@ -113,25 +115,12 @@ namespace VoukoderManager.Controls
             set { SetValue(VoukoderProgramDataProperty, value); }
         }
 
-        public IProgramEntry VoukoderComponentData
-        {
-            get { return (IProgramEntry)GetValue(VoukoderComponentDataProperty); }
-            set { SetValue(VoukoderComponentDataProperty, value); }
-        }
-
         public static readonly DependencyProperty VoukoderProgramDataProperty =
             DependencyProperty.Register(
             "VoukoderProgramData",
             typeof(IProgramEntry),
             typeof(VoukoderItemControl),
             new FrameworkPropertyMetadata(new PropertyChangedCallback(VoukoderItemControl.OnProgramEntryChanged)));
-
-        public static readonly DependencyProperty VoukoderComponentDataProperty =
-            DependencyProperty.Register(
-            "VoukoderComponentData",
-            typeof(IProgramEntry),
-            typeof(VoukoderItemControl),
-            new FrameworkPropertyMetadata(new PropertyChangedCallback(VoukoderItemControl.OnVoukoderEntryChanged)));
 
         protected virtual void OnProgramEntryChanged(IProgramEntry oldEntry, IProgramEntry newEntry)
         {
@@ -147,17 +136,6 @@ namespace VoukoderManager.Controls
         {
             var v = (VoukoderItemControl)d;
             v.OnProgramEntryChanged((IProgramEntry)e.OldValue, (IProgramEntry)e.NewValue);
-        }
-
-        protected virtual void OnVoukoderEntryChanged(IProgramEntry oldEntry, IProgramEntry newEntry)
-        {
-            _voukoderEntry = newEntry;
-        }
-
-        private static void OnVoukoderEntryChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var v = (VoukoderItemControl)d;
-            v.OnVoukoderEntryChanged((IProgramEntry)e.OldValue, (IProgramEntry)e.NewValue);
         }
 
         private void _buttonUninstall_Click(object sender, RoutedEventArgs e)
@@ -236,6 +214,7 @@ namespace VoukoderManager.Controls
         {
             if (_entry.VoukoderComponent != null)
             {
+                Console.WriteLine("Update Called");
                 var p = new PackageManager();
                 var update = p.GetUpdate(_entry.VoukoderComponent);
                 if (update != null)
@@ -244,12 +223,17 @@ namespace VoukoderManager.Controls
                     _buttonUpdate.Content = "Update";
                     _buttonUpdate.Visibility = Visibility.Visible;
                 }
-                var update2 = p.GetUpdate(_entry.VoukoderComponent.VoukoderComponent);
-                if (update2 != null)
+                //Check for voukoder core update
+                if (!_updateSearchCoreDone)
                 {
-                    _coreUpdate = update2;
-                    _buttonUpdate.Visibility = Visibility.Visible;
-                    _buttonUpdate.Content = "Update Core";
+                    var update2 = p.GetUpdate(_entry.VoukoderComponent.VoukoderComponent);
+                    _updateSearchCoreDone = true;
+                    if (update2 != null)
+                    {
+                        _coreUpdate = update2;
+                        _buttonUpdate.Visibility = Visibility.Visible;
+                        _buttonUpdate.Content = "Update Core";
+                    }
                 }
             }
         }
