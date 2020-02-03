@@ -62,21 +62,24 @@ namespace VoukoderManager.Core
                 {
                     repopath = "premiere";
                 }
-                var content = GetContent(type, "Vouk", repo, repopath, results);
+                var content = GetContent(type, "Vouk", repo, repopath, results, true);
                 Mouse.OverrideCursor = null;
                 return content;
             }
         }
 
-        private List<IGitHubEntry> GetContent(ProgramType type, string owner, string repo, string filepath, int results)
+        private List<IGitHubEntry> GetContent(ProgramType type, string owner, string repo, string filepath, int results, bool includeCore)
         {
             try
             {
+                IGitHubEntry corepkg = null;
                 var test = _client.Repository.Content.GetAllContents(owner, repo, filepath).Result;
+                if (includeCore)
+                    corepkg = GetLatestDownloadableCorePackage(ProgramType.VoukoderCore);
                 OnRequest(this, new ApiRequestEventArgs(_client.GetLastApiInfo()));
+                var re = _client.GetLastApiInfo();
                 var lst = new List<IGitHubEntry>();
                 int entries = test.Count;
-
                 while (results > 0)
                 {
                     var v = test[entries - 1];
@@ -87,7 +90,7 @@ namespace VoukoderManager.Core
                         {
                             DownloadUrl = new Uri(v.DownloadUrl),
                             ComponentType = type,
-                            Dependencies = new List<IGitHubEntry>() { GetLatestDownloadableCorePackage(ProgramType.VoukoderCore) }
+                            Dependencies = new List<IGitHubEntry>() { corepkg }
                         };
                         lst.Add(vkentry);
                     }
@@ -190,7 +193,7 @@ namespace VoukoderManager.Core
                     {
                         repopath = "premiere";
                     }
-                    var content = GetContent(entry.ComponentType, "Vouk", repo, repopath, 1);
+                    var content = GetContent(entry.ComponentType, "Vouk", repo, repopath, 1, false);
                     if (entry.Version.CompareTo(content[0].Version) < 0)
                         return content[0];
                     else

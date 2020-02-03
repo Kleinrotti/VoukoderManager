@@ -98,7 +98,9 @@ namespace VoukoderManager.Core.Models
             if (e.Cancelled)
                 OnOperationStatusChanged(new ProcessStatusEventArgs($"Cancelled installation of package {Name}", ComponentType));
             else
-                InstallationFinished?.Invoke(this, new OperationFinishedEventArgs(e.Error, e.Cancelled, this));
+            {
+                InstallationFinished?.Invoke(this, new OperationFinishedEventArgs(e.Error, e.Cancelled, this, OperationType.Install));
+            }
             _worker.DoWork -= ExecuteProcess;
             _worker.RunWorkerCompleted -= WorkerCompleted;
         }

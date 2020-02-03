@@ -68,9 +68,9 @@ namespace VoukoderManager.Core.Models
         private void WorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Cancelled)
-                OnOperationStatusChanged(new ProcessStatusEventArgs($"Cancelled installation of package {Name}", ComponentType));
+                OnOperationStatusChanged(new ProcessStatusEventArgs($"Cancelled uninstallation of package {Name}", ComponentType));
             else
-                UninstallationFinished?.Invoke(this, new OperationFinishedEventArgs(e.Error, _cancelled, this));
+                UninstallationFinished?.Invoke(this, new OperationFinishedEventArgs(e.Error, _cancelled, this, OperationType.Uninstall));
             _worker.DoWork -= ExecuteProcess;
             _worker.RunWorkerCompleted -= WorkerCompleted;
         }

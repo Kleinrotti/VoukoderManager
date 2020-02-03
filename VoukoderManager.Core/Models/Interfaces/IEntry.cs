@@ -5,5 +5,6 @@
         string Name { get; }
         IVersion Version { get; }
         ProgramType ComponentType { get; set; }
+        bool Hide { get; set; }
     }
 }

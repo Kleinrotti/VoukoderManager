@@ -18,19 +18,8 @@ namespace VoukoderManager.GUI
     {
         private BackgroundWorker _worker;
         private List<IProgramEntry> _detectedPrograms;
-        private ObservableCollection<VoukoderItemControl> _voukoderItemControls;
 
-        public ObservableCollection<VoukoderItemControl> VoukoderItemControls
-        {
-            get
-            {
-                return _voukoderItemControls;
-            }
-            set
-            {
-                _voukoderItemControls = value;
-            }
-        }
+        public ObservableCollection<VoukoderItemControl> VoukoderItemControls { get; set; }
 
         private bool _isInstalledPage;
 
@@ -39,8 +28,8 @@ namespace VoukoderManager.GUI
             InitializeComponent();
             DataContext = this;
             _isInstalledPage = isInstalledPage;
-            _voukoderItemControls = new ObservableCollection<VoukoderItemControl>();
-            _voukoderItemControls = new ObservableCollection<VoukoderItemControl>();
+            VoukoderItemControls = new ObservableCollection<VoukoderItemControl>();
+            VoukoderItemControls = new ObservableCollection<VoukoderItemControl>();
             _worker = new BackgroundWorker();
             this.Unloaded += ComponentPage_Unloaded;
             this.Loaded += ComponentPage_Loaded;
@@ -51,19 +40,19 @@ namespace VoukoderManager.GUI
 
         private void Package_InstallationFinished(object sender, OperationFinishedEventArgs e)
         {
-            LoadProgramLists();
+            if (!e.Cancelled)
+                UpdateProgramList(e.Entry, e.OperationType);
         }
 
         private void ProgramEntry_UninstallationFinished(object sender, OperationFinishedEventArgs e)
         {
             if (!e.Cancelled)
-                LoadProgramLists();
+                UpdateProgramList(e.Entry, e.OperationType);
         }
 
         private void ComponentPage_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
             Trace.WriteLine("ComponentPage loaded");
-            LoadProgramLists();
         }
 
         public void RefreshVoukoderComponents()
@@ -79,6 +68,37 @@ namespace VoukoderManager.GUI
         ~ComponentPage()
         {
             Trace.WriteLine("ComponentPage destroyed");
+        }
+
+        private void UpdateProgramList(IEntry changedEntry, OperationType operationType)
+        {
+            _detectedPrograms = ProgramDetector.GetInstalledPrograms(true);
+            if (_isInstalledPage)
+            {
+                if (operationType == OperationType.Uninstall)
+                {
+                    var en = VoukoderItemControls.Single(x => x.VoukoderProgramData.VoukoderComponent.ComponentType == changedEntry.ComponentType);
+                    VoukoderItemControls.Remove(en);
+                }
+                else if (operationType == OperationType.Install)
+                {
+                    var item = _detectedPrograms.Single(x => x.ComponentType == changedEntry.ComponentType);
+                    AddItem(item);
+                }
+            }
+            else
+            {
+                if (operationType == OperationType.Uninstall)
+                {
+                    var item2 = _detectedPrograms.Single(x => x.ComponentType == VKEnumHelper.GetMatchingType(changedEntry.ComponentType));
+                    AddItem(item2);
+                }
+                else if (operationType == OperationType.Install)
+                {
+                    var en = VoukoderItemControls.Single(x => x.VoukoderProgramData.ComponentType == changedEntry.ComponentType);
+                    VoukoderItemControls.Remove(en);
+                }
+            }
         }
 
         private void LoadProgramLists()
@@ -101,54 +121,51 @@ namespace VoukoderManager.GUI
                 _worker.RunWorkerCompleted -= WorkCompleted;
                 foreach (var v in _detectedPrograms)
                 {
-                    var vv = v as VKProgramEntry;
                     if (_isInstalledPage)
                     {
-                        if (v.VoukoderComponent != null && !vv.Hide)
+                        if (v.VoukoderComponent != null && !v.Hide && !VoukoderItemControls.Any(x => x.Name == "item" + v.ComponentType.ToString()))
                         {
                             AddItem(v);
                         }
                     }
                     else
                     {
-                        if (v.VoukoderComponent == null && !vv.Hide)
+                        if (v.VoukoderComponent == null && !v.Hide && !VoukoderItemControls.Any(x => x.Name == "item" + v.ComponentType.ToString()))
                         {
                             AddItem(v);
                         }
                     }
                 }
 
-                if (VoukoderItemControls.Count < 1)
-                {
-                    Label l = new Label();
-                    if (_isInstalledPage)
-                    {
-                        l.Content = "There is currently no Voukoder component installed";
-                    }
-                    else
-                    {
-                        l.Content = "There is currently no program availible where Voukoder can be installed for";
-                    }
-                    l.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center;
-                    l.VerticalAlignment = System.Windows.VerticalAlignment.Center;
-                    l.FontSize = 22;
-                    stackpanelPrograms.Children.Add(l);
-                }
+                //if (VoukoderItemControls.Count < 1)
+                //{
+                //    Label l = new Label();
+                //    if (_isInstalledPage)
+                //    {
+                //        l.Content = "There is currently no Voukoder component installed";
+                //    }
+                //    else
+                //    {
+                //        l.Content = "There is currently no program availible where Voukoder can be installed for";
+                //    }
+                //    l.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center;
+                //    l.VerticalAlignment = System.Windows.VerticalAlignment.Center;
+                //    l.FontSize = 22;
+                //    stackpanelPrograms.Children.Add(l);
+                //}
                 Mouse.OverrideCursor = null;
-
-                void AddItem(IProgramEntry entry)
-                {
-                    var i = new VoukoderItemControl
-                    {
-                        Name = "item" + entry.ComponentType.ToString(),
-                        VoukoderProgramData = entry,
-                        Margin = new System.Windows.Thickness(0, 10, 0, 0)
-                    };
-                    //only add to collection if not existing
-                    if (!VoukoderItemControls.Any(x => x.Name == "item" + entry.ComponentType.ToString()))
-                        VoukoderItemControls.Add(i);
-                }
             }
+        }
+
+        private void AddItem(IProgramEntry entry)
+        {
+            var i = new VoukoderItemControl
+            {
+                Name = "item" + entry.ComponentType.ToString(),
+                VoukoderProgramData = entry,
+                Margin = new System.Windows.Thickness(0, 10, 0, 0)
+            };
+            VoukoderItemControls.Add(i);
         }
     }
 }

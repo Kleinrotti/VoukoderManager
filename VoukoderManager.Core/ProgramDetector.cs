@@ -75,6 +75,8 @@ namespace VoukoderManager.Core
             entry.Publisher = regEntry.Publisher;
             entry.UninstallString = regEntry.UninstallString;
             entry.WindowsInstaller = regEntry.WindowsInstaller;
+            if (entry.ComponentType == ProgramType.MediaEncoder)
+                entry.Hide = true;
         }
 
         /// <summary>
@@ -133,7 +135,7 @@ namespace VoukoderManager.Core
             return list;
         }
 
-        public static bool IsVoukoderComponentInstalled(IGitHubEntry entry)
+        public static bool IsVoukoderComponentInstalled(IEntry entry)
         {
             var cpn = GetInstalledVoukoderComponents();
             foreach (var v in cpn)
