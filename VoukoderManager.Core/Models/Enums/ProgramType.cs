@@ -3,9 +3,6 @@
     public enum ProgramType
     {
         VoukoderCore,
-        VoukoderConnectorVegas,
-        VoukoderConnectorPremiere,
-        VoukoderConnectorAfterEffects,
         VEGAS,
         Premiere,
         AfterEffects,

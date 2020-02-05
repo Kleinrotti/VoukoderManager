@@ -19,6 +19,7 @@ namespace VoukoderManager.Core
 
         private void OnRequest(object sender, ApiRequestEventArgs e)
         {
+            Console.WriteLine("Request!!");
             ApiRequestUsed?.Invoke(sender, e);
         }
 
@@ -90,8 +91,9 @@ namespace VoukoderManager.Core
                         {
                             DownloadUrl = new Uri(v.DownloadUrl),
                             ComponentType = type,
-                            Dependencies = new List<IGitHubEntry>() { corepkg }
                         };
+                        if (corepkg != null)
+                            vkentry.Dependencies = new List<IGitHubEntry>() { corepkg };
                         lst.Add(vkentry);
                     }
                     entries--;
@@ -181,11 +183,11 @@ namespace VoukoderManager.Core
                 {
                     repo = "voukoder-connectors";
                     string repopath;
-                    if (entry.ComponentType == ProgramType.VoukoderConnectorVegas)
+                    if (entry.ComponentType == ProgramType.VEGAS)
                     {
                         repopath = "vegas";
                     }
-                    else if (entry.ComponentType == ProgramType.VoukoderConnectorAfterEffects)
+                    else if (entry.ComponentType == ProgramType.AfterEffects)
                     {
                         repopath = "aftereffects";
                     }

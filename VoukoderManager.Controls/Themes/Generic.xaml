@@ -29,12 +29,12 @@
                             <Label Grid.Row="0" Content="oukoder for" Width="80" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="38,8,0,0" />
                             <TextBlock x:Name="PART_ProgramLabel" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="15" Style="{DynamicResource MaterialDesignCaptionTextBlock}" />
                             <Image x:Name="PART_ProgramLogo" Height="70" Width="70" Grid.Row="1" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Bottom" />
-                            <TextBlock HorizontalAlignment="Left" FontSize="12" Grid.Column="1" Grid.Row="1" VerticalAlignment="Bottom" Visibility="Hidden" x:Name="PART_TextBlockStatus" />
+                            <TextBlock HorizontalAlignment="Right" FontSize="12" Grid.Column="0" Grid.Row="1" VerticalAlignment="Bottom" Visibility="Hidden" x:Name="PART_TextBlockStatus" />
                             <StackPanel Grid.Row="2" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                <Button x:Name="PART_InstallButton" Visibility="Collapsed" Width="100" FontSize="12" Height="22" Content="Install" Background="White" />
-                                <Button x:Name="PART_UpdateButton" Visibility="Collapsed" Width="100" FontSize="12" Height="22" Content="Update" Background="White" />
-                                <Button x:Name="PART_UninstallButton" Visibility="Collapsed" Width="100" FontSize="12" Height="22" Content="Uninstall" Background="White" />
-                                <Button x:Name="PART_PropertiesButton" Visibility="Collapsed" Width="100" FontSize="12" Height="22" Content="Properties" Background="White" />
+                                <Button x:Name="PART_InstallButton" Visibility="Collapsed" Width="160" FontSize="12" Height="29" Content="Install" Background="White" />
+                                <Button x:Name="PART_UpdateButton" Visibility="Collapsed" Width="160" FontSize="12" Height="29" Content="Update" Background="White" />
+                                <Button x:Name="PART_UninstallButton" Visibility="Collapsed" Width="160" FontSize="12" Height="29" Content="Uninstall" Background="White" />
+                                <Button x:Name="PART_PropertiesButton" Visibility="Collapsed" Width="160" FontSize="12" Height="29" Content="Properties" Background="White" />
                             </StackPanel>
                         </Grid>
                     </Border>

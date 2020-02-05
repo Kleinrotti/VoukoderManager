@@ -39,7 +39,7 @@ namespace VoukoderManager.Core.Models
             return pkg;
         }
 
-        public virtual async Task<IPackage> StartPackageDownloadWithDependencies()
+        public virtual async Task<IPackage> StartPackageDownloadWithDependencies(bool forceDependencyDownload)
         {
             OnOperationStatusChanged(new ProcessStatusEventArgs($"Downloading package {Name}...", ComponentType));
             packagePath = Path.GetTempPath() + DownloadUrl.Segments[DownloadUrl.Segments.Length - 1];
@@ -56,7 +56,7 @@ namespace VoukoderManager.Core.Models
                 List<IPackage> dep = new List<IPackage>();
                 foreach (var v in Dependencies)
                 {
-                    if (!ProgramDetector.IsVoukoderComponentInstalled(v))
+                    if (!ProgramDetector.IsVoukoderComponentInstalled(v) || forceDependencyDownload)
                     {
                         OnOperationStatusChanged(new ProcessStatusEventArgs($"Downloading package dependency  {v.ComponentType} {v.Name}...", ComponentType));
                         packagePath = Path.GetTempPath() + v.DownloadUrl.Segments[v.DownloadUrl.Segments.Length - 1];

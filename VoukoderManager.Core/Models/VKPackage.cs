@@ -18,7 +18,7 @@ namespace VoukoderManager.Core.Models
         {
             get
             {
-                if (ComponentType == ProgramType.VoukoderConnectorVegas || ComponentType == ProgramType.VEGAS)
+                if (ComponentType == ProgramType.VEGAS || ComponentType == ProgramType.VEGAS)
                     return @" /i " + Path + @" VEGASDIR=""" + PluginsPath + @""" /qn";
                 else
                     return @" /i " + Path + @" TGTDIR=""" + PluginsPath + @""" /qn";
@@ -121,7 +121,7 @@ namespace VoukoderManager.Core.Models
                 p.StartInfo = startinfo;
                 p.Start();
                 p.WaitForExit();
-                if (!_installDependencies || Dependencies.Count < 0)
+                if (!_installDependencies || (Dependencies == null))
                 {
                     OnOperationStatusChanged(new ProcessStatusEventArgs($"Finished installation of package {Name}", ComponentType));
                     p.Dispose();

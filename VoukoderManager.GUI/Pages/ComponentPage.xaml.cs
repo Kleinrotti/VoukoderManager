@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -73,31 +74,44 @@ namespace VoukoderManager.GUI
         private void UpdateProgramList(IEntry changedEntry, OperationType operationType)
         {
             _detectedPrograms = ProgramDetector.GetInstalledPrograms(true);
-            if (_isInstalledPage)
+            try
             {
-                if (operationType == OperationType.Uninstall)
+                if (_isInstalledPage)
                 {
-                    var en = VoukoderItemControls.Single(x => x.VoukoderProgramData.VoukoderComponent.ComponentType == changedEntry.ComponentType);
-                    VoukoderItemControls.Remove(en);
+                    if (operationType == OperationType.Uninstall)
+                    {
+                        var en = VoukoderItemControls.Single(x => x.VoukoderProgramData.VoukoderComponent.ComponentType == changedEntry.ComponentType);
+                        VoukoderItemControls.Remove(en);
+                    }
+                    else if (operationType == OperationType.Install)
+                    {
+                        var item = _detectedPrograms.Single(x => x.ComponentType == changedEntry.ComponentType);
+                        //Check if entry already exists and delete it if true (appears when updating a component)
+                        if (VoukoderItemControls.Any(x => x.VoukoderProgramData.ComponentType == changedEntry.ComponentType))
+                        {
+                            var rm = VoukoderItemControls.Single(x => x.VoukoderProgramData.ComponentType == changedEntry.ComponentType);
+                            VoukoderItemControls.Remove(rm);
+                        }
+                        AddItem(item);
+                    }
                 }
-                else if (operationType == OperationType.Install)
+                else
                 {
-                    var item = _detectedPrograms.Single(x => x.ComponentType == changedEntry.ComponentType);
-                    AddItem(item);
+                    if (operationType == OperationType.Uninstall)
+                    {
+                        var item2 = _detectedPrograms.Single(x => x.ComponentType == changedEntry.ComponentType);
+                        AddItem(item2);
+                    }
+                    else if (operationType == OperationType.Install)
+                    {
+                        var en = VoukoderItemControls.Single(x => x.VoukoderProgramData.ComponentType == changedEntry.ComponentType);
+                        VoukoderItemControls.Remove(en);
+                    }
                 }
             }
-            else
+            catch (InvalidOperationException ex)
             {
-                if (operationType == OperationType.Uninstall)
-                {
-                    var item2 = _detectedPrograms.Single(x => x.ComponentType == VKEnumHelper.GetMatchingType(changedEntry.ComponentType));
-                    AddItem(item2);
-                }
-                else if (operationType == OperationType.Install)
-                {
-                    var en = VoukoderItemControls.Single(x => x.VoukoderProgramData.ComponentType == changedEntry.ComponentType);
-                    VoukoderItemControls.Remove(en);
-                }
+                Trace.WriteLine(ex.Message);
             }
         }
 
@@ -136,23 +150,6 @@ namespace VoukoderManager.GUI
                         }
                     }
                 }
-
-                //if (VoukoderItemControls.Count < 1)
-                //{
-                //    Label l = new Label();
-                //    if (_isInstalledPage)
-                //    {
-                //        l.Content = "There is currently no Voukoder component installed";
-                //    }
-                //    else
-                //    {
-                //        l.Content = "There is currently no program availible where Voukoder can be installed for";
-                //    }
-                //    l.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center;
-                //    l.VerticalAlignment = System.Windows.VerticalAlignment.Center;
-                //    l.FontSize = 22;
-                //    stackpanelPrograms.Children.Add(l);
-                //}
                 Mouse.OverrideCursor = null;
             }
         }

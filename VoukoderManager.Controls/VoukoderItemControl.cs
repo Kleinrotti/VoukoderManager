@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using VoukoderManager.Core;
@@ -34,7 +35,7 @@ namespace VoukoderManager.Controls
         private TextBlock _programName;
         private TextBlock _textBlockStatus;
         private IProgramEntry _entry { get; set; }
-        private IGitHubEntry _connectorUpdate;
+        private IGitHubEntry _packageUpdate;
         private static IGitHubEntry _coreUpdate;
         private bool _updateSearchDone;
         private static bool _updateSearchCoreDone;
@@ -47,6 +48,11 @@ namespace VoukoderManager.Controls
         public VoukoderItemControl()
         {
             VKEntry.OperationStatus += Operation_InstallProgressChanged;
+            VKPackage.InstallationFinished += VKPackage_InstallationFinished;
+        }
+
+        private void VKPackage_InstallationFinished(object sender, OperationFinishedEventArgs e)
+        {
         }
 
         private void Operation_InstallProgressChanged(object sender, ProcessStatusEventArgs e)
@@ -153,23 +159,23 @@ namespace VoukoderManager.Controls
             w.ShowDialog();
         }
 
-        private void _buttonUpdate_Click(object sender, RoutedEventArgs e)
+        private async void _buttonUpdate_Click(object sender, RoutedEventArgs e)
         {
-            if (_connectorUpdate != null)
+            if (_packageUpdate != null)
             {
-                var msb = MessageBox.Show("Are you sure to update: " + _connectorUpdate.ComponentType.ToString() +
-                    " to version: " + _connectorUpdate.Version.PackageVersion +
-                    "?", "Update", MessageBoxButton.YesNo);
+                var updatemsg = "Update: " + _packageUpdate.ComponentType.ToString() +
+                    " to version: " + _packageUpdate.Version.PackageVersion;
+                if (_packageUpdate.Dependencies != null)
+                {
+                    foreach (var v in _packageUpdate.Dependencies)
+                    {
+                        updatemsg += " \nUpdate: " + v.ComponentType.ToString() +
+                        " to version: " + v.Version.PackageVersion;
+                    }
+                }
+                var msb = MessageBox.Show(updatemsg, "Update", MessageBoxButton.YesNo);
                 if (msb == MessageBoxResult.Yes)
-                    DownloadPackage(_connectorUpdate);
-            }
-            if (_coreUpdate != null)
-            {
-                var msb = MessageBox.Show("Are you sure to update: " + _coreUpdate.ComponentType.ToString() +
-                    " to version: " + _coreUpdate.Version.PackageVersion +
-                    "?", "Update Core", MessageBoxButton.YesNo);
-                if (msb == MessageBoxResult.Yes)
-                    DownloadPackage(_coreUpdate);
+                    await DownloadPackage(_packageUpdate, true);
             }
         }
 
@@ -194,13 +200,13 @@ namespace VoukoderManager.Controls
 
         private void W_InstallEvent(object sender, InstallEventArgs e)
         {
-            DownloadPackage(e.PackageToInstall);
+            DownloadPackage(e.PackageToInstall, false);
         }
 
-        private async void DownloadPackage(IGitHubEntry entry)
+        private async Task DownloadPackage(IGitHubEntry entry, bool forceDepDownload)
         {
             VKGithubEntry.DownloadProgressChanged += VoukoderEntry_DownloadProgressChanged;
-            var t = await entry.StartPackageDownloadWithDependencies();
+            var t = await entry.StartPackageDownloadWithDependencies(forceDepDownload);
             t.InstallPackageWithDepenencies();
             VKGithubEntry.DownloadProgressChanged -= VoukoderEntry_DownloadProgressChanged;
         }
@@ -214,26 +220,30 @@ namespace VoukoderManager.Controls
         {
             if (_entry.VoukoderComponent != null)
             {
-                Console.WriteLine("Update Called");
                 var p = new PackageManager();
-                var update = p.GetUpdate(_entry.VoukoderComponent);
-                if (update != null)
-                {
-                    _connectorUpdate = update;
-                    _buttonUpdate.Content = "Update";
-                    _buttonUpdate.Visibility = Visibility.Visible;
-                }
-                //Check for voukoder core update
                 if (!_updateSearchCoreDone)
                 {
-                    var update2 = p.GetUpdate(_entry.VoukoderComponent.VoukoderComponent);
+                    _coreUpdate = p.GetUpdate(_entry.VoukoderComponent.VoukoderComponent);
                     _updateSearchCoreDone = true;
-                    if (update2 != null)
+                }
+
+                var update = p.GetUpdate(_entry.VoukoderComponent);
+                if (update == null)
+                {
+                    if (_coreUpdate != null)
                     {
-                        _coreUpdate = update2;
+                        _packageUpdate = _coreUpdate;
+                        _buttonUpdate.Content = "Update";
                         _buttonUpdate.Visibility = Visibility.Visible;
-                        _buttonUpdate.Content = "Update Core";
                     }
+                }
+                else
+                {
+                    if (_coreUpdate != null)
+                        update.Dependencies = new List<IGitHubEntry>() { _coreUpdate };
+                    _packageUpdate = update;
+                    _buttonUpdate.Content = "Update";
+                    _buttonUpdate.Visibility = Visibility.Visible;
                 }
             }
         }

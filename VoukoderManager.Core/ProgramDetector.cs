@@ -32,25 +32,25 @@ namespace VoukoderManager.Core
                     {
                         ConvertFromRegistryEntry(out pro, pr, ProgramType.Premiere);
                         if (includeConnector)
-                            FillComponent(ref pro, ProgramType.VoukoderConnectorPremiere);
+                            FillComponent(ref pro, ProgramType.Premiere);
                     }
                     else if (pr.DisplayName.Contains("Media Encoder"))
                     {
                         ConvertFromRegistryEntry(out pro, pr, ProgramType.MediaEncoder);
                         if (includeConnector)
-                            FillComponent(ref pro, ProgramType.VoukoderConnectorPremiere);
+                            FillComponent(ref pro, ProgramType.Premiere);
                     }
                     else if (pr.DisplayName.Contains("Effects"))
                     {
                         ConvertFromRegistryEntry(out pro, pr, ProgramType.AfterEffects);
                         if (includeConnector)
-                            FillComponent(ref pro, ProgramType.VoukoderConnectorAfterEffects);
+                            FillComponent(ref pro, ProgramType.AfterEffects);
                     }
                     else
                     {
                         ConvertFromRegistryEntry(out pro, pr, ProgramType.VEGAS);
                         if (includeConnector)
-                            FillComponent(ref pro, ProgramType.VoukoderConnectorVegas);
+                            FillComponent(ref pro, ProgramType.VEGAS);
                     }
                     list.Add(pro);
                 }
@@ -93,11 +93,11 @@ namespace VoukoderManager.Core
                 if (e.DisplayName.Contains("Voukoder"))
                 {
                     if (e.DisplayName.Contains("Premiere"))
-                        ConvertFromRegistryEntry(out entry, e, ProgramType.VoukoderConnectorPremiere);
+                        ConvertFromRegistryEntry(out entry, e, ProgramType.Premiere);
                     else if (e.DisplayName.Contains("VEGAS"))
-                        ConvertFromRegistryEntry(out entry, e, ProgramType.VoukoderConnectorVegas);
+                        ConvertFromRegistryEntry(out entry, e, ProgramType.VEGAS);
                     else if (e.DisplayName.Contains("AfterEffects"))
-                        ConvertFromRegistryEntry(out entry, e, ProgramType.VoukoderConnectorAfterEffects);
+                        ConvertFromRegistryEntry(out entry, e, ProgramType.AfterEffects);
                     else
                         ConvertFromRegistryEntry(out entry, e, ProgramType.VoukoderCore);
 
@@ -122,11 +122,11 @@ namespace VoukoderManager.Core
                 if (e.DisplayName.Contains("Voukoder"))
                 {
                     if (e.DisplayName.Contains("Premiere"))
-                        ConvertFromRegistryEntry(out entry, e, ProgramType.VoukoderConnectorPremiere);
+                        ConvertFromRegistryEntry(out entry, e, ProgramType.Premiere);
                     else if (e.DisplayName.Contains("VEGAS"))
-                        ConvertFromRegistryEntry(out entry, e, ProgramType.VoukoderConnectorVegas);
+                        ConvertFromRegistryEntry(out entry, e, ProgramType.VEGAS);
                     else if (e.DisplayName.Contains("AfterEffects"))
-                        ConvertFromRegistryEntry(out entry, e, ProgramType.VoukoderConnectorAfterEffects);
+                        ConvertFromRegistryEntry(out entry, e, ProgramType.AfterEffects);
                     else
                         ConvertFromRegistryEntry(out entry, e, ProgramType.VoukoderCore);
                     list.Add(entry);
@@ -151,9 +151,9 @@ namespace VoukoderManager.Core
         public static string GetPluginsDir(ProgramType programType)
         {
             if (programType == ProgramType.Premiere || programType == ProgramType.MediaEncoder
-                || programType == ProgramType.VoukoderConnectorPremiere)
+                || programType == ProgramType.Premiere)
                 return RegistryHelper.GetHKEYLocalValue(_premierePluginsDir, "Plug-InsDir");
-            else if (programType == ProgramType.AfterEffects || programType == ProgramType.VoukoderConnectorAfterEffects)
+            else if (programType == ProgramType.AfterEffects || programType == ProgramType.AfterEffects)
                 return RegistryHelper.GetHKEYLocalValue(_afterEffectsPluginsDir, "Plug-InsDir");
             else
                 return RegistryHelper.GetHKEYLocalValue(_vegasPluginsDir, "InstallPath");

@@ -9,7 +9,7 @@ namespace VoukoderManager.Core.Models
 
         Task<IPackage> StartPackageDownload();
 
-        Task<IPackage> StartPackageDownloadWithDependencies();
+        Task<IPackage> StartPackageDownloadWithDependencies(bool forceDependencyDownload);
 
         void StopPackageDownload();
     }
