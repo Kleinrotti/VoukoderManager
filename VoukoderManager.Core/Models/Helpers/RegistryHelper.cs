@@ -70,6 +70,28 @@ namespace VoukoderManager.Core
             return values;
         }
 
+        public static void SetUseBetaVerion(bool value)
+        {
+            using (var _registryKey = Registry.CurrentUser.OpenSubKey(@"Software\VoukoderManager", true))
+            {
+                _registryKey.SetValue("UseBetaVersions", value, RegistryValueKind.DWord);
+            }
+        }
+
+        public static bool GetUseBetaVersion()
+        {
+            using (var _registryKey = Registry.CurrentUser.OpenSubKey(@"Software\VoukoderManager", true))
+            {
+                var v = _registryKey.GetValue("UseBetaVersions");
+                if (v == null)
+                {
+                    _registryKey.SetValue("UseBetaVersions", false, RegistryValueKind.DWord);
+                    return false;
+                }
+                return Convert.ToBoolean(v);
+            }
+        }
+
         /// <summary>
         /// Returns the registry base key for 32bit or 64bit
         /// </summary>

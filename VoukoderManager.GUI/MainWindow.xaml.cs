@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using VoukoderManager.Core;
@@ -33,6 +34,7 @@ namespace VoukoderManager.GUI
             _lang = new Lang();
             _lang.Initialize();
             InitializeComponent();
+            menuItem_beta.IsChecked = PackageManager.AllowPreReleaseVersion;
             DataContext = this;
             Lang.LanguageChanged += LanguageChanged;
             PackageManager.ApiRequestUsed += PackageManager_ApiRequestUsed;
@@ -98,6 +100,17 @@ namespace VoukoderManager.GUI
             buttonAvailible.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3399FF"));
             buttonInstalled.Foreground = new SolidColorBrush(Colors.Black);
             framePages.Navigate(_availiblePage);
+        }
+
+        private void MenuItem_exit_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void MenuItem_beta_Click(object sender, RoutedEventArgs e)
+        {
+            var src = e.Source as MenuItem;
+            RegistryHelper.SetUseBetaVerion(src.IsChecked);
         }
     }
 }

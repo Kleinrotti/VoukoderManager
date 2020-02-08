@@ -11,7 +11,14 @@ namespace VoukoderManager.Core
     public class PackageManager
     {
         private static readonly GitHubClient _client;
-        public static bool AllowPreReleaseVersion { get; set; } = false;
+
+        public static bool AllowPreReleaseVersion
+        {
+            get
+            {
+                return RegistryHelper.GetUseBetaVersion();
+            }
+        }
 
         public static int RemainingApiRequests { get { return _client.GetLastApiInfo().RateLimit.Remaining; } }
 
@@ -176,7 +183,10 @@ namespace VoukoderManager.Core
                         DownloadUrl = new Uri(release.Assets[0].BrowserDownloadUrl)
                     };
                     if (entry.Version.CompareTo(entr.Version) < 0)
-                        return entr;
+                        if (!AllowPreReleaseVersion && entr.Version.PreRelease)
+                            return null;
+                        else
+                            return entr;
                     return null;
                 }
                 else
