@@ -1,6 +1,6 @@
 ﻿namespace VoukoderManager.Core.Models
 {
-    public enum ProgramType
+    public enum ProgramType : int
     {
         VoukoderCore,
         VEGAS,

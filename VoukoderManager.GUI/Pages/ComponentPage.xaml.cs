@@ -73,7 +73,7 @@ namespace VoukoderManager.GUI
 
         private void UpdateProgramList(IEntry changedEntry, OperationType operationType)
         {
-            _detectedPrograms = ProgramDetector.GetInstalledPrograms(true);
+            _detectedPrograms = ProgramDetector.GetInstalledPrograms(true, true);
             try
             {
                 if (_isInstalledPage)
@@ -126,7 +126,7 @@ namespace VoukoderManager.GUI
 
             void GetEntries(object sender, DoWorkEventArgs args)
             {
-                _detectedPrograms = ProgramDetector.GetInstalledPrograms(true);
+                _detectedPrograms = ProgramDetector.GetInstalledPrograms(true, true);
             }
 
             void WorkCompleted(object sender, RunWorkerCompletedEventArgs args)
