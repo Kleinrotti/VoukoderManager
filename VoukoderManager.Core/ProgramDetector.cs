@@ -9,9 +9,9 @@ namespace VoukoderManager.Core
     public static class ProgramDetector
     {
         private static string _registryProgramPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
-        private static string _premierePluginsDir = @"SOFTWARE\Adobe\Premiere Pro\CurrentVersion";
-        private static string _afterEffectsPluginsDir = @"SOFTWARE\Adobe\After Effects\CurrentVersion";
-        private static string _vegasPluginsDir = @"SOFTWARE\Sony Creative Software\VEGAS Pro\17.0";
+        private static string _premierePluginsDir = @"SOFTWARE\Adobe\Premiere Pro\";
+        private static string _afterEffectsPluginsDir = @"SOFTWARE\Adobe\After Effects\";
+        private static string _vegasPluginsDir = @"SOFTWARE\Sony Creative Software\VEGAS Pro\";
 
         /// <summary>
         /// Returns a list which contains all installed programs where voukoder components are availible for
@@ -148,15 +148,14 @@ namespace VoukoderManager.Core
             return false;
         }
 
-        public static string GetPluginsDir(ProgramType programType)
+        public static string GetPluginsDir(IEntry program)
         {
-            if (programType == ProgramType.Premiere || programType == ProgramType.MediaEncoder
-                || programType == ProgramType.Premiere)
-                return RegistryHelper.GetHKEYLocalValue(_premierePluginsDir, "Plug-InsDir");
-            else if (programType == ProgramType.AfterEffects || programType == ProgramType.AfterEffects)
-                return RegistryHelper.GetHKEYLocalValue(_afterEffectsPluginsDir, "Plug-InsDir");
+            if (program.ComponentType == ProgramType.Premiere || program.ComponentType == ProgramType.MediaEncoder)
+                return RegistryHelper.GetHKEYLocalValue(_premierePluginsDir + program.Version.Major + ".0", "Plug-InsDir");
+            else if (program.ComponentType == ProgramType.AfterEffects || program.ComponentType == ProgramType.AfterEffects)
+                return RegistryHelper.GetHKEYLocalValue(_afterEffectsPluginsDir + program.Version.Major + ".0", "Plug-InsDir");
             else
-                return RegistryHelper.GetHKEYLocalValue(_vegasPluginsDir, "InstallPath");
+                return RegistryHelper.GetHKEYLocalValue(_vegasPluginsDir + program.Version.Major + ".0", "InstallPath");
         }
     }
 }

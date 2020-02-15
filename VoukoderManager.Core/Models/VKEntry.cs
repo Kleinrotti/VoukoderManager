@@ -24,5 +24,14 @@ namespace VoukoderManager.Core.Models
         {
             OperationStatus?.Invoke(this, e);
         }
+
+        /// <summary>
+        /// Returns the name with replaced space and dots
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return Name.Replace(' ', '_').Replace('.', '_');
+        }
     }
 }

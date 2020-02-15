@@ -24,6 +24,10 @@ namespace VoukoderManager.Controls
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Constructor to display properties of the given entry
+        /// </summary>
+        /// <param name="entry"></param>
         public PropertyWindow(IEntry entry)
         {
             InitializeComponent();
@@ -32,6 +36,10 @@ namespace VoukoderManager.Controls
             ShowProperties();
         }
 
+        /// <summary>
+        /// Contructor to display all entries of the given list
+        /// </summary>
+        /// <param name="entryList"></param>
         public PropertyWindow(List<IGitHubEntry> entryList)
         {
             InitializeComponent();
@@ -102,6 +110,7 @@ namespace VoukoderManager.Controls
         {
             List<IEntry> lst = new List<IEntry>();
             lst.Add(_programEntry);
+            lst.Add(((VKProgramEntry)_programEntry).VoukoderComponent);
             icItems.ItemsSource = lst;
         }
     }

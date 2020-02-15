@@ -17,13 +17,13 @@
         <Grid x:Name="gridMove" Background="Transparent" VerticalAlignment="Top" HorizontalAlignment="Left" Height="30" Width="1170" MouseDown="gridMove_MouseDown" />
         <Button Content="X" FontSize="20" Name="buttonExit" Click="buttonExit_Click" Style="{DynamicResource MaterialDesignFlatButton}" Height="Auto" Width="Auto" Foreground="Red" VerticalAlignment="Top" HorizontalAlignment="Right" />
         <Button Content="-" FontSize="20" Name="buttonMinimize" Click="buttonMinimize_Click"  Style="{DynamicResource MaterialDesignFlatButton}" Height="Auto" Width="Auto" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,0,46,0" />
-        <DockPanel Visibility="Visible" HorizontalAlignment="Left" Height="28" LastChildFill="False" VerticalAlignment="Top" Width="800" Margin="0,0,-0.333,0">
-            <Menu DockPanel.Dock="Top" Height="28" Margin="0,0,0.333,0">
-                <MenuItem Header="_File" Height="28" Width="88">
-                    <MenuItem Header="_Exit" Click="MenuItem_exit_Click" />
+        <DockPanel Visibility="Visible" HorizontalAlignment="Left" Height="28" LastChildFill="False" VerticalAlignment="Top" Width="250" Margin="0,0,-0.333,0">
+            <Menu DockPanel.Dock="Top" Margin="0,0,0.333,0" Background="Transparent">
+                <MenuItem Header="_File" Height="28">
+                    <MenuItem Header="_Exit" Click="MenuItem_exit_Click" Background="White" />
                 </MenuItem>
-                <MenuItem Header="_Options" Height="28" Width="88">
-                    <MenuItem Header="_Use beta versions" IsCheckable="True" Click="MenuItem_beta_Click" Name="menuItem_beta" />
+                <MenuItem Header="_Options" Height="28">
+                    <MenuItem Header="_Use beta versions" IsCheckable="True" Click="MenuItem_beta_Click" Name="menuItem_beta" Background="White" />
                 </MenuItem>
             </Menu>
         </DockPanel>

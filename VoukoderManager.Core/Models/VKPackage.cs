@@ -31,7 +31,7 @@ namespace VoukoderManager.Core.Models
         {
             get
             {
-                return ProgramDetector.GetPluginsDir(this.ComponentType);
+                return ProgramDetector.GetPluginsDir(this);
             }
         }
 

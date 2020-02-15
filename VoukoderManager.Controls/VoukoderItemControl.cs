@@ -37,7 +37,6 @@ namespace VoukoderManager.Controls
         private IProgramEntry _entry { get; set; }
         private IGitHubEntry _packageUpdate;
         private static IGitHubEntry _coreUpdate;
-        private bool _updateSearchDone;
         private static bool _updateSearchCoreDone;
 
         static VoukoderItemControl()
@@ -48,11 +47,6 @@ namespace VoukoderManager.Controls
         public VoukoderItemControl()
         {
             VKEntry.OperationStatus += Operation_InstallProgressChanged;
-            VKPackage.InstallationFinished += VKPackage_InstallationFinished;
-        }
-
-        private void VKPackage_InstallationFinished(object sender, OperationFinishedEventArgs e)
-        {
         }
 
         private void Operation_InstallProgressChanged(object sender, ProcessStatusEventArgs e)
@@ -163,13 +157,13 @@ namespace VoukoderManager.Controls
         {
             if (_packageUpdate != null)
             {
-                var updatemsg = "Update: " + _packageUpdate.ComponentType.ToString() +
+                var updatemsg = "Update: Voukoder for " + _packageUpdate.ComponentType.ToString() +
                     " to version: " + _packageUpdate.Version.PackageVersion;
                 if (_packageUpdate.Dependencies != null)
                 {
                     foreach (var v in _packageUpdate.Dependencies)
                     {
-                        updatemsg += " \nUpdate: " + v.ComponentType.ToString() +
+                        updatemsg += "\nUpdate: Voukoder Core " + v.ComponentType.ToString() +
                         " to version: " + v.Version.PackageVersion;
                     }
                 }

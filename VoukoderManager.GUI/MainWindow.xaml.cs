@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using VoukoderManager.Core;
+using VoukoderManager.Core.Models;
 using VoukoderManager.Language;
 
 namespace VoukoderManager.GUI
@@ -38,9 +39,16 @@ namespace VoukoderManager.GUI
             DataContext = this;
             Lang.LanguageChanged += LanguageChanged;
             PackageManager.ApiRequestUsed += PackageManager_ApiRequestUsed;
+            VKPackage.InstallationFinished += VKPackage_InstallationFinished;
             _installedPage = new ComponentPage(true);
             _availiblePage = new ComponentPage(false);
             framePages.Navigate(_installedPage);
+        }
+
+        private void VKPackage_InstallationFinished(object sender, OperationFinishedEventArgs e)
+        {
+            if (e.OperationType == OperationType.Install)
+                buttonInstalled_Click(this, new RoutedEventArgs());
         }
 
         #region INotifyPropertyChanged Members

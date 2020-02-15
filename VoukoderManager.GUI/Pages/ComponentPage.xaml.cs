@@ -80,16 +80,16 @@ namespace VoukoderManager.GUI
                 {
                     if (operationType == OperationType.Uninstall)
                     {
-                        var en = VoukoderItemControls.Single(x => x.VoukoderProgramData.VoukoderComponent.ComponentType == changedEntry.ComponentType);
+                        var en = VoukoderItemControls.Single(x => x.VoukoderProgramData.VoukoderComponent.Name == changedEntry.Name);
                         VoukoderItemControls.Remove(en);
                     }
                     else if (operationType == OperationType.Install)
                     {
-                        var item = _detectedPrograms.Single(x => x.ComponentType == changedEntry.ComponentType);
+                        var item = _detectedPrograms.Where(x => x.ComponentType == changedEntry.ComponentType).First();
                         //Check if entry already exists and delete it if true (appears when updating a component)
-                        if (VoukoderItemControls.Any(x => x.VoukoderProgramData.ComponentType == changedEntry.ComponentType))
+                        if (VoukoderItemControls.Any(x => x.VoukoderProgramData.Name == changedEntry.ToString()))
                         {
-                            var rm = VoukoderItemControls.Single(x => x.VoukoderProgramData.ComponentType == changedEntry.ComponentType);
+                            var rm = VoukoderItemControls.Single(x => x.VoukoderProgramData.Name == changedEntry.ToString());
                             VoukoderItemControls.Remove(rm);
                         }
                         AddItem(item);
@@ -99,7 +99,7 @@ namespace VoukoderManager.GUI
                 {
                     if (operationType == OperationType.Uninstall)
                     {
-                        var item2 = _detectedPrograms.Single(x => x.ComponentType == changedEntry.ComponentType);
+                        var item2 = _detectedPrograms.Where(x => x.ComponentType == changedEntry.ComponentType).First();
                         AddItem(item2);
                     }
                     else if (operationType == OperationType.Install)
@@ -137,14 +137,14 @@ namespace VoukoderManager.GUI
                 {
                     if (_isInstalledPage)
                     {
-                        if (v.VoukoderComponent != null && !v.Hide && !VoukoderItemControls.Any(x => x.Name == "item" + v.ComponentType.ToString()))
+                        if (v.VoukoderComponent != null && !v.Hide && !VoukoderItemControls.Any(x => x.VoukoderProgramData.ComponentType == v.ComponentType))
                         {
                             AddItem(v);
                         }
                     }
                     else
                     {
-                        if (v.VoukoderComponent == null && !v.Hide && !VoukoderItemControls.Any(x => x.Name == "item" + v.ComponentType.ToString()))
+                        if (v.VoukoderComponent == null && !v.Hide && !VoukoderItemControls.Any(x => x.VoukoderProgramData.ComponentType == v.ComponentType))
                         {
                             AddItem(v);
                         }
@@ -158,7 +158,7 @@ namespace VoukoderManager.GUI
         {
             var i = new VoukoderItemControl
             {
-                Name = "item" + entry.ComponentType.ToString(),
+                Name = "item" + entry.ToString(),
                 VoukoderProgramData = entry,
                 Margin = new System.Windows.Thickness(0, 10, 0, 0)
             };

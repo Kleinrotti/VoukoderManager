@@ -5,6 +5,7 @@
         Download,
         Install,
         Uninstall,
+        Update,
         Repair
     }
 }
