@@ -172,9 +172,9 @@ namespace VoukoderManager.Core
         public static string GetPluginsDir(IEntry program)
         {
             if (program.ComponentType == ProgramType.Premiere || program.ComponentType == ProgramType.MediaEncoder)
-                return RegistryHelper.GetHKEYLocalValue(_premierePluginsDir + program.Version.Major + ".0", "Plug-InsDir");
+                return RegistryHelper.GetHKEYLocalValue(_premierePluginsDir + program.Version.Major + ".0", "CommonPluginInstallPath");
             else if (program.ComponentType == ProgramType.AfterEffects || program.ComponentType == ProgramType.AfterEffects)
-                return RegistryHelper.GetHKEYLocalValue(_afterEffectsPluginsDir + program.Version.Major + ".0", "Plug-InsDir");
+                return RegistryHelper.GetHKEYLocalValue(_afterEffectsPluginsDir + program.Version.Major + ".0", "CommonPluginInstallPath");
             else
                 return RegistryHelper.GetHKEYLocalValue(_vegasPluginsDir + program.Version.Major + ".0", "InstallPath");
         }

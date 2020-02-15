@@ -13,6 +13,7 @@ namespace VoukoderManager.Core.Models
         public virtual string Path { get; set; }
         protected static BackgroundWorker _worker = new BackgroundWorker();
         protected bool _installDependencies;
+        protected IEntry _nle;
 
         protected virtual string InstallArguments
         {
@@ -31,7 +32,7 @@ namespace VoukoderManager.Core.Models
         {
             get
             {
-                return ProgramDetector.GetPluginsDir(this);
+                return ProgramDetector.GetPluginsDir(_nle);
             }
         }
 
@@ -85,9 +86,10 @@ namespace VoukoderManager.Core.Models
 
         public static event EventHandler<OperationFinishedEventArgs> InstallationFinished;
 
-        public virtual void InstallPackage()
+        public virtual void InstallPackage(IEntry nle)
         {
             _installDependencies = false;
+            _nle = nle;
             _worker.DoWork += ExecuteProcess;
             _worker.RunWorkerCompleted += WorkerCompleted;
             _worker.RunWorkerAsync();
@@ -146,9 +148,10 @@ namespace VoukoderManager.Core.Models
             }
         }
 
-        public virtual void InstallPackageWithDepenencies()
+        public virtual void InstallPackageWithDepenencies(IEntry nle)
         {
             _installDependencies = true;
+            _nle = nle;
             _worker.DoWork += ExecuteProcess;
             _worker.RunWorkerCompleted += WorkerCompleted;
             _worker.RunWorkerAsync();
