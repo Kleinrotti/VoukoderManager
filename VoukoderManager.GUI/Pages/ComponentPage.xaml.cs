@@ -42,7 +42,10 @@ namespace VoukoderManager.GUI
         private void Package_InstallationFinished(object sender, OperationFinishedEventArgs e)
         {
             if (!e.Cancelled)
-                UpdateProgramList(e.Entry, e.OperationType);
+                if (e.Entry.ComponentType == ProgramType.VoukoderCore || ((VKPackage)e.Entry).Dependencies != null)
+                    LoadProgramLists();
+                else
+                    UpdateProgramList(e.Entry, e.OperationType);
         }
 
         private void ProgramEntry_UninstallationFinished(object sender, OperationFinishedEventArgs e)
@@ -87,9 +90,9 @@ namespace VoukoderManager.GUI
                     {
                         var item = _detectedPrograms.Where(x => x.ComponentType == changedEntry.ComponentType).First();
                         //Check if entry already exists and delete it if true (appears when updating a component)
-                        if (VoukoderItemControls.Any(x => x.VoukoderProgramData.Name == changedEntry.ToString()))
+                        if (VoukoderItemControls.Any(x => x.Name == "item" + ((VKPackage)changedEntry).Nle.ToString()))
                         {
-                            var rm = VoukoderItemControls.Single(x => x.VoukoderProgramData.Name == changedEntry.ToString());
+                            var rm = VoukoderItemControls.Single(x => x.Name == "item" + ((VKPackage)changedEntry).Nle.ToString());
                             VoukoderItemControls.Remove(rm);
                         }
                         AddItem(item);
@@ -133,18 +136,19 @@ namespace VoukoderManager.GUI
             {
                 _worker.DoWork -= GetEntries;
                 _worker.RunWorkerCompleted -= WorkCompleted;
+                VoukoderItemControls.Clear();
                 foreach (var v in _detectedPrograms)
                 {
                     if (_isInstalledPage)
                     {
-                        if (v.VoukoderComponent != null && !v.Hide && !VoukoderItemControls.Any(x => x.VoukoderProgramData.ComponentType == v.ComponentType))
+                        if (v.VoukoderComponent != null && !v.Hide)
                         {
                             AddItem(v);
                         }
                     }
                     else
                     {
-                        if (v.VoukoderComponent == null && !v.Hide && !VoukoderItemControls.Any(x => x.VoukoderProgramData.ComponentType == v.ComponentType))
+                        if (v.VoukoderComponent == null && !v.Hide)
                         {
                             AddItem(v);
                         }

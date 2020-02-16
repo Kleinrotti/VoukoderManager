@@ -201,6 +201,7 @@ namespace VoukoderManager.Controls
         {
             VKGithubEntry.DownloadProgressChanged += VoukoderEntry_DownloadProgressChanged;
             var t = await entry.StartPackageDownloadWithDependencies(forceDepDownload);
+            _coreUpdate = null;
             t.InstallPackageWithDepenencies(_entry);
             VKGithubEntry.DownloadProgressChanged -= VoukoderEntry_DownloadProgressChanged;
         }
