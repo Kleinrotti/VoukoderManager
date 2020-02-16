@@ -39,6 +39,6 @@ namespace VoukoderManager.Core.Models
         /// </summary>
         BitmapImage Logo { get; }
 
-        IProgramEntry VoukoderComponent { get; set; }
+        IProgramEntry SubComponent { get; set; }
     }
 }

@@ -83,7 +83,7 @@ namespace VoukoderManager.GUI
                 {
                     if (operationType == OperationType.Uninstall)
                     {
-                        var en = VoukoderItemControls.Single(x => x.VoukoderProgramData.VoukoderComponent.Name == changedEntry.Name);
+                        var en = VoukoderItemControls.Single(x => x.VoukoderProgramData.SubComponent.Name == changedEntry.Name);
                         VoukoderItemControls.Remove(en);
                     }
                     else if (operationType == OperationType.Install)
@@ -141,14 +141,14 @@ namespace VoukoderManager.GUI
                 {
                     if (_isInstalledPage)
                     {
-                        if (v.VoukoderComponent != null && !v.Hide)
+                        if (v.SubComponent != null && !v.Hide)
                         {
                             AddItem(v);
                         }
                     }
                     else
                     {
-                        if (v.VoukoderComponent == null && !v.Hide)
+                        if (v.SubComponent == null && !v.Hide)
                         {
                             AddItem(v);
                         }

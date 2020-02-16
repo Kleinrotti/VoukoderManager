@@ -126,7 +126,6 @@ namespace VoukoderManager.Core.Models
                 if (!_installDependencies || (Dependencies == null))
                 {
                     OnOperationStatusChanged(new ProcessStatusEventArgs($"Finished installation of package {Name}", ComponentType));
-                    p.Dispose();
                 }
                 else
                 {
@@ -139,8 +138,8 @@ namespace VoukoderManager.Core.Models
                         p.WaitForExit();
                         OnOperationStatusChanged(new ProcessStatusEventArgs($"Finished installation of package dependency {v.Name}", ComponentType));
                     }
-                    p.Dispose();
                 }
+                p.Dispose();
             }
             catch (Win32Exception ex)
             {

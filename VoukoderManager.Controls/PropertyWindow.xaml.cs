@@ -110,7 +110,7 @@ namespace VoukoderManager.Controls
         {
             List<IEntry> lst = new List<IEntry>();
             lst.Add(_programEntry);
-            lst.Add(((VKProgramEntry)_programEntry).VoukoderComponent);
+            lst.Add(((VKProgramEntry)_programEntry).SubComponent);
             icItems.ItemsSource = lst;
         }
     }

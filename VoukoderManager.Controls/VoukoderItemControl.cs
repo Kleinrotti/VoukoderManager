@@ -51,9 +51,9 @@ namespace VoukoderManager.Controls
 
         private void Operation_InstallProgressChanged(object sender, ProcessStatusEventArgs e)
         {
-            if (_entry.VoukoderComponent != null)
+            if (_entry.SubComponent != null)
             {
-                if (e.ComponentType == _entry.VoukoderComponent.ComponentType)
+                if (e.ComponentType == _entry.SubComponent.ComponentType)
                     UpdateStatusTextBlock(e.StatusMessage);
             }
             else
@@ -97,7 +97,7 @@ namespace VoukoderManager.Controls
             _programName.Text = _entry.Name;
             _programLogo.Source = _entry.Logo;
 
-            if (_entry.VoukoderComponent == null)
+            if (_entry.SubComponent == null)
             {
                 _buttonInstall.Visibility = Visibility.Visible;
             }
@@ -140,12 +140,25 @@ namespace VoukoderManager.Controls
 
         private void _buttonUninstall_Click(object sender, RoutedEventArgs e)
         {
-            _entry.VoukoderComponent.UninstallPackage();
+            var cp = ProgramDetector.GetInstalledVoukoderComponents();
+            if (_entry.SubComponent.SubComponent != null)
+            {
+                foreach (var v in cp)
+                {
+                    //remove voukoder core too if it's the last connector installed
+                    if (v.ComponentType != _entry.SubComponent.ComponentType && v.ComponentType != _entry.SubComponent.SubComponent.ComponentType)
+                    {
+                        _entry.SubComponent.UninstallPackage(false);
+                        return;
+                    }
+                }
+            }
+            _entry.SubComponent.UninstallPackage(true);
         }
 
         private void _buttonProperties_Click(object sender, RoutedEventArgs e)
         {
-            PropertyWindow w = new PropertyWindow(_entry.VoukoderComponent)
+            PropertyWindow w = new PropertyWindow(_entry.SubComponent)
             {
                 Owner = Window.GetWindow(this),
                 WindowStartupLocation = WindowStartupLocation.CenterOwner
@@ -213,16 +226,16 @@ namespace VoukoderManager.Controls
 
         private void CheckForUpdate()
         {
-            if (_entry.VoukoderComponent != null)
+            if (_entry.SubComponent != null)
             {
                 var p = new PackageManager();
                 if (!_updateSearchCoreDone)
                 {
-                    _coreUpdate = p.GetUpdate(_entry.VoukoderComponent.VoukoderComponent);
+                    _coreUpdate = p.GetUpdate(_entry.SubComponent.SubComponent);
                     _updateSearchCoreDone = true;
                 }
 
-                var update = p.GetUpdate(_entry.VoukoderComponent);
+                var update = p.GetUpdate(_entry.SubComponent);
                 if (update == null)
                 {
                     if (_coreUpdate != null)

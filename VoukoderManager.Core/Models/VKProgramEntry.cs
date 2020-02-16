@@ -13,8 +13,9 @@ namespace VoukoderManager.Core.Models
         public string UninstallString { get; set; }
         public string ModifyPath { get; set; }
         public string Publisher { get; set; }
-        public IProgramEntry VoukoderComponent { get; set; }
+        public IProgramEntry SubComponent { get; set; }
         private bool _cancelled;
+        protected bool _removeDependency;
 
         private static BackgroundWorker _worker = new BackgroundWorker();
 
@@ -75,8 +76,9 @@ namespace VoukoderManager.Core.Models
             _worker.RunWorkerCompleted -= WorkerCompleted;
         }
 
-        public virtual void UninstallPackage()
+        public virtual void UninstallPackage(bool includeDendency)
         {
+            _removeDependency = includeDendency;
             _worker.DoWork += ExecuteProcess;
             _worker.RunWorkerCompleted += WorkerCompleted;
             _worker.RunWorkerAsync();
@@ -97,13 +99,26 @@ namespace VoukoderManager.Core.Models
             {
                 p.Start();
                 p.WaitForExit();
+                if (!_removeDependency || SubComponent == null)
+                {
+                    OnOperationStatusChanged(new ProcessStatusEventArgs($"Finished uninstall of package {Name}", ComponentType));
+                }
+                else
+                {
+                    OnOperationStatusChanged(new ProcessStatusEventArgs($"Starting uninstall of package {SubComponent.Name}", ComponentType));
+                    startinfo.Arguments = SubComponent.UninstallString.Split(' ')[1];
+                    p.StartInfo = startinfo;
+                    p.Start();
+                    p.WaitForExit();
+                    OnOperationStatusChanged(new ProcessStatusEventArgs($"Finished uninstall of package {SubComponent.Name}", ComponentType));
+                }
                 p.Dispose();
-                OnOperationStatusChanged(new ProcessStatusEventArgs($"Finished uninstall of package {Name}", ComponentType));
             }
             catch (Win32Exception ex)
             {
                 _cancelled = true;
                 OnOperationStatusChanged(new ProcessStatusEventArgs(ex.Message, ComponentType));
+                p.Dispose();
             }
         }
 

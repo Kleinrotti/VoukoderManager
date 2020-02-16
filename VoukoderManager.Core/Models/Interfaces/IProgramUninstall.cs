@@ -2,7 +2,7 @@
 {
     public interface IProgramUninstall
     {
-        void UninstallPackage();
+        void UninstallPackage(bool includeDependency);
 
         void StopUninstallPackage();
     }

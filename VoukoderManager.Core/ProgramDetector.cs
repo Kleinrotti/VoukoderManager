@@ -62,9 +62,9 @@ namespace VoukoderManager.Core
 
             void FillComponent(ref IProgramEntry entry, ProgramType componentType)
             {
-                entry.VoukoderComponent = GetVoukoderComponent(componentType);
-                if (entry.VoukoderComponent != null)
-                    entry.VoukoderComponent.VoukoderComponent = GetVoukoderComponent(ProgramType.VoukoderCore);
+                entry.SubComponent = GetVoukoderComponent(componentType);
+                if (entry.SubComponent != null)
+                    entry.SubComponent.SubComponent = GetVoukoderComponent(ProgramType.VoukoderCore);
             }
             if (onlyNewestVersion)
             {
