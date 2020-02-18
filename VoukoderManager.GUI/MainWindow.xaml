@@ -72,7 +72,7 @@
                 </Style>
             </Button.Style>
         </Button>
-        <Frame Name="framePages" Margin="-1,143,408,0" NavigationUIVisibility="Hidden" BorderBrush="Black" BorderThickness="1">
-        </Frame>
+        <Frame Name="framePages" Width="900" Height="578" VerticalAlignment="Bottom" HorizontalAlignment="Left" NavigationUIVisibility="Hidden" BorderBrush="Black" BorderThickness="1" />
+        <Frame Name="framePages2" Width="380" Height="578" VerticalAlignment="Bottom" HorizontalAlignment="Right" NavigationUIVisibility="Hidden" BorderBrush="Black" BorderThickness="1" />
     </Grid>
 </Window>

@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using MaterialDesignThemes.Wpf;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using VoukoderManager.Core;
 using VoukoderManager.Core.Models;
 
@@ -15,6 +17,8 @@ namespace VoukoderManager.Controls
     [TemplatePart(Name = VoukoderItemControl.ElementInstallButton, Type = typeof(Button))]
     [TemplatePart(Name = VoukoderItemControl.ElementProgressBar, Type = typeof(ProgressBar))]
     [TemplatePart(Name = VoukoderItemControl.ElementTextBlockStatus, Type = typeof(TextBlock))]
+    [TemplatePart(Name = VoukoderItemControl.ElementLabelVersion, Type = typeof(Label))]
+    [TemplatePart(Name = VoukoderItemControl.ElementGridOuter, Type = typeof(Grid))]
     public class VoukoderItemControl : Control
     {
         private const string ElementProgramLabel = "PART_ProgramLabel";
@@ -25,6 +29,8 @@ namespace VoukoderManager.Controls
         private const string ElementInstallButton = "PART_InstallButton";
         private const string ElementProgressBar = "PART_BarProgress";
         private const string ElementTextBlockStatus = "PART_TextBlockStatus";
+        private const string ElementLabelVersion = "PART_labelVersion";
+        private const string ElementGridOuter = "PART_gridOuter";
 
         private ProgressBar _barProgress;
         private Button _buttonProperties;
@@ -34,6 +40,8 @@ namespace VoukoderManager.Controls
         private Image _programLogo;
         private TextBlock _programName;
         private TextBlock _textBlockStatus;
+        private Label _labelVersion;
+        private Grid _gridOuter;
         private IProgramEntry _entry { get; set; }
         private IGitHubEntry _packageUpdate;
         private static IGitHubEntry _coreUpdate;
@@ -94,6 +102,8 @@ namespace VoukoderManager.Controls
             _programName = GetTemplateChild(ElementProgramLabel) as TextBlock;
             _textBlockStatus = GetTemplateChild(ElementTextBlockStatus) as TextBlock;
             _barProgress = GetTemplateChild(ElementProgressBar) as ProgressBar;
+            _labelVersion = GetTemplateChild(ElementLabelVersion) as Label;
+            _gridOuter = GetTemplateChild(ElementGridOuter) as Grid;
             _programName.Text = _entry.Name;
             _programLogo.Source = _entry.Logo;
 
@@ -105,6 +115,8 @@ namespace VoukoderManager.Controls
             {
                 _buttonProperties.Visibility = Visibility.Visible;
                 _buttonUninstall.Visibility = Visibility.Visible;
+                _labelVersion.Content = _entry.SubComponent.Version.PackageVersion;
+                _labelVersion.Visibility = Visibility.Visible;
                 CheckForUpdate();
             }
         }
@@ -243,6 +255,7 @@ namespace VoukoderManager.Controls
                         _packageUpdate = _coreUpdate;
                         _buttonUpdate.Content = "Update";
                         _buttonUpdate.Visibility = Visibility.Visible;
+                        CreateUpdateInfo();
                     }
                 }
                 else
@@ -252,8 +265,51 @@ namespace VoukoderManager.Controls
                     _packageUpdate = update;
                     _buttonUpdate.Content = "Update";
                     _buttonUpdate.Visibility = Visibility.Visible;
+                    CreateUpdateInfo();
                 }
             }
+        }
+
+        private void CreateUpdateInfo()
+        {
+            var dockPanelUpdate = new DockPanel();
+            dockPanelUpdate.SetValue(Grid.RowProperty, 1);
+            dockPanelUpdate.Margin = new Thickness(30, -5, 0, 0);
+            dockPanelUpdate.SetValue(VerticalAlignmentProperty, VerticalAlignment.Bottom);
+            dockPanelUpdate.SetValue(HorizontalAlignmentProperty, HorizontalAlignment.Left);
+
+            var icon = new PackIcon { Kind = PackIconKind.Information };
+            icon.Foreground = new SolidColorBrush(Colors.CornflowerBlue);
+
+            var labelBlockHeadline = new Label();
+            labelBlockHeadline.Content = "Update availible";
+            DockPanel.SetDock(labelBlockHeadline, Dock.Bottom);
+
+            var labelUpdateVersion = new Label();
+            labelUpdateVersion.Content = _packageUpdate.Version.PackageVersion;
+            DockPanel.SetDock(labelUpdateVersion, Dock.Bottom);
+
+            var buttonChangelog = new Button();
+            buttonChangelog.Content = "View Details";
+            buttonChangelog.Foreground = new SolidColorBrush(Colors.CornflowerBlue);
+            buttonChangelog.Background = new SolidColorBrush(Colors.Transparent);
+            buttonChangelog.BorderThickness = new Thickness(0);
+            buttonChangelog.Click += ButtonChangelog_Click;
+            buttonChangelog.Width = double.NaN;
+            buttonChangelog.HorizontalAlignment = HorizontalAlignment.Left;
+            DockPanel.SetDock(buttonChangelog, Dock.Bottom);
+
+            dockPanelUpdate.Children.Add(icon);
+            dockPanelUpdate.Children.Add(buttonChangelog);
+            dockPanelUpdate.Children.Add(labelUpdateVersion);
+
+            dockPanelUpdate.Children.Add(labelBlockHeadline);
+            _gridOuter.Children.Add(dockPanelUpdate);
+        }
+
+        private void ButtonChangelog_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Not implemented yet");
         }
     }
 }

@@ -6,7 +6,7 @@
 
     <Style x:Key="{x:Type local:VoukoderItemControl}" TargetType="{x:Type local:VoukoderItemControl}">
         <Setter Property="Width" Value="680" />
-        <Setter Property="Height" Value="145" />
+        <Setter Property="Height" Value="auto" />
         <Setter Property="BorderBrush" Value="Black" />
         <Setter Property="BorderThickness" Value="0.5" />
         <Setter Property="Template">
@@ -16,10 +16,10 @@
                         <Border.Effect>
                             <DropShadowEffect ShadowDepth="0" />
                         </Border.Effect>
-                        <Grid x:Name="gridOuter" HorizontalAlignment="Left" Width="680" Background="#FFFFFF">
+                        <Grid x:Name="PART_gridOuter" HorizontalAlignment="Left" ShowGridLines="false" Width="680" Background="#FFFFFF">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="45" />
-                                <RowDefinition Height="100" />
+                                <RowDefinition Height="110" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -27,8 +27,9 @@
                             </Grid.ColumnDefinitions>
                             <Image Grid.Row="0" Margin="10" Source="./Resources/logo.png" Height="30" Width="30" VerticalAlignment="Top" HorizontalAlignment="Left" />
                             <Label Grid.Row="0" Content="oukoder for" Width="80" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="38,8,0,0" />
-                            <TextBlock x:Name="PART_ProgramLabel" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="15" Style="{DynamicResource MaterialDesignCaptionTextBlock}" />
-                            <Image x:Name="PART_ProgramLogo" Height="70" Width="70" Grid.Row="1" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Bottom" />
+                            <TextBlock x:Name="PART_ProgramLabel" Grid.Row="1" Margin="10,-10" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Light" FontSize="19" Style="{DynamicResource MaterialDesignCaptionTextBlock}" />
+                            <Label Grid.Row="1" x:Name="PART_labelVersion" Visibility="Collapsed" Width="auto" FontSize="14" FontWeight="Light" Margin="7,11" VerticalAlignment="Top" HorizontalAlignment="Left" />
+                            <Image x:Name="PART_ProgramLogo" Height="70" Visibility="Collapsed" Width="70" Grid.Row="1" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Bottom" />
                             <TextBlock HorizontalAlignment="Right" FontSize="12" Grid.Column="0" Grid.Row="1" VerticalAlignment="Bottom" Visibility="Hidden" x:Name="PART_TextBlockStatus" />
                             <StackPanel Grid.Row="2" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center">
                                 <Button x:Name="PART_InstallButton" Visibility="Collapsed" Width="160" FontSize="12" Height="29" Content="Install" Background="White" />
