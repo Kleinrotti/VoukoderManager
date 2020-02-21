@@ -127,8 +127,11 @@ namespace VoukoderManager.Core
                     if (i >= results)
                         break;
 
-                    var vkentry = new VKGithubEntry(f.Name, new Models.Version(f.Name));
-                    vkentry.DownloadUrl = new Uri(f.Assets[0].BrowserDownloadUrl);
+                    var vkentry = new VKGithubEntry(f.Name, new Models.Version(f.Name))
+                    {
+                        DownloadUrl = new Uri(f.Assets[0].BrowserDownloadUrl),
+                        Changelog = f.Body
+                    };
                     lst.Add(vkentry);
                     i++;
                 }
@@ -152,7 +155,8 @@ namespace VoukoderManager.Core
                     OnRequest(this, new ApiRequestEventArgs(_client.GetLastApiInfo()));
                     var entry = new VKGithubEntry(release.Name, new Models.Version(release.Name))
                     {
-                        DownloadUrl = new Uri(release.Assets[0].BrowserDownloadUrl)
+                        DownloadUrl = new Uri(release.Assets[0].BrowserDownloadUrl),
+                        Changelog = release.Body
                     };
                     return entry;
                 }
@@ -180,7 +184,8 @@ namespace VoukoderManager.Core
 
                     var entr = new VKGithubEntry(release.Name, new Models.Version(release.TagName))
                     {
-                        DownloadUrl = new Uri(release.Assets[0].BrowserDownloadUrl)
+                        DownloadUrl = new Uri(release.Assets[0].BrowserDownloadUrl),
+                        Changelog = release.Body
                     };
                     if (entry.Version.CompareTo(entr.Version) < 0)
                         if (!AllowPreReleaseVersion && entr.Version.PreRelease)

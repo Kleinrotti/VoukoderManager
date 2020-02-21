@@ -120,5 +120,9 @@ namespace VoukoderManager.GUI
             var src = e.Source as MenuItem;
             RegistryHelper.SetUseBetaVerion(src.IsChecked);
         }
+
+        private void menuItem_notifications_Click(object sender, RoutedEventArgs e)
+        {
+        }
     }
 }
