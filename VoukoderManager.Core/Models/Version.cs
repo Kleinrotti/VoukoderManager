@@ -1,10 +1,11 @@
+using Serilog;
 using System;
 
 namespace VoukoderManager.Core.Models
 {
     public class Version : IVersion
     {
-        public string PackageVersion { get; set; }
+        public string PackageVersion { get; }
         private bool _preRelease;
 
         public int Major
@@ -18,6 +19,7 @@ namespace VoukoderManager.Core.Models
                 }
                 catch (Exception ex)
                 {
+                    Log.Error(ex, "Failed parsing major version", this);
                     return 0;
                 }
             }
@@ -34,6 +36,7 @@ namespace VoukoderManager.Core.Models
                 }
                 catch (Exception ex)
                 {
+                    Log.Error(ex, "Failed parsing minor version", this);
                     return 0;
                 }
             }
@@ -50,6 +53,7 @@ namespace VoukoderManager.Core.Models
                 }
                 catch (Exception ex)
                 {
+                    Log.Error(ex, "Failed parsing patch version", this);
                     return 0;
                 }
             }

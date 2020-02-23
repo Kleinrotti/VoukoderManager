@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -27,6 +28,7 @@ namespace VoukoderManager.Core.Models
 
         public virtual async Task<IPackage> StartPackageDownload()
         {
+            Log.Debug("Starting download of package", this);
             OnOperationStatusChanged(new ProcessStatusEventArgs("Downloading files...", ComponentType));
             packagePath = Path.GetTempPath() + DownloadUrl.Segments[DownloadUrl.Segments.Length - 1];
             await _webclient.DownloadFileTaskAsync(DownloadUrl, packagePath, new Progress<Tuple<long, int, long>>(t =>

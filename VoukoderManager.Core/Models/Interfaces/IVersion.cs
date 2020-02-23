@@ -4,7 +4,7 @@ namespace VoukoderManager.Core.Models
 {
     public interface IVersion : IComparable<IVersion>
     {
-        string PackageVersion { get; set; }
+        string PackageVersion { get; }
 
         int Major { get; }
 

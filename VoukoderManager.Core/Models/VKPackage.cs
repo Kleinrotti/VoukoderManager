@@ -1,4 +1,5 @@
 ﻿using Microsoft.Deployment.WindowsInstaller;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -79,6 +80,7 @@ namespace VoukoderManager.Core.Models
             {
                 using (Database db = new Database(Path))
                 {
+                    Log.Debug("Reading version from file", this);
                     return new Version(db.ExecuteScalar("SELECT `Value` FROM `Property` WHERE `Property` = '{0}'", "ProductVersion") as string);
                 }
             }
@@ -109,7 +111,6 @@ namespace VoukoderManager.Core.Models
 
         private void ExecuteProcess(object sender, DoWorkEventArgs e)
         {
-            Console.WriteLine(InstallArguments);
             try
             {
                 Process p = new Process();
@@ -121,6 +122,7 @@ namespace VoukoderManager.Core.Models
                     Verb = "runas"
                 };
                 p.StartInfo = startinfo;
+                Log.Debug($"Install package with arguments: {startinfo.Arguments}");
                 p.Start();
                 p.WaitForExit();
                 if (!_installDependencies || (Dependencies == null))
@@ -134,6 +136,7 @@ namespace VoukoderManager.Core.Models
                         OnOperationStatusChanged(new ProcessStatusEventArgs($"Starting installation of package dependency {v.Name}", ComponentType));
                         startinfo.Arguments = @" /i " + v.Path + @" /qn";
                         p.StartInfo = startinfo;
+                        Log.Debug($"Install package with arguments: {startinfo.Arguments}");
                         p.Start();
                         p.WaitForExit();
                         OnOperationStatusChanged(new ProcessStatusEventArgs($"Finished installation of package dependency {v.Name}", ComponentType));
@@ -143,6 +146,7 @@ namespace VoukoderManager.Core.Models
             }
             catch (Win32Exception ex)
             {
+                Log.Error(ex, "Error while installing package", this);
                 OnOperationStatusChanged(new ProcessStatusEventArgs(ex.Message, ComponentType));
             }
         }

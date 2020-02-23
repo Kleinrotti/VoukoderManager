@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using VoukoderManager.Core.Models;
@@ -24,6 +25,7 @@ namespace VoukoderManager.Core
         public static List<IProgramEntry> GetInstalledPrograms(bool includeConnector, bool onlyNewestVersion)
         {
             var programs = RegistryHelper.GetPrograms(_registryProgramPath);
+            Log.Debug("Received registry program list");
             List<IProgramEntry> list = new List<IProgramEntry>();
             IProgramEntry pro;
             foreach (RegistryEntry pr in programs)
@@ -68,6 +70,7 @@ namespace VoukoderManager.Core
             }
             if (onlyNewestVersion)
             {
+                Log.Debug("Removing older versions of same program from list");
                 var enumlengh = Enum.GetNames(typeof(ProgramType)).Length;
                 //Check for multiple installed versions of each program
                 for (int i = 0; i < enumlengh; i++)
@@ -108,6 +111,7 @@ namespace VoukoderManager.Core
         public static IProgramEntry GetVoukoderComponent(ProgramType connectorType)
         {
             var programs = RegistryHelper.GetPrograms(_registryProgramPath);
+            Log.Debug("Received registry program list");
             IProgramEntry entry;
             foreach (RegistryEntry e in programs)
             {
@@ -126,6 +130,7 @@ namespace VoukoderManager.Core
                         return entry;
                 }
             }
+            Log.Debug("No match for searching voukoder component");
             return null;
         }
 
@@ -136,6 +141,7 @@ namespace VoukoderManager.Core
         public static List<IProgramEntry> GetInstalledVoukoderComponents()
         {
             var programs = RegistryHelper.GetPrograms(_registryProgramPath);
+            Log.Debug("Received registry program list");
             List<IProgramEntry> list = new List<IProgramEntry>();
             IProgramEntry entry;
             foreach (RegistryEntry e in programs)

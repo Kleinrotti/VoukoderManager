@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Media.Imaging;
@@ -38,6 +39,7 @@ namespace VoukoderManager.Core.Models
         {
             get
             {
+                Log.Debug("Getting program logo");
                 if (ComponentType == ProgramType.MediaEncoder)
                     return ToImage(VoukoderManager.Core.Properties.Resources.me_logo);
                 else if (ComponentType == ProgramType.AfterEffects)
@@ -97,6 +99,7 @@ namespace VoukoderManager.Core.Models
             p.StartInfo = startinfo;
             try
             {
+                Log.Debug($"Uninstall package with arguments: {startinfo.Arguments}");
                 p.Start();
                 p.WaitForExit();
                 if (!_removeDependency || SubComponent == null)
@@ -108,6 +111,7 @@ namespace VoukoderManager.Core.Models
                     OnOperationStatusChanged(new ProcessStatusEventArgs($"Starting uninstall of package {SubComponent.Name}", ComponentType));
                     startinfo.Arguments = SubComponent.UninstallString.Split(' ')[1];
                     p.StartInfo = startinfo;
+                    Log.Debug($"Uninstall package with arguments: {startinfo.Arguments}");
                     p.Start();
                     p.WaitForExit();
                     OnOperationStatusChanged(new ProcessStatusEventArgs($"Finished uninstall of package {SubComponent.Name}", ComponentType));
@@ -116,6 +120,7 @@ namespace VoukoderManager.Core.Models
             }
             catch (Win32Exception ex)
             {
+                Log.Error(ex, "Error while uninstalling", this);
                 _cancelled = true;
                 OnOperationStatusChanged(new ProcessStatusEventArgs(ex.Message, ComponentType));
                 p.Dispose();

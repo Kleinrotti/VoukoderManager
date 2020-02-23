@@ -27,7 +27,8 @@
                 </MenuItem>
                 <MenuItem Header="_Options" Height="28">
                     <MenuItem Header="_Use beta versions" IsCheckable="True" Click="MenuItem_beta_Click" Name="menuItem_beta" Background="White" />
-                    <MenuItem Header="_Notifications" IsCheckable="True" Click="menuItem_notifications_Click" Name="menuItem_notifications" Background="White" />
+                    <MenuItem Header="_Notifications" IsCheckable="True" Visibility="Collapsed" Click="menuItem_notifications_Click" Name="menuItem_notifications" Background="White" />
+                    <MenuItem Header="_Debug mode" IsCheckable="True" Click="menuItem_debug_Click" Name="menuItem_debug" Background="White" />
                 </MenuItem>
             </Menu>
         </DockPanel>

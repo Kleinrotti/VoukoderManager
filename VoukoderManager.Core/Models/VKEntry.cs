@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 
 namespace VoukoderManager.Core.Models
 {
@@ -11,6 +12,7 @@ namespace VoukoderManager.Core.Models
 
         public VKEntry(string name, IVersion version)
         {
+            Log.Debug("Creating VKEntry");
             Name = name;
             Version = version;
         }
@@ -22,6 +24,7 @@ namespace VoukoderManager.Core.Models
 
         protected void OnOperationStatusChanged(ProcessStatusEventArgs e)
         {
+            Log.Debug("OperationStatusChanged");
             OperationStatus?.Invoke(this, e);
         }
 

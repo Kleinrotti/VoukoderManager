@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -27,6 +27,7 @@ namespace VoukoderManager.GUI
         public ComponentPage(bool isInstalledPage)
         {
             InitializeComponent();
+            Log.Information("Initializing Componentpage");
             DataContext = this;
             _isInstalledPage = isInstalledPage;
             VoukoderItemControls = new ObservableCollection<VoukoderItemControl>();
@@ -56,7 +57,7 @@ namespace VoukoderManager.GUI
 
         private void ComponentPage_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
-            Trace.WriteLine("ComponentPage loaded");
+            Log.Information("ComponentPage loaded");
         }
 
         public void RefreshVoukoderComponents()
@@ -66,16 +67,17 @@ namespace VoukoderManager.GUI
 
         private void ComponentPage_Unloaded(object sender, System.Windows.RoutedEventArgs e)
         {
-            Trace.WriteLine("ComponentPage unloaded");
+            Log.Information("ComponentPage unloaded");
         }
 
         ~ComponentPage()
         {
-            Trace.WriteLine("ComponentPage destroyed");
+            Log.Information("ComponentPage destroyed");
         }
 
         private void UpdateProgramList(IEntry changedEntry, OperationType operationType)
         {
+            Log.Debug("Updating program list", changedEntry);
             _detectedPrograms = ProgramDetector.GetInstalledPrograms(true, true);
             try
             {
@@ -114,7 +116,7 @@ namespace VoukoderManager.GUI
             }
             catch (InvalidOperationException ex)
             {
-                Trace.WriteLine(ex.Message);
+                Log.Error(ex, "Error updating Voukodercontrolitem", changedEntry);
             }
         }
 
@@ -122,6 +124,7 @@ namespace VoukoderManager.GUI
         {
             if (_worker.IsBusy)
                 return;
+            Log.Debug("Loading program lists");
             Mouse.OverrideCursor = Cursors.Wait;
             _worker.DoWork += GetEntries;
             _worker.RunWorkerCompleted += WorkCompleted;
@@ -155,6 +158,7 @@ namespace VoukoderManager.GUI
                     }
                 }
                 Mouse.OverrideCursor = null;
+                Log.Debug("Completed program list initialization");
             }
         }
 

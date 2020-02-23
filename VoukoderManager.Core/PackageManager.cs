@@ -1,9 +1,8 @@
 ﻿using Octokit;
+using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Windows.Input;
 using VoukoderManager.Core.Models;
 
 namespace VoukoderManager.Core
@@ -26,7 +25,7 @@ namespace VoukoderManager.Core
 
         private void OnRequest(object sender, ApiRequestEventArgs e)
         {
-            Console.WriteLine("Request!!");
+            Log.Information("API request used");
             ApiRequestUsed?.Invoke(sender, e);
         }
 
@@ -43,7 +42,6 @@ namespace VoukoderManager.Core
         /// <returns></returns>
         public List<IGitHubEntry> GetDownloadablePackages(ProgramType type, int results)
         {
-            Mouse.OverrideCursor = Cursors.Wait;
             var lst = new List<IGitHubEntry>();
             string repo;
             string repopath;
@@ -52,7 +50,6 @@ namespace VoukoderManager.Core
             {
                 repo = "voukoder";
                 var re = GetReleases(_client, "Vouk", repo, results);
-                Mouse.OverrideCursor = null;
                 return re;
             }
             else
@@ -71,7 +68,6 @@ namespace VoukoderManager.Core
                     repopath = "premiere";
                 }
                 var content = GetContent(type, "Vouk", repo, repopath, results, true);
-                Mouse.OverrideCursor = null;
                 return content;
             }
         }
@@ -108,8 +104,9 @@ namespace VoukoderManager.Core
                 }
                 return lst;
             }
-            catch (AggregateException)
+            catch (AggregateException ex)
             {
+                Log.Error(ex, "Error getting content from github");
                 throw;
             }
         }
@@ -137,8 +134,9 @@ namespace VoukoderManager.Core
                 }
                 return lst;
             }
-            catch (AggregateException)
+            catch (AggregateException ex)
             {
+                Log.Error(ex, "Error getting releases from github");
                 throw;
             }
         }
@@ -163,8 +161,9 @@ namespace VoukoderManager.Core
                 else
                     return null;
             }
-            catch (AggregateException)
+            catch (AggregateException ex)
             {
+                Log.Error(ex, "Error getting latest core package from github");
                 throw;
             }
         }
@@ -220,9 +219,8 @@ namespace VoukoderManager.Core
             catch (AggregateException ex)
             {
                 var v = _client.GetLastApiInfo();
-                Trace.WriteLine("API Limit resets at: " + v.RateLimit.Reset.ToLocalTime());
+                Log.Error(ex, "API Limit resets at: " + v.RateLimit.Reset.ToLocalTime());
                 return null;
-                //throw;
             }
         }
 

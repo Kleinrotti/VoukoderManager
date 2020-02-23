@@ -288,7 +288,6 @@ namespace VoukoderManager.Controls
 
             dockPanelUpdate.SetValue(VerticalAlignmentProperty, VerticalAlignment.Bottom);
             dockPanelUpdate.SetValue(HorizontalAlignmentProperty, HorizontalAlignment.Left);
-            //dockPanelUpdate.Margin = new Thickness(30, -6, 0, 0);
 
             var icon = new PackIcon { Kind = PackIconKind.Information };
             icon.Foreground = new SolidColorBrush(Colors.CornflowerBlue);

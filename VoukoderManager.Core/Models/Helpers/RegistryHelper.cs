@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using Serilog;
 using System;
 using System.Collections.Generic;
 
@@ -34,7 +35,7 @@ namespace VoukoderManager.Core
         public static List<RegistryEntry> GetPrograms(string registryPath)
         {
             List<RegistryEntry> values = new List<RegistryEntry>();
-            RegistryEntry entry;
+            RegistryEntry entry = new RegistryEntry();
             foreach (RegistryView v in _views)
             {
                 using (RegistryKey rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, v).OpenSubKey(registryPath))
@@ -43,6 +44,7 @@ namespace VoukoderManager.Core
                     {
                         using (RegistryKey sk = rk.OpenSubKey(skName))
                         {
+                            Log.Verbose<RegistryKey>("Processing program registry entry", sk);
                             try
                             {
                                 entry = new RegistryEntry();
@@ -62,7 +64,9 @@ namespace VoukoderManager.Core
                                 }
                             }
                             catch (NullReferenceException ex)
-                            { }
+                            {
+                                Log.Error(ex, $"Error formatting Registry values to RegistryEntry", entry);
+                            }
                         }
                     }
                 }
@@ -70,10 +74,11 @@ namespace VoukoderManager.Core
             return values;
         }
 
-        public static void SetUseBetaVerion(bool value)
+        public static void SetUseBetaVersion(bool value)
         {
             using (var _registryKey = Registry.CurrentUser.OpenSubKey(@"Software\VoukoderManager", true))
             {
+                Log.Debug($"Setting registry value UseBetaVersions: {value}");
                 _registryKey.SetValue("UseBetaVersions", value, RegistryValueKind.DWord);
             }
         }
@@ -82,10 +87,35 @@ namespace VoukoderManager.Core
         {
             using (var _registryKey = Registry.CurrentUser.OpenSubKey(@"Software\VoukoderManager", true))
             {
+                Log.Debug("Getting UseBetaVersion from registry");
                 var v = _registryKey.GetValue("UseBetaVersions");
                 if (v == null)
                 {
                     _registryKey.SetValue("UseBetaVersions", false, RegistryValueKind.DWord);
+                    return false;
+                }
+                return Convert.ToBoolean(v);
+            }
+        }
+
+        public static void SetLogging(bool value)
+        {
+            using (var _registryKey = Registry.CurrentUser.OpenSubKey(@"Software\VoukoderManager", true))
+            {
+                Log.Debug($"Setting registry value logging: {value}");
+                _registryKey.SetValue("Logging", value, RegistryValueKind.DWord);
+            }
+        }
+
+        public static bool GetLogging()
+        {
+            using (var _registryKey = Registry.CurrentUser.OpenSubKey(@"Software\VoukoderManager", true))
+            {
+                Log.Debug("Getting logging from registry");
+                var v = _registryKey.GetValue("Logging");
+                if (v == null)
+                {
+                    _registryKey.SetValue("Logging", false, RegistryValueKind.DWord);
                     return false;
                 }
                 return Convert.ToBoolean(v);

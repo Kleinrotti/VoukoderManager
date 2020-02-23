@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Serilog;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -36,6 +37,15 @@ namespace VoukoderManager.GUI
             _lang.Initialize();
             InitializeComponent();
             menuItem_beta.IsChecked = PackageManager.AllowPreReleaseVersion;
+            menuItem_debug.IsChecked = RegistryHelper.GetLogging();
+            if (menuItem_debug.IsChecked)
+            {
+                Log.Logger = new LoggerConfiguration()
+                    .MinimumLevel.Debug()
+                    .WriteTo.Console()
+                    .WriteTo.File("log.txt", rollingInterval: RollingInterval.Day)
+                    .CreateLogger();
+            }
             DataContext = this;
             Lang.LanguageChanged += LanguageChanged;
             PackageManager.ApiRequestUsed += PackageManager_ApiRequestUsed;
@@ -118,11 +128,28 @@ namespace VoukoderManager.GUI
         private void MenuItem_beta_Click(object sender, RoutedEventArgs e)
         {
             var src = e.Source as MenuItem;
-            RegistryHelper.SetUseBetaVerion(src.IsChecked);
+            RegistryHelper.SetUseBetaVersion(src.IsChecked);
         }
 
         private void menuItem_notifications_Click(object sender, RoutedEventArgs e)
         {
+        }
+
+        private void menuItem_debug_Click(object sender, RoutedEventArgs e)
+        {
+            RegistryHelper.SetLogging(menuItem_debug.IsChecked);
+            if (menuItem_debug.IsChecked)
+            {
+                Log.Logger = new LoggerConfiguration()
+                    .MinimumLevel.Debug()
+                    .WriteTo.Console()
+                    .WriteTo.File("log.txt", rollingInterval: RollingInterval.Day)
+                    .CreateLogger();
+            }
+            else
+            {
+                Log.CloseAndFlush();
+            }
         }
     }
 }
