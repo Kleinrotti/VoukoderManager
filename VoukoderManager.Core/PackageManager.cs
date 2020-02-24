@@ -178,37 +178,31 @@ namespace VoukoderManager.Core
                 if (entry.ComponentType == ProgramType.VoukoderCore)
                 {
                     repo = "voukoder";
-                    var release = _client.Repository.Release.GetLatest("Vouk", repo).Result;
+                    Release re = new Release();
+                    if (AllowPreReleaseVersion)
+                    {
+                        re = _client.Repository.Release.GetAll("Vouk", repo).Result[0];
+                    }
+                    else
+                    {
+                        re = _client.Repository.Release.GetLatest("Vouk", repo).Result;
+                    }
                     OnRequest(this, new ApiRequestEventArgs(_client.GetLastApiInfo()));
 
-                    var entr = new VKGithubEntry(release.Name, new Models.Version(release.TagName))
+                    var entr = new VKGithubEntry(re.Name, new Models.Version(re.TagName))
                     {
-                        DownloadUrl = new Uri(release.Assets[0].BrowserDownloadUrl),
-                        Changelog = release.Body
+                        DownloadUrl = new Uri(re.Assets[0].BrowserDownloadUrl),
+                        Changelog = re.Body
                     };
                     if (entry.Version.CompareTo(entr.Version) < 0)
-                        if (!AllowPreReleaseVersion && entr.Version.PreRelease)
-                            return null;
-                        else
-                            return entr;
+                        return entr;
                     return null;
                 }
                 else
                 {
                     repo = "voukoder-connectors";
                     string repopath;
-                    if (entry.ComponentType == ProgramType.VEGAS)
-                    {
-                        repopath = "vegas";
-                    }
-                    else if (entry.ComponentType == ProgramType.AfterEffects)
-                    {
-                        repopath = "aftereffects";
-                    }
-                    else
-                    {
-                        repopath = "premiere";
-                    }
+                    repopath = entry.ComponentType.ToString().ToLower();
                     var content = GetContent(entry.ComponentType, "Vouk", repo, repopath, 1, false);
                     if (entry.Version.CompareTo(content[0].Version) < 0)
                         return content[0];
