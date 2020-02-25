@@ -22,7 +22,7 @@ namespace VoukoderManager.Core.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -67,6 +67,15 @@ namespace VoukoderManager.Core.Properties {
             get {
                 object obj = ResourceManager.GetObject("ae_logo", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string Licence {
+            get {
+                return ResourceManager.GetString("Licence", resourceCulture);
             }
         }
         

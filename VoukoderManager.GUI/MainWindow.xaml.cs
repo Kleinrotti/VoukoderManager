@@ -151,5 +151,13 @@ namespace VoukoderManager.GUI
                 Log.CloseAndFlush();
             }
         }
+
+        private void menuItem_about_Click(object sender, RoutedEventArgs e)
+        {
+            AboutWindow about = new AboutWindow();
+            about.Owner = this;
+            about.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            about.Show();
+        }
     }
 }

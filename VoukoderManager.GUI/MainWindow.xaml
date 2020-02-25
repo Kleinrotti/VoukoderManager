@@ -30,6 +30,9 @@
                     <MenuItem Header="_Notifications" IsCheckable="True" Visibility="Collapsed" Click="menuItem_notifications_Click" Name="menuItem_notifications" Background="White" />
                     <MenuItem Header="_Debug mode" IsCheckable="True" Click="menuItem_debug_Click" Name="menuItem_debug" Background="White" />
                 </MenuItem>
+                <MenuItem Header="_Help" Height="28">
+                    <MenuItem Header="_About" Name="menuItem_about" Click="menuItem_about_Click" Background="White" />
+                </MenuItem>
             </Menu>
         </DockPanel>
         <Label Content="Voukoder Manager" FontSize="35" Margin="30, 45" FontWeight="Light" HorizontalAlignment="Left" x:Name="labelTop" />

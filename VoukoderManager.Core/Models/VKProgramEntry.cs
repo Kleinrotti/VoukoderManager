@@ -41,13 +41,13 @@ namespace VoukoderManager.Core.Models
             {
                 Log.Debug("Getting program logo");
                 if (ComponentType == ProgramType.MediaEncoder)
-                    return ToImage(VoukoderManager.Core.Properties.Resources.me_logo);
+                    return ToImage(Properties.Resources.me_logo);
                 else if (ComponentType == ProgramType.AfterEffects)
-                    return ToImage(VoukoderManager.Core.Properties.Resources.ae_logo);
+                    return ToImage(Properties.Resources.ae_logo);
                 else if (ComponentType == ProgramType.Premiere)
-                    return ToImage(VoukoderManager.Core.Properties.Resources.premiere_logo);
+                    return ToImage(Properties.Resources.premiere_logo);
                 else if (ComponentType == ProgramType.VEGAS)
-                    return ToImage(VoukoderManager.Core.Properties.Resources.vegas_logo);
+                    return ToImage(Properties.Resources.vegas_logo);
                 else
                     return null;
             }

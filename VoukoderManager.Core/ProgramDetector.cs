@@ -25,7 +25,7 @@ namespace VoukoderManager.Core
         public static List<IProgramEntry> GetInstalledPrograms(bool includeConnector, bool onlyNewestVersion)
         {
             var programs = RegistryHelper.GetPrograms(_registryProgramPath);
-            Log.Debug("Received registry program list");
+            Log.Debug("Received registry program list for GetInstalledPrograms");
             List<IProgramEntry> list = new List<IProgramEntry>();
             IProgramEntry pro;
             foreach (RegistryEntry pr in programs)
@@ -111,7 +111,7 @@ namespace VoukoderManager.Core
         public static IProgramEntry GetVoukoderComponent(ProgramType connectorType)
         {
             var programs = RegistryHelper.GetPrograms(_registryProgramPath);
-            Log.Debug("Received registry program list");
+            Log.Debug("Received registry program list for GetVoukoderComponent");
             IProgramEntry entry;
             foreach (RegistryEntry e in programs)
             {
@@ -141,7 +141,7 @@ namespace VoukoderManager.Core
         public static List<IProgramEntry> GetInstalledVoukoderComponents()
         {
             var programs = RegistryHelper.GetPrograms(_registryProgramPath);
-            Log.Debug("Received registry program list");
+            Log.Debug("Received registry program list for GetInstalledVoukoderComponents");
             List<IProgramEntry> list = new List<IProgramEntry>();
             IProgramEntry entry;
             foreach (RegistryEntry e in programs)
