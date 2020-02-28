@@ -15,7 +15,7 @@ namespace VoukoderManager.Core.Models
     {
         public Uri DownloadUrl { get; set; }
         public string Changelog { get; set; }
-        private WebClient _webclient = new WebClient();
+        protected WebClient _webclient = new WebClient();
         private string packagePath = String.Empty;
 
         public VKGithubEntry(string name, IVersion version) : base(name, version)
@@ -76,7 +76,7 @@ namespace VoukoderManager.Core.Models
             return p;
         }
 
-        private void OnDownloadProgressChanged(ProgressChangedEventArgs e)
+        protected void OnDownloadProgressChanged(ProgressChangedEventArgs e)
         {
             DownloadProgressChanged?.Invoke(this, e);
         }

@@ -220,14 +220,23 @@ namespace VoukoderManager.Core
 
         public IGitHubEntry GetManagerUpdate(Models.Version currentVersion)
         {
-            var release = _client.Repository.Release.GetLatest("Kleinrotti", "VoukoderManager").Result;
-            OnRequest(this, new ApiRequestEventArgs(_client.GetLastApiInfo()));
+            try
+            {
+                var release = _client.Repository.Release.GetLatest("Kleinrotti", "VoukoderManager").Result;
+                OnRequest(this, new ApiRequestEventArgs(_client.GetLastApiInfo()));
 
-            var en = new VKGithubEntry(release.Name, new Models.Version(release.TagName));
-            if (currentVersion.CompareTo(en.Version) < 0)
-                return en;
-            else
+                var en = new VKGithubEntry(release.Name, new Models.Version(release.TagName));
+                if (currentVersion.CompareTo(en.Version) < 0)
+                    return en;
+                else
+                    return null;
+            }
+            catch (AggregateException ex)
+            {
+                var v = _client.GetLastApiInfo();
+                Log.Error(ex, "API Limit resets at: " + v.RateLimit.Reset.ToLocalTime());
                 return null;
+            }
         }
 
         #region IDisposable Support

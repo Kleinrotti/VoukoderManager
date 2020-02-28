@@ -233,7 +233,7 @@ namespace VoukoderManager.Controls
         private async Task DownloadPackage(IGitHubEntry entry, bool forceDepDownload)
         {
             VKGithubEntry.DownloadProgressChanged += VoukoderEntry_DownloadProgressChanged;
-            var t = await entry.StartPackageDownloadWithDependencies(forceDepDownload);
+            var t = await ((VKGithubEntry)entry).StartPackageDownloadWithDependencies(forceDepDownload);
             _coreUpdate = null;
             t.InstallPackageWithDepenencies(_entry);
             VKGithubEntry.DownloadProgressChanged -= VoukoderEntry_DownloadProgressChanged;

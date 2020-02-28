@@ -40,16 +40,16 @@ namespace VoukoderManager.Core.Models
             get
             {
                 Log.Debug("Getting program logo");
-                if (ComponentType == ProgramType.MediaEncoder)
-                    return ToImage(Properties.Resources.me_logo);
-                else if (ComponentType == ProgramType.AfterEffects)
-                    return ToImage(Properties.Resources.ae_logo);
-                else if (ComponentType == ProgramType.Premiere)
-                    return ToImage(Properties.Resources.premiere_logo);
-                else if (ComponentType == ProgramType.VEGAS)
-                    return ToImage(Properties.Resources.vegas_logo);
-                else
-                    return null;
+                //if (ComponentType == ProgramType.MediaEncoder)
+                //    return ToImage(Properties.Resources.me_logo);
+                //else if (ComponentType == ProgramType.AfterEffects)
+                //    return ToImage(Properties.Resources.ae_logo);
+                //else if (ComponentType == ProgramType.Premiere)
+                //    return ToImage(Properties.Resources.premiere_logo);
+                //else if (ComponentType == ProgramType.VEGAS)
+                //    return ToImage(Properties.Resources.vegas_logo);
+                //else
+                return null;
             }
         }
 

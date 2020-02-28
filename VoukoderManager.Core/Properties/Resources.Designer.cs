@@ -61,51 +61,22 @@ namespace VoukoderManager.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] ae_logo {
-            get {
-                object obj = ResourceManager.GetObject("ae_logo", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to MIT License
+        ///
+        ///Copyright (c) 2019-2020 VoukoderManager authors
+        ///
+        ///Permission is hereby granted, free of charge, to any person obtaining
+        ///a copy of this software and ssociated documentation files (the &quot;Software&quot;),
+        ///to deal in the Software without restriction, including without limitation
+        ///the rights to use, copy, modify, merge, publish, distribute, sublicense,
+        ///and/or sell copies of the Software, and to permit persons to whom the
+        ///Software is furnished to do so, subject to the following conditions:
+        ///
+        ///The ab [rest of string was truncated]&quot;;.
         /// </summary>
         public static string Licence {
             get {
                 return ResourceManager.GetString("Licence", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] me_logo {
-            get {
-                object obj = ResourceManager.GetObject("me_logo", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] premiere_logo {
-            get {
-                object obj = ResourceManager.GetObject("premiere_logo", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] vegas_logo {
-            get {
-                object obj = ResourceManager.GetObject("vegas_logo", resourceCulture);
-                return ((byte[])(obj));
             }
         }
     }

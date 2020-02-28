@@ -20,7 +20,7 @@
         <Grid x:Name="gridMove" Background="Transparent" VerticalAlignment="Top" HorizontalAlignment="Left" Height="30" Width="1170" MouseDown="gridMove_MouseDown" />
         <Button Content="X" FontSize="20" Name="buttonExit" Click="buttonExit_Click" Style="{DynamicResource MaterialDesignFlatButton}" Height="Auto" Width="Auto" Foreground="Red" VerticalAlignment="Top" HorizontalAlignment="Right" />
         <Button Content="-" FontSize="20" Name="buttonMinimize" Click="buttonMinimize_Click"  Style="{DynamicResource MaterialDesignFlatButton}" Height="Auto" Width="Auto" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,0,46,0" />
-        <DockPanel Visibility="Visible" HorizontalAlignment="Left" Height="28" LastChildFill="False" VerticalAlignment="Top" Width="250" Margin="0,0,-0.333,0">
+        <DockPanel Visibility="Visible" HorizontalAlignment="Left" Height="28" LastChildFill="False" VerticalAlignment="Top" Width="auto" Margin="0,0,-0.333,0">
             <Menu DockPanel.Dock="Top" Margin="0,0,0.333,0" Background="Transparent">
                 <MenuItem Header="_File" Height="28">
                     <MenuItem Header="_Exit" Click="MenuItem_exit_Click" Background="White" />
@@ -32,6 +32,13 @@
                 </MenuItem>
                 <MenuItem Header="_Help" Height="28">
                     <MenuItem Header="_About" Name="menuItem_about" Click="menuItem_about_Click" Background="White" />
+                </MenuItem>
+                <MenuItem Header="{d:PackIcon ArrowDownBoldCircleOutline}" Name="menuItem_update" Height="28" Foreground="Green" Visibility="Collapsed" Click="menuItem_update_Click">
+                    <MenuItem.ToolTip>
+                        <ToolTip>
+                            <TextBlock Text="Update availibe" />
+                        </ToolTip>
+                    </MenuItem.ToolTip>
                 </MenuItem>
             </Menu>
         </DockPanel>

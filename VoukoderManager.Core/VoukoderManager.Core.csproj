@@ -5,13 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\ae logo.png" />
-    <None Remove="Resources\me_logo.png" />
-    <None Remove="Resources\premiere_logo.png" />
-    <None Remove="Resources\vegas_logo.png" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0" />
     <PackageReference Include="Octokit" Version="0.40.0" />
     <PackageReference Include="Serilog" Version="2.9.0" />
@@ -27,15 +20,6 @@
     <Reference Include="PresentationCore">
       <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\PresentationCore.dll</HintPath>
     </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Resources\ae logo.png" />
-    <Resource Include="Resources\me_logo.png" />
-    <Resource Include="Resources\premiere_logo.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\vegas_logo.png" />
   </ItemGroup>
 
   <ItemGroup>

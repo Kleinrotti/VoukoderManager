@@ -1,5 +1,7 @@
-﻿using Serilog;
+﻿using Microsoft.Win32;
+using Serilog;
 using System.ComponentModel;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,6 +22,7 @@ namespace VoukoderManager.GUI
         private ComponentPage _installedPage;
         private ComponentPage _availiblePage;
         private int _requests = 0;
+        private IGitHubEntry _selfUpdate;
 
         public int RemainingRequests
         {
@@ -53,6 +56,7 @@ namespace VoukoderManager.GUI
             _installedPage = new ComponentPage(true);
             _availiblePage = new ComponentPage(false);
             framePages.Navigate(_installedPage);
+            CheckSelfUpdate();
         }
 
         private void VKPackage_InstallationFinished(object sender, OperationFinishedEventArgs e)
@@ -84,6 +88,14 @@ namespace VoukoderManager.GUI
         private void PackageManager_ApiRequestUsed(object sender, ApiRequestEventArgs e)
         {
             RemainingRequests = e.Remaining;
+        }
+
+        private void CheckSelfUpdate()
+        {
+            PackageManager m = new PackageManager();
+            _selfUpdate = m.GetManagerUpdate(new Version(Assembly.GetExecutingAssembly().GetName().Version.ToString()));
+            if (_selfUpdate != null)
+                menuItem_update.Visibility = Visibility.Visible;
         }
 
         private void LanguageChanged(object sender, LanguageChangeEventArgs e)
@@ -158,6 +170,23 @@ namespace VoukoderManager.GUI
             about.Owner = this;
             about.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             about.Show();
+        }
+
+        private void menuItem_update_Click(object sender, RoutedEventArgs e)
+        {
+            if (_selfUpdate == null)
+                return;
+            SaveFileDialog sfd = new SaveFileDialog
+            {
+                FileName = "VoukoderManager.exe",
+                Filter = "Executable file (*.exe)|*.exe",
+                Title = "Download to..."
+            };
+            if (sfd.ShowDialog(this) == true)
+            {
+                ((VKMGithubEntry)_selfUpdate).DownloadDestination = sfd.FileName.TrimEnd('\\') + @"\";
+                var pkg = _selfUpdate.StartPackageDownload().Result;
+            }
         }
     }
 }
