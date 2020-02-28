@@ -17,7 +17,7 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Height="auto" Width="auto" VerticalAlignment="Top">
                 <Label Name="labelName" FontSize="22" />
-                <TextBlock Text="Voukoder icon made by Noah" FontWeight="Light" FontSize="19" TextWrapping="Wrap" />
+                <TextBlock Text="Voukoder icon made by Noar" FontWeight="Light" FontSize="19" TextWrapping="Wrap" />
                 <TextBlock Name="textBlock_licence" FontSize="16" VerticalAlignment="Center" TextWrapping="Wrap" />
             </StackPanel>
         </ScrollViewer>
