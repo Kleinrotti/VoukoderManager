@@ -1,7 +1,7 @@
 <p align="center"><img src="https://www.voukoder.org/__resources/logo128.png" width="128" height="128">
 <br><a href="https://www.voukoder.org" style="font-size:20pt;">WWW.VOUKODER.ORG</a></p>
 
-![alt text](https://github.com/Kleinrotti/VoukoderManager/blob/master/VoukoderManager/front.PNG)
+![alt text](https://github.com/Kleinrotti/VoukoderManager/blob/master/front.PNG)
 ## Voukoder Manager
 ### GUI based program to install/uninstall voukoder components
 
