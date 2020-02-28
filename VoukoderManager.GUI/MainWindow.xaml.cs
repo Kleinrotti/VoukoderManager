@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using Serilog;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -172,7 +173,7 @@ namespace VoukoderManager.GUI
             about.Show();
         }
 
-        private void menuItem_update_Click(object sender, RoutedEventArgs e)
+        private async void menuItem_update_Click(object sender, RoutedEventArgs e)
         {
             if (_selfUpdate == null)
                 return;
@@ -184,8 +185,10 @@ namespace VoukoderManager.GUI
             };
             if (sfd.ShowDialog(this) == true)
             {
-                ((VKMGithubEntry)_selfUpdate).DownloadDestination = sfd.FileName.TrimEnd('\\') + @"\";
-                var pkg = _selfUpdate.StartPackageDownload().Result;
+                ((VKMGithubEntry)_selfUpdate).DownloadDestination = sfd.FileName;
+                var pkg = await _selfUpdate.StartPackageDownload();
+                Process.Start(((VKMGithubEntry)_selfUpdate).DownloadDestination);
+                Application.Current.Shutdown();
             }
         }
     }

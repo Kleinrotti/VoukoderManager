@@ -225,7 +225,11 @@ namespace VoukoderManager.Core
                 var release = _client.Repository.Release.GetLatest("Kleinrotti", "VoukoderManager").Result;
                 OnRequest(this, new ApiRequestEventArgs(_client.GetLastApiInfo()));
 
-                var en = new VKGithubEntry(release.Name, new Models.Version(release.TagName));
+                var en = new VKMGithubEntry(release.Name, new Models.Version(release.TagName))
+                {
+                    DownloadUrl = new Uri(release.Assets[0].BrowserDownloadUrl),
+                    Changelog = release.Body
+                };
                 if (currentVersion.CompareTo(en.Version) < 0)
                     return en;
                 else

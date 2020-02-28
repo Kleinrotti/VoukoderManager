@@ -11,6 +11,10 @@ namespace VoukoderManager.Core.Models
 
         public string DownloadDestination { get { return _destination; } set { _destination = value; } }
 
+        public VKMGithubEntry(string name, IVersion version) : base(name, version)
+        {
+        }
+
         public VKMGithubEntry(string name, IVersion version, string downloadDestination) : base(name, version)
         {
             Name = name;
@@ -22,7 +26,7 @@ namespace VoukoderManager.Core.Models
         {
             Log.Debug("Starting download of package", this);
             OnOperationStatusChanged(new ProcessStatusEventArgs("Downloading files...", ComponentType));
-            string packagePath = _destination + DownloadUrl.Segments[DownloadUrl.Segments.Length - 1];
+            string packagePath = _destination;
             await _webclient.DownloadFileTaskAsync(DownloadUrl, packagePath, new Progress<Tuple<long, int, long>>(t =>
             {
                 ProgressChangedEventArgs a = new ProgressChangedEventArgs(t.Item2, this);

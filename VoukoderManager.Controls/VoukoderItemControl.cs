@@ -209,7 +209,7 @@ namespace VoukoderManager.Controls
         private void _buttonInstall_Click(object sender, RoutedEventArgs e)
         {
             PackageManager p = new PackageManager();
-            var lst = p.GetDownloadablePackages(_entry.ComponentType, 5);
+            var lst = p.GetDownloadablePackages(_entry.ComponentType, 2);
             if (lst == null)
             {
                 MessageBox.Show("Couldn't receive list, maybe too many API requests");

@@ -113,7 +113,6 @@
       <DependentUpon>ComponentPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="MarginSetter.cs" />
-    <Compile Include="SelfUpdate.cs" />
     <Page Include="AboutWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

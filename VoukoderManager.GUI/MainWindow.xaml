@@ -36,7 +36,7 @@
                 <MenuItem Header="{d:PackIcon ArrowDownBoldCircleOutline}" Name="menuItem_update" Height="28" Foreground="Green" Visibility="Collapsed" Click="menuItem_update_Click">
                     <MenuItem.ToolTip>
                         <ToolTip>
-                            <TextBlock Text="Update availibe" />
+                            <TextBlock Text="Update availible" />
                         </ToolTip>
                     </MenuItem.ToolTip>
                 </MenuItem>
