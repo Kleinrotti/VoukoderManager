@@ -177,6 +177,8 @@ namespace VoukoderManager.GUI
         {
             if (_selfUpdate == null)
                 return;
+            if (MessageBox.Show("Are you sure to update VoukoderManager?", "Update", MessageBoxButton.YesNo) == MessageBoxResult.No)
+                return;
             SaveFileDialog sfd = new SaveFileDialog
             {
                 FileName = "VoukoderManager.exe",
