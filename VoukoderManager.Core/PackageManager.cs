@@ -3,6 +3,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using VoukoderManager.Core.Models;
 
 namespace VoukoderManager.Core
@@ -77,16 +78,21 @@ namespace VoukoderManager.Core
             try
             {
                 IGitHubEntry corepkg = null;
-                var test = _client.Repository.Content.GetAllContents(owner, repo, filepath).Result;
+                var content = _client.Repository.Content.GetAllContents(owner, repo, filepath).Result;
                 if (includeCore)
                     corepkg = GetLatestDownloadableCorePackage(ProgramType.VoukoderCore);
                 OnRequest(this, new ApiRequestEventArgs(_client.GetLastApiInfo()));
                 var re = _client.GetLastApiInfo();
                 var lst = new List<IGitHubEntry>();
-                int entries = test.Count;
+                int entries = content.Count;
+                string changelog;
+                using (WebClient client = new WebClient())
+                {
+                    changelog = client.DownloadString(content[0].DownloadUrl);
+                }
                 while (results > 0)
                 {
-                    var v = test[entries - 1];
+                    var v = content[entries - 1];
                     if (v.Name.Contains("connector"))
                     {
                         var version = v.Name.Where(Char.IsDigit).ToArray();
@@ -94,6 +100,7 @@ namespace VoukoderManager.Core
                         {
                             DownloadUrl = new Uri(v.DownloadUrl),
                             ComponentType = type,
+                            Changelog = changelog
                         };
                         if (corepkg != null)
                             vkentry.Dependencies = new List<IGitHubEntry>() { corepkg };
