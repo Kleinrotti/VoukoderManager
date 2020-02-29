@@ -315,7 +315,8 @@ namespace VoukoderManager.Controls
                 Foreground = new SolidColorBrush(Colors.CornflowerBlue),
                 Background = new SolidColorBrush(Colors.Transparent),
                 BorderThickness = new Thickness(0),
-                HorizontalAlignment = HorizontalAlignment.Left
+                HorizontalAlignment = HorizontalAlignment.Left,
+                DataContext = update
             };
             buttonChangelog.Click += ButtonChangelog_Click;
             DockPanel.SetDock(buttonChangelog, Dock.Bottom);
@@ -331,7 +332,9 @@ namespace VoukoderManager.Controls
 
         private void ButtonChangelog_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Not implemented yet");
+            var data = e.Source as Button;
+            var changelog = ((IGitHubEntry)data.DataContext).Changelog;
+            MessageBox.Show(changelog);
         }
     }
 }
