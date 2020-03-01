@@ -114,7 +114,7 @@ namespace VoukoderManager.Core
             catch (AggregateException ex)
             {
                 Log.Error(ex, "Error getting content from github");
-                throw;
+                return null;
             }
         }
 
@@ -211,7 +211,7 @@ namespace VoukoderManager.Core
                     string repopath;
                     repopath = entry.ComponentType.ToString().ToLower();
                     var content = GetContent(entry.ComponentType, "Vouk", repo, repopath, 1, false);
-                    if (entry.Version.CompareTo(content[0].Version) < 0)
+                    if (content !=null && entry.Version.CompareTo(content[0].Version) < 0)
                         return content[0];
                     else
                         return null;
@@ -220,7 +220,7 @@ namespace VoukoderManager.Core
             catch (AggregateException ex)
             {
                 var v = _client.GetLastApiInfo();
-                Log.Error(ex, "API Limit resets at: " + v.RateLimit.Reset.ToLocalTime());
+                Log.Error(ex, ex.Message);
                 return null;
             }
         }
@@ -245,7 +245,7 @@ namespace VoukoderManager.Core
             catch (AggregateException ex)
             {
                 var v = _client.GetLastApiInfo();
-                Log.Error(ex, "API Limit resets at: " + v.RateLimit.Reset.ToLocalTime());
+                Log.Error(ex, ex.Message);
                 return null;
             }
         }

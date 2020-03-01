@@ -212,7 +212,7 @@ namespace VoukoderManager.Controls
             var lst = p.GetDownloadablePackages(_entry.ComponentType, 2);
             if (lst == null)
             {
-                MessageBox.Show("Couldn't receive list, maybe too many API requests");
+                MessageBox.Show("Couldn't receive list");
                 return;
             }
             PropertyWindow w = new PropertyWindow(lst)
@@ -294,7 +294,7 @@ namespace VoukoderManager.Controls
 
             var labelBlockHeadline = new Label
             {
-                Content = "Update availible"
+                Content = "Update available"
             };
             DockPanel.SetDock(labelBlockHeadline, Dock.Bottom);
 
