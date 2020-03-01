@@ -6,7 +6,12 @@
 ### GUI based program to install/uninstall voukoder components
 
 Click on the Availible tab to see your installed NLE's where voukoder can be installed for.
-Below the Installed tab you can see updates for voukoder and uninstall it.
+Below the Installed tab you can see updates for voukoder and uninstall it if wanted.
+<br>
+If you want to use beta versions of voukoder you can enable it in the Options menu (restart required).
+
+<br>
+If there is an update availible for VoukoderManager a green download icon on the top is visible to get the update.
 
 **Requirements:**
 <br><a href="https://dotnet.microsoft.com/download/dotnet-framework/net48" style="font-size:18pt;">.NET Framework 4.8</a></p>
