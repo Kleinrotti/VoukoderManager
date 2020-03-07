@@ -37,19 +37,21 @@ namespace VoukoderManager.GUI
 
         public MainWindow()
         {
+            Stopwatch w = new Stopwatch();
+            w.Start();
             _lang = new Lang();
             _lang.Initialize();
             InitializeComponent();
-            menuItem_beta.IsChecked = PackageManager.AllowPreReleaseVersion;
             menuItem_debug.IsChecked = RegistryHelper.GetLogging();
             if (menuItem_debug.IsChecked)
             {
                 Log.Logger = new LoggerConfiguration()
                     .MinimumLevel.Debug()
                     .WriteTo.Console()
-                    .WriteTo.File("log.txt", rollingInterval: RollingInterval.Day)
+                    .WriteTo.File("log.txt", rollingInterval: RollingInterval.Hour)
                     .CreateLogger();
             }
+            menuItem_beta.IsChecked = PackageManager.AllowPreReleaseVersion;
             DataContext = this;
             Lang.LanguageChanged += LanguageChanged;
             PackageManager.ApiRequestUsed += PackageManager_ApiRequestUsed;
@@ -58,6 +60,8 @@ namespace VoukoderManager.GUI
             _availiblePage = new ComponentPage(false);
             framePages.Navigate(_installedPage);
             CheckSelfUpdate();
+            w.Stop();
+            Log.Debug($"Initialation finished in {w.ElapsedMilliseconds}ms");
         }
 
         private void VKPackage_InstallationFinished(object sender, OperationFinishedEventArgs e)
@@ -156,7 +160,7 @@ namespace VoukoderManager.GUI
                 Log.Logger = new LoggerConfiguration()
                     .MinimumLevel.Debug()
                     .WriteTo.Console()
-                    .WriteTo.File("log.txt", rollingInterval: RollingInterval.Day)
+                    .WriteTo.File("log.txt", rollingInterval: RollingInterval.Hour)
                     .CreateLogger();
             }
             else

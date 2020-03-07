@@ -7,6 +7,7 @@
         Premiere,
         AfterEffects,
         MediaEncoder,
+        MovieStudio,
         None
     }
 }

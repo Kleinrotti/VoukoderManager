@@ -103,6 +103,7 @@ namespace VoukoderManager.Core.Models
                 OnOperationStatusChanged(new ProcessStatusEventArgs($"Cancelled installation of package {Name}", ComponentType));
             else
             {
+                Log.Debug($"Installation finished of package: {Name}");
                 InstallationFinished?.Invoke(this, new OperationFinishedEventArgs(e.Error, e.Cancelled, this, OperationType.Install));
             }
             _worker.DoWork -= ExecuteProcess;

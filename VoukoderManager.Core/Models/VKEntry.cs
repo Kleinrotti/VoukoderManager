@@ -12,7 +12,7 @@ namespace VoukoderManager.Core.Models
 
         public VKEntry(string name, IVersion version)
         {
-            Log.Debug("Creating VKEntry");
+            Log.Debug($"Creating VKEntry {name} Version: {version.PackageVersion}");
             Name = name;
             Version = version;
         }
@@ -24,7 +24,7 @@ namespace VoukoderManager.Core.Models
 
         protected void OnOperationStatusChanged(ProcessStatusEventArgs e)
         {
-            Log.Debug("OperationStatusChanged");
+            Log.Debug($"OperationStatusChanged of {e.ComponentType} with message: {e.StatusMessage}");
             OperationStatus?.Invoke(this, e);
         }
 

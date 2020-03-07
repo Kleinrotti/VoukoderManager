@@ -56,7 +56,7 @@ namespace VoukoderManager.Core
             else
             {
                 repo = "voukoder-connectors";
-                if (type == ProgramType.VEGAS)
+                if (type == ProgramType.VEGAS || type == ProgramType.MovieStudio)
                 {
                     repopath = "vegas";
                 }
@@ -211,7 +211,7 @@ namespace VoukoderManager.Core
                     string repopath;
                     repopath = entry.ComponentType.ToString().ToLower();
                     var content = GetContent(entry.ComponentType, "Vouk", repo, repopath, 1, false);
-                    if (content !=null && entry.Version.CompareTo(content[0].Version) < 0)
+                    if (content != null && entry.Version.CompareTo(content[0].Version) < 0)
                         return content[0];
                     else
                         return null;

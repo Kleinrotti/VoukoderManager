@@ -2,6 +2,7 @@
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace VoukoderManager.Core
 {
@@ -26,6 +27,9 @@ namespace VoukoderManager.Core
             _views = new List<RegistryView>() { RegistryView.Registry32, RegistryView.Registry64 };
         }
 
+        private static List<RegistryEntry> _values;
+        private static DateTime _lastRefreshed;
+
         /// <summary>
         /// Returns all values in that registy path with the given name
         /// </summary>
@@ -34,44 +38,57 @@ namespace VoukoderManager.Core
         /// <returns></returns>
         public static List<RegistryEntry> GetPrograms(string registryPath)
         {
-            List<RegistryEntry> values = new List<RegistryEntry>();
-            RegistryEntry entry = new RegistryEntry();
-            foreach (RegistryView v in _views)
+            var curr = DateTime.Now;
+            var div = curr - _lastRefreshed;
+            if (_values == null || div.TotalSeconds > 2)
             {
-                using (RegistryKey rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, v).OpenSubKey(registryPath))
+                Log.Debug("Getting programs from registry...");
+                Stopwatch w = new Stopwatch();
+                w.Start();
+                _values = new List<RegistryEntry>();
+                var currentList = new List<RegistryEntry>();
+                RegistryEntry entry = new RegistryEntry();
+                foreach (RegistryView v in _views)
                 {
-                    foreach (string skName in rk.GetSubKeyNames())
+                    using (RegistryKey rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, v).OpenSubKey(registryPath))
                     {
-                        using (RegistryKey sk = rk.OpenSubKey(skName))
+                        foreach (string skName in rk.GetSubKeyNames())
                         {
-                            Log.Verbose<RegistryKey>("Processing program registry entry", sk);
-                            try
+                            using (RegistryKey sk = rk.OpenSubKey(skName))
                             {
-                                entry = new RegistryEntry();
-                                entry.DisplayName = sk.GetValue("DisplayName")?.ToString() ?? "";
-                                entry.DisplayVersion = sk.GetValue("DisplayVersion")?.ToString() ?? "";
-                                entry.PreRelease = entry.DisplayName.Contains("rc") || entry.DisplayName.Contains("beta");
-                                entry.InstallationPath = sk.GetValue("InstallLocation")?.ToString() ?? "";
-                                entry.UninstallString = sk.GetValue("UninstallString")?.ToString() ?? "";
-                                entry.Publisher = sk.GetValue("Publisher")?.ToString() ?? "";
-                                entry.InstallationDate = sk.GetValue("InstallDate")?.ToString() ?? "";
-                                entry.ModifyPath = sk.GetValue("ModifyPath")?.ToString() ?? "";
-                                entry.WindowsInstaller = Convert.ToBoolean(sk.GetValue("WindowsInstaller") ?? false);
-
-                                if (!values.Exists(x => x.DisplayName.Contains(entry.DisplayName)))
+                                Log.Verbose<RegistryKey>("Processing program registry entry", sk);
+                                try
                                 {
-                                    values.Add(entry);
+                                    entry = new RegistryEntry();
+                                    entry.DisplayName = sk.GetValue("DisplayName")?.ToString() ?? "";
+                                    entry.DisplayVersion = sk.GetValue("DisplayVersion")?.ToString() ?? "";
+                                    entry.PreRelease = entry.DisplayName.Contains("rc") || entry.DisplayName.Contains("beta");
+                                    entry.InstallationPath = sk.GetValue("InstallLocation")?.ToString() ?? "";
+                                    entry.UninstallString = sk.GetValue("UninstallString")?.ToString() ?? "";
+                                    entry.Publisher = sk.GetValue("Publisher")?.ToString() ?? "";
+                                    entry.InstallationDate = sk.GetValue("InstallDate")?.ToString() ?? "";
+                                    entry.ModifyPath = sk.GetValue("ModifyPath")?.ToString() ?? "";
+                                    entry.WindowsInstaller = Convert.ToBoolean(sk.GetValue("WindowsInstaller") ?? false);
+
+                                    if (!currentList.Exists(x => x.DisplayName.Contains(entry.DisplayName)))
+                                    {
+                                        currentList.Add(entry);
+                                    }
                                 }
-                            }
-                            catch (NullReferenceException ex)
-                            {
-                                Log.Error(ex, $"Error formatting Registry values to RegistryEntry", entry);
+                                catch (NullReferenceException ex)
+                                {
+                                    Log.Error(ex, $"Error formatting Registry values to RegistryEntry", entry);
+                                }
                             }
                         }
                     }
                 }
+                w.Stop();
+                Log.Debug($"Finished getting programs from registry in {w.ElapsedMilliseconds} ms");
+                _values = currentList;
             }
-            return values;
+            _lastRefreshed = DateTime.Now;
+            return _values;
         }
 
         public static void SetUseBetaVersion(bool value)

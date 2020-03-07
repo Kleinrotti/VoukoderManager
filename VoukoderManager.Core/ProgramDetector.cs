@@ -11,10 +11,13 @@ namespace VoukoderManager.Core
     /// </summary>
     public static class ProgramDetector
     {
-        private static string _registryProgramPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
-        private static string _premierePluginsDir = @"SOFTWARE\Adobe\Premiere Pro\";
-        private static string _afterEffectsPluginsDir = @"SOFTWARE\Adobe\After Effects\";
-        private static string _vegasPluginsDir = @"SOFTWARE\Sony Creative Software\VEGAS Pro\";
+        private static readonly string _registryProgramPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
+        private static readonly string _premierePluginsDir = @"SOFTWARE\Adobe\Premiere Pro\";
+        private static readonly string _afterEffectsPluginsDir = @"SOFTWARE\Adobe\After Effects\";
+        private static readonly string _vegasPluginsDir = @"SOFTWARE\Sony Creative Software\VEGAS Pro\";
+        private static readonly string _movieStudioPluginsDir = @"SOFTWARE\Sony Creative Software\Movie Studio\";
+        public static readonly List<string> ProgramSearchValues = new List<string>() { "Premiere", "Media Encoder", "AfterEffects", "VEGAS", "Movie Studio" };
+        public static readonly List<string> VoukoderSearchValues = new List<string>() { "Premiere", "AfterEffects", "VEGAS" };
 
         /// <summary>
         /// Returns a list which contains all installed programs where voukoder components are availible for
@@ -30,41 +33,24 @@ namespace VoukoderManager.Core
             IProgramEntry pro;
             foreach (RegistryEntry pr in programs)
             {
-                if (pr.DisplayName.Contains("Adobe Premiere") || pr.DisplayName.Contains("Adobe Media Encoder")
-                    || pr.DisplayName.Contains("VEGAS Pro")
-                    || pr.DisplayName.Contains("Adobe After Effects"))
+                var displayname = pr.DisplayName;
+                foreach (var v in ProgramSearchValues)
                 {
-                    if (pr.DisplayName.Contains("Premiere"))
+                    if (displayname.Contains(v) && !displayname.Contains("connector"))
                     {
-                        ConvertFromRegistryEntry(out pro, pr, ProgramType.Premiere);
+                        var parsed = Enum.TryParse(v.Replace(" ", ""), out ProgramType result);
+                        Log.Debug($"Enum parsing successed: {parsed}");
+                        ConvertFromRegistryEntry(out pro, pr, result);
                         if (includeConnector)
-                            FillComponent(ref pro, ProgramType.Premiere);
+                            FillComponent(ref pro);
+                        list.Add(pro);
                     }
-                    else if (pr.DisplayName.Contains("Media Encoder"))
-                    {
-                        ConvertFromRegistryEntry(out pro, pr, ProgramType.MediaEncoder);
-                        if (includeConnector)
-                            FillComponent(ref pro, ProgramType.Premiere);
-                    }
-                    else if (pr.DisplayName.Contains("Effects"))
-                    {
-                        ConvertFromRegistryEntry(out pro, pr, ProgramType.AfterEffects);
-                        if (includeConnector)
-                            FillComponent(ref pro, ProgramType.AfterEffects);
-                    }
-                    else
-                    {
-                        ConvertFromRegistryEntry(out pro, pr, ProgramType.VEGAS);
-                        if (includeConnector)
-                            FillComponent(ref pro, ProgramType.VEGAS);
-                    }
-                    list.Add(pro);
                 }
             }
 
-            void FillComponent(ref IProgramEntry entry, ProgramType componentType)
+            void FillComponent(ref IProgramEntry entry)
             {
-                entry.SubComponent = GetVoukoderComponent(componentType);
+                entry.SubComponent = GetVoukoderComponent(entry.ComponentType);
                 if (entry.SubComponent != null)
                     entry.SubComponent.SubComponent = GetVoukoderComponent(ProgramType.VoukoderCore);
             }
@@ -112,22 +98,26 @@ namespace VoukoderManager.Core
         {
             var programs = RegistryHelper.GetPrograms(_registryProgramPath);
             Log.Debug("Received registry program list for GetVoukoderComponent");
-            IProgramEntry entry;
+            IProgramEntry entry = null;
             foreach (RegistryEntry e in programs)
             {
-                if (e.DisplayName.Contains("Voukoder"))
+                var displayname = e.DisplayName;
+                if (displayname.Contains("Voukoder"))
                 {
-                    if (e.DisplayName.Contains("Premiere"))
-                        ConvertFromRegistryEntry(out entry, e, ProgramType.Premiere);
-                    else if (e.DisplayName.Contains("VEGAS"))
-                        ConvertFromRegistryEntry(out entry, e, ProgramType.VEGAS);
-                    else if (e.DisplayName.Contains("AfterEffects"))
-                        ConvertFromRegistryEntry(out entry, e, ProgramType.AfterEffects);
-                    else
-                        ConvertFromRegistryEntry(out entry, e, ProgramType.VoukoderCore);
+                    foreach (var v in VoukoderSearchValues)
+                    {
+                        if (displayname.Contains(v))
+                        {
+                            var parsed = Enum.TryParse(v, out ProgramType result);
+                            Log.Debug($"Enum parsing successed: {parsed}");
+                            ConvertFromRegistryEntry(out entry, e, result);
+                        }
+                        else
+                            ConvertFromRegistryEntry(out entry, e, ProgramType.VoukoderCore);
 
-                    if (entry.ComponentType == connectorType)
-                        return entry;
+                        if (entry.ComponentType == connectorType)
+                            return entry;
+                    }
                 }
             }
             Log.Debug("No match for searching voukoder component");
@@ -146,17 +136,20 @@ namespace VoukoderManager.Core
             IProgramEntry entry;
             foreach (RegistryEntry e in programs)
             {
-                if (e.DisplayName.Contains("Voukoder"))
+                var displayname = e.DisplayName;
+                if (displayname.Contains("Voukoder"))
                 {
-                    if (e.DisplayName.Contains("Premiere"))
-                        ConvertFromRegistryEntry(out entry, e, ProgramType.Premiere);
-                    else if (e.DisplayName.Contains("VEGAS"))
-                        ConvertFromRegistryEntry(out entry, e, ProgramType.VEGAS);
-                    else if (e.DisplayName.Contains("AfterEffects"))
-                        ConvertFromRegistryEntry(out entry, e, ProgramType.AfterEffects);
-                    else
-                        ConvertFromRegistryEntry(out entry, e, ProgramType.VoukoderCore);
-                    list.Add(entry);
+                    foreach (var v in VoukoderSearchValues)
+                    {
+                        if (displayname.Contains(v))
+                        {
+                            Enum.TryParse(v, out ProgramType result);
+                            ConvertFromRegistryEntry(out entry, e, result);
+                        }
+                        else
+                            ConvertFromRegistryEntry(out entry, e, ProgramType.VoukoderCore);
+                        list.Add(entry);
+                    }
                 }
             }
             return list;
@@ -179,8 +172,10 @@ namespace VoukoderManager.Core
         {
             if (program.ComponentType == ProgramType.Premiere || program.ComponentType == ProgramType.MediaEncoder)
                 return RegistryHelper.GetHKEYLocalValue(_premierePluginsDir + program.Version.Major + ".0", "CommonPluginInstallPath");
-            else if (program.ComponentType == ProgramType.AfterEffects || program.ComponentType == ProgramType.AfterEffects)
+            else if (program.ComponentType == ProgramType.AfterEffects)
                 return RegistryHelper.GetHKEYLocalValue(_afterEffectsPluginsDir + program.Version.Major + ".0", "CommonPluginInstallPath");
+            else if (program.ComponentType == ProgramType.MovieStudio)
+                return RegistryHelper.GetHKEYLocalValue(_movieStudioPluginsDir + program.Version.Major + ".0", "InstallPath");
             else
                 return RegistryHelper.GetHKEYLocalValue(_vegasPluginsDir + program.Version.Major + ".0", "InstallPath");
         }
