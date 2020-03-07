@@ -16,7 +16,7 @@ namespace VoukoderManager.Core
         private static readonly string _afterEffectsPluginsDir = @"SOFTWARE\Adobe\After Effects\";
         private static readonly string _vegasPluginsDir = @"SOFTWARE\Sony Creative Software\VEGAS Pro\";
         private static readonly string _movieStudioPluginsDir = @"SOFTWARE\Sony Creative Software\Movie Studio\";
-        public static readonly List<string> ProgramSearchValues = new List<string>() { "Premiere", "Media Encoder", "AfterEffects", "VEGAS", "Movie Studio" };
+        public static readonly List<string> ProgramSearchValues = new List<string>() { "Premiere", "Media Encoder", "AfterEffects", "VEGAS" };
         public static readonly List<string> VoukoderSearchValues = new List<string>() { "Premiere", "AfterEffects", "VEGAS" };
 
         /// <summary>
