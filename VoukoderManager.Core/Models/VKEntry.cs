@@ -12,7 +12,7 @@ namespace VoukoderManager.Core.Models
 
         public VKEntry(string name, IVersion version)
         {
-            Log.Debug($"Creating VKEntry {name} Version: {version.PackageVersion}");
+            Log.Verbose($"Creating VKEntry {name} Version: {version.PackageVersion}");
             Name = name;
             Version = version;
         }
