@@ -203,6 +203,7 @@ namespace VoukoderManager.Controls
                 var msb = MessageBox.Show(updatemsg, "Update", MessageBoxButton.YesNo);
                 if (msb == MessageBoxResult.Yes)
                     await DownloadPackage(_packageUpdate, true);
+                _coreUpdate = null;
             }
         }
 
@@ -234,7 +235,6 @@ namespace VoukoderManager.Controls
         {
             VKGithubEntry.DownloadProgressChanged += VoukoderEntry_DownloadProgressChanged;
             var t = await ((VKGithubEntry)entry).StartPackageDownloadWithDependencies(forceDepDownload);
-            _coreUpdate = null;
             t.InstallPackageWithDepenencies(_entry);
             VKGithubEntry.DownloadProgressChanged -= VoukoderEntry_DownloadProgressChanged;
         }

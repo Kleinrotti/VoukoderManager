@@ -40,7 +40,7 @@ namespace VoukoderManager.Core
         {
             var curr = DateTime.Now;
             var div = curr - _lastRefreshed;
-            if (_values == null || div.TotalSeconds > 2)
+            if (_values == null || div.TotalSeconds > 1)
             {
                 Log.Debug("Getting programs from registry...");
                 Stopwatch w = new Stopwatch();

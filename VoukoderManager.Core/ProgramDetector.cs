@@ -99,27 +99,32 @@ namespace VoukoderManager.Core
             var programs = RegistryHelper.GetPrograms(_registryProgramPath);
             Log.Debug("Received registry program list for GetVoukoderComponent");
             IProgramEntry entry = null;
+            List<RegistryEntry> vComponents = null;
             foreach (RegistryEntry e in programs)
             {
                 var displayname = e.DisplayName;
                 if (displayname.Contains("Voukoder"))
                 {
-                    foreach (var v in VoukoderSearchValues)
-                    {
-                        if (displayname.Contains(v))
-                        {
-                            var parsed = Enum.TryParse(v, out ProgramType result);
-                            Log.Debug($"Enum parsing successed: {parsed}");
-                            ConvertFromRegistryEntry(out entry, e, result);
-                        }
-                        else
-                            ConvertFromRegistryEntry(out entry, e, ProgramType.VoukoderCore);
-
-                        if (entry.ComponentType == connectorType)
-                            return entry;
-                    }
+                    if (vComponents == null)
+                        vComponents = new List<RegistryEntry>();
+                    vComponents.Add(e);
                 }
             }
+            try
+            {
+                var ad = vComponents.Single(x => x.DisplayName.Any(char.IsDigit));
+                ConvertFromRegistryEntry(out entry, ad, ProgramType.VoukoderCore);
+            }
+            catch (InvalidOperationException ex) { }
+            try
+            {
+                var re = vComponents.Single(x => x.DisplayName.Contains(connectorType.ToString()));
+                ConvertFromRegistryEntry(out entry, re, connectorType);
+            }
+            catch (InvalidOperationException ex) { }
+            if (entry != null && connectorType == entry.ComponentType)
+                return entry;
+
             Log.Debug("No match for searching voukoder component");
             return null;
         }
