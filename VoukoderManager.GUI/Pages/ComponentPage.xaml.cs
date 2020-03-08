@@ -19,6 +19,7 @@ namespace VoukoderManager.GUI
     {
         private BackgroundWorker _worker;
         private List<IProgramEntry> _detectedPrograms;
+        private TextBlock _textBlockInfo;
 
         public ObservableCollection<VoukoderItemControl> VoukoderItemControls { get; set; }
 
@@ -31,13 +32,33 @@ namespace VoukoderManager.GUI
             DataContext = this;
             _isInstalledPage = isInstalledPage;
             VoukoderItemControls = new ObservableCollection<VoukoderItemControl>();
-            VoukoderItemControls = new ObservableCollection<VoukoderItemControl>();
+            VoukoderItemControls.CollectionChanged += VoukoderItemControls_CollectionChanged;
             _worker = new BackgroundWorker();
             this.Unloaded += ComponentPage_Unloaded;
             this.Loaded += ComponentPage_Loaded;
             VKProgramEntry.UninstallationFinished += ProgramEntry_UninstallationFinished;
             VKPackage.InstallationFinished += Package_InstallationFinished;
+            _textBlockInfo = new TextBlock();
+            if (!_isInstalledPage)
+                _textBlockInfo.Text = "There is currently no NLE available where Voukoder can be installed for.";
+            else
+                _textBlockInfo.Text = "There is currently no Voukoder component installed.";
+            _textBlockInfo.FontSize = 15;
+            stackpanelPrograms.Children.Add(_textBlockInfo);
             LoadProgramLists();
+        }
+
+        private void VoukoderItemControls_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            var v = (ObservableCollection<VoukoderItemControl>)sender;
+            if (e.NewStartingIndex != -1)
+            {
+                _textBlockInfo.Visibility = System.Windows.Visibility.Collapsed;
+            }
+            else if (v.Count == 0)
+            {
+                _textBlockInfo.Visibility = System.Windows.Visibility.Visible;
+            }
         }
 
         private void Package_InstallationFinished(object sender, OperationFinishedEventArgs e)

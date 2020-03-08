@@ -115,13 +115,13 @@ namespace VoukoderManager.Core
                 var ad = vComponents.Single(x => x.DisplayName.Any(char.IsDigit));
                 ConvertFromRegistryEntry(out entry, ad, ProgramType.VoukoderCore);
             }
-            catch (InvalidOperationException ex) { }
+            catch (Exception ex) { }
             try
             {
                 var re = vComponents.Single(x => x.DisplayName.Contains(connectorType.ToString()));
                 ConvertFromRegistryEntry(out entry, re, connectorType);
             }
-            catch (InvalidOperationException ex) { }
+            catch (Exception ex) { }
             if (entry != null && connectorType == entry.ComponentType)
                 return entry;
 
