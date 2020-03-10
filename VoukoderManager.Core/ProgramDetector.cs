@@ -20,7 +20,7 @@ namespace VoukoderManager.Core
         public static readonly List<string> VoukoderSearchValues = new List<string>() { "Premiere", "AfterEffects", "VEGAS" };
 
         /// <summary>
-        /// Returns a list which contains all installed programs where voukoder components are availible for
+        /// Returns a list which contains all installed programs where voukoder components are available for
         /// </summary>
         /// <param name="includeConnector">include the connector if installed</param>
         /// <param name="onlyNewestVersion">only the newest version of each program</param>

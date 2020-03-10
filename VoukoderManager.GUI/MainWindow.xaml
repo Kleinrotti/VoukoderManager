@@ -36,7 +36,7 @@
                 <MenuItem Header="{d:PackIcon ArrowDownBoldCircleOutline}" Name="menuItem_update" Height="28" Foreground="Green" Visibility="Collapsed" Click="menuItem_update_Click">
                     <MenuItem.ToolTip>
                         <ToolTip>
-                            <TextBlock Text="Update availible" />
+                            <TextBlock Text="Update available" />
                         </ToolTip>
                     </MenuItem.ToolTip>
                 </MenuItem>
@@ -66,7 +66,7 @@
                 </Style>
             </Button.Style>
         </Button>
-        <Button Content="Available" Margin="128,97,1030,555" FontSize="18" FontWeight="Regular" x:Name="buttonAvailible" Width="Auto" Height="Auto" Click="buttonAvailible_Click">
+        <Button Content="Available" Margin="128,97,1030,555" FontSize="18" FontWeight="Regular" x:Name="buttonavailable" Width="Auto" Height="Auto" Click="buttonavailable_Click">
             <Button.Style>
                 <Style TargetType="{x:Type Button}">
                     <Setter Property="Background" Value="Transparent" />

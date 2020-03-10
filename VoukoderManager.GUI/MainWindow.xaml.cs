@@ -21,7 +21,7 @@ namespace VoukoderManager.GUI
     {
         private Lang _lang;
         private ComponentPage _installedPage;
-        private ComponentPage _availiblePage;
+        private ComponentPage _availablePage;
         private int _requests = 0;
         private IGitHubEntry _selfUpdate;
 
@@ -57,7 +57,7 @@ namespace VoukoderManager.GUI
             PackageManager.ApiRequestUsed += PackageManager_ApiRequestUsed;
             VKPackage.InstallationFinished += VKPackage_InstallationFinished;
             _installedPage = new ComponentPage(true);
-            _availiblePage = new ComponentPage(false);
+            _availablePage = new ComponentPage(false);
             framePages.Navigate(_installedPage);
             CheckSelfUpdate();
             w.Stop();
@@ -125,16 +125,16 @@ namespace VoukoderManager.GUI
 
         private void buttonInstalled_Click(object sender, RoutedEventArgs e)
         {
-            buttonAvailible.Foreground = new SolidColorBrush(Colors.Black);
+            buttonavailable.Foreground = new SolidColorBrush(Colors.Black);
             buttonInstalled.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3399FF"));
             framePages.Navigate(_installedPage);
         }
 
-        private void buttonAvailible_Click(object sender, RoutedEventArgs e)
+        private void buttonavailable_Click(object sender, RoutedEventArgs e)
         {
-            buttonAvailible.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3399FF"));
+            buttonavailable.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3399FF"));
             buttonInstalled.Foreground = new SolidColorBrush(Colors.Black);
-            framePages.Navigate(_availiblePage);
+            framePages.Navigate(_availablePage);
         }
 
         private void MenuItem_exit_Click(object sender, RoutedEventArgs e)
