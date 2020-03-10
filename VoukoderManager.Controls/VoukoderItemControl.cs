@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using VoukoderManager.Core;
 using VoukoderManager.Core.Models;
@@ -82,6 +83,7 @@ namespace VoukoderManager.Controls
             _textBlockStatus.Dispatcher.Invoke(() =>
             {
                 _textBlockStatus.Visibility = Visibility.Visible;
+                _textBlockStatus.Foreground = new SolidColorBrush(Colors.Black);
                 _textBlockStatus.Text = statusMessage;
             });
         }
@@ -125,6 +127,7 @@ namespace VoukoderManager.Controls
                 _buttonUninstall.Visibility = Visibility.Visible;
                 _labelVersion.Content = _entry.SubComponent.Version.PackageVersion;
                 _labelVersion.Visibility = Visibility.Visible;
+                CheckCoreInstallation();
                 CheckForUpdate();
             }
         }
@@ -242,6 +245,39 @@ namespace VoukoderManager.Controls
         private void VoukoderEntry_DownloadProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
         {
             UpdateStatusTextBlock($"Downloading: {e.ProgressPercentage}%");
+        }
+
+        private void CheckCoreInstallation()
+        {
+            if (_entry.SubComponent.SubComponent == null)
+            {
+                _textBlockStatus.Visibility = Visibility.Visible;
+                _textBlockStatus.MouseLeftButtonUp += _textBlockStatus_MouseLeftButtonUp;
+                _textBlockStatus.MouseEnter += _textBlockStatus_MouseEnter;
+                _textBlockStatus.MouseLeave += _textBlockStatus_MouseLeave;
+                _textBlockStatus.Foreground = new SolidColorBrush(Colors.Red);
+                _textBlockStatus.Text = "WARNING: Voukoder Core is currently not installed. Click to install it now!";
+            }
+        }
+
+        private void _textBlockStatus_MouseLeave(object sender, MouseEventArgs e)
+        {
+            this.Cursor = Cursors.Arrow;
+        }
+
+        private void _textBlockStatus_MouseEnter(object sender, MouseEventArgs e)
+        {
+            this.Cursor = Cursors.Hand;
+        }
+
+        private void _textBlockStatus_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            var p = new PackageManager();
+            var pkg = p.GetLatestDownloadableCorePackage();
+            DownloadPackage(pkg, false);
+            _textBlockStatus.MouseLeftButtonUp -= _textBlockStatus_MouseLeftButtonUp;
+            _textBlockStatus.MouseEnter -= _textBlockStatus_MouseEnter;
+            _textBlockStatus.MouseLeave -= _textBlockStatus_MouseLeave;
         }
 
         private void CheckForUpdate()

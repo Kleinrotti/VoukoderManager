@@ -80,7 +80,7 @@ namespace VoukoderManager.Core
                 IGitHubEntry corepkg = null;
                 var content = _client.Repository.Content.GetAllContents(owner, repo, filepath).Result;
                 if (includeCore)
-                    corepkg = GetLatestDownloadableCorePackage(ProgramType.VoukoderCore);
+                    corepkg = GetLatestDownloadableCorePackage();
                 OnRequest(this, new ApiRequestEventArgs(_client.GetLastApiInfo()));
                 var re = _client.GetLastApiInfo();
                 var lst = new List<IGitHubEntry>();
@@ -148,25 +148,20 @@ namespace VoukoderManager.Core
             }
         }
 
-        public IGitHubEntry GetLatestDownloadableCorePackage(ProgramType type)
+        public IGitHubEntry GetLatestDownloadableCorePackage()
         {
             string repo;
             try
             {
-                if (type == ProgramType.VoukoderCore)
+                repo = "voukoder";
+                var release = _client.Repository.Release.GetLatest("Vouk", repo).Result;
+                OnRequest(this, new ApiRequestEventArgs(_client.GetLastApiInfo()));
+                var entry = new VKGithubEntry(release.Name, new Models.Version(release.Name))
                 {
-                    repo = "voukoder";
-                    var release = _client.Repository.Release.GetLatest("Vouk", repo).Result;
-                    OnRequest(this, new ApiRequestEventArgs(_client.GetLastApiInfo()));
-                    var entry = new VKGithubEntry(release.Name, new Models.Version(release.Name))
-                    {
-                        DownloadUrl = new Uri(release.Assets[0].BrowserDownloadUrl),
-                        Changelog = release.Body
-                    };
-                    return entry;
-                }
-                else
-                    return null;
+                    DownloadUrl = new Uri(release.Assets[0].BrowserDownloadUrl),
+                    Changelog = release.Body
+                };
+                return entry;
             }
             catch (AggregateException ex)
             {
