@@ -16,7 +16,7 @@ namespace VoukoderManager.Core
         {
             get
             {
-                return RegistryHelper.GetUseBetaVersion();
+                return RegistryHelper.GetValue("UseBetaVersions");
             }
         }
 

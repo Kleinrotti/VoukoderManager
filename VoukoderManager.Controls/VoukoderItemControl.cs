@@ -256,7 +256,7 @@ namespace VoukoderManager.Controls
                 _textBlockStatus.MouseEnter += _textBlockStatus_MouseEnter;
                 _textBlockStatus.MouseLeave += _textBlockStatus_MouseLeave;
                 _textBlockStatus.Foreground = new SolidColorBrush(Colors.Red);
-                _textBlockStatus.Text = "WARNING: Voukoder Core is currently not installed. Click to install it now!";
+                _textBlockStatus.Text = "WARNING: Voukoder Core is not installed. Click to install it now!";
             }
         }
 

@@ -91,48 +91,24 @@ namespace VoukoderManager.Core
             return _values;
         }
 
-        public static void SetUseBetaVersion(bool value)
-        {
-            using (var _registryKey = Registry.CurrentUser.OpenSubKey(@"Software\VoukoderManager", true))
-            {
-                Log.Debug($"Setting registry value UseBetaVersions: {value}");
-                _registryKey.SetValue("UseBetaVersions", value, RegistryValueKind.DWord);
-            }
-        }
-
-        public static bool GetUseBetaVersion()
-        {
-            using (var _registryKey = Registry.CurrentUser.OpenSubKey(@"Software\VoukoderManager", true))
-            {
-                Log.Debug("Getting UseBetaVersion from registry");
-                var v = _registryKey.GetValue("UseBetaVersions");
-                if (v == null)
-                {
-                    _registryKey.SetValue("UseBetaVersions", false, RegistryValueKind.DWord);
-                    return false;
-                }
-                return Convert.ToBoolean(v);
-            }
-        }
-
-        public static void SetLogging(bool value)
+        public static void SetValue(string valueName, bool value)
         {
             using (var _registryKey = Registry.CurrentUser.OpenSubKey(@"Software\VoukoderManager", true))
             {
                 Log.Debug($"Setting registry value logging: {value}");
-                _registryKey.SetValue("Logging", value, RegistryValueKind.DWord);
+                _registryKey.SetValue(valueName, value, RegistryValueKind.DWord);
             }
         }
 
-        public static bool GetLogging()
+        public static bool GetValue(string valueName)
         {
             using (var _registryKey = Registry.CurrentUser.OpenSubKey(@"Software\VoukoderManager", true))
             {
-                Log.Debug("Getting logging from registry");
-                var v = _registryKey.GetValue("Logging");
+                Log.Debug($"Getting {valueName} from registry");
+                var v = _registryKey.GetValue(valueName);
                 if (v == null)
                 {
-                    _registryKey.SetValue("Logging", false, RegistryValueKind.DWord);
+                    _registryKey.SetValue(valueName, false, RegistryValueKind.DWord);
                     return false;
                 }
                 return Convert.ToBoolean(v);

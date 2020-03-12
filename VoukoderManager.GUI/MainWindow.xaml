@@ -15,7 +15,7 @@
         Background="#FBFBFB"
         BorderBrush="Black"
         BorderThickness="0.5"
-        Title="" Height="720" Width="1280" Icon="./Resources/logo.png">
+        Title="" Height="720" Width="1280" Icon="./Resources/logo_new.png">
     <Grid x:Name="mainGrid" Background="#FBFBFB">
         <Grid x:Name="gridMove" Background="Transparent" VerticalAlignment="Top" HorizontalAlignment="Left" Height="30" Width="1170" MouseDown="gridMove_MouseDown" />
         <Button Content="X" FontSize="20" Name="buttonExit" Click="buttonExit_Click" Style="{DynamicResource MaterialDesignFlatButton}" Height="Auto" Width="Auto" Foreground="Red" VerticalAlignment="Top" HorizontalAlignment="Right" />
@@ -27,7 +27,11 @@
                 </MenuItem>
                 <MenuItem Header="_Options" Height="28">
                     <MenuItem Header="_Use beta versions" IsCheckable="True" Click="MenuItem_beta_Click" Name="menuItem_beta" Background="White" />
-                    <MenuItem Header="_Notifications" IsCheckable="True" Visibility="Collapsed" Click="menuItem_notifications_Click" Name="menuItem_notifications" Background="White" />
+                    <MenuItem Header="Tray" Background="White">
+                        <MenuItem Header="_Minimize to tray" IsCheckable="True" Name="menuItem_tray" Click="menuItem_tray_Click" Background="White" />
+                        <MenuItem Header="_Start minimized" IsCheckable="True" Name="menuItem_start_tray" Click="menuItem_start_tray_Click" Background="White" />
+                    </MenuItem>
+                    <MenuItem Header="_Notifications" IsCheckable="True" Visibility="Visible" Click="menuItem_notifications_Click" Name="menuItem_notifications" Background="White" />
                     <MenuItem Header="_Debug mode" IsCheckable="True" Click="menuItem_debug_Click" Name="menuItem_debug" Background="White" />
                 </MenuItem>
                 <MenuItem Header="_Help" Height="28">

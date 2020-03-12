@@ -11,6 +11,7 @@ using System.Windows.Media;
 using VoukoderManager.Core;
 using VoukoderManager.Core.Models;
 using VoukoderManager.Language;
+using VoukoderManager.Notify;
 
 namespace VoukoderManager.GUI
 {
@@ -24,6 +25,7 @@ namespace VoukoderManager.GUI
         private ComponentPage _availablePage;
         private int _requests = 0;
         private IGitHubEntry _selfUpdate;
+        private NotifyService _notifyService;
 
         public int RemainingRequests
         {
@@ -42,7 +44,13 @@ namespace VoukoderManager.GUI
             _lang = new Lang();
             _lang.Initialize();
             InitializeComponent();
-            menuItem_debug.IsChecked = RegistryHelper.GetLogging();
+            this.IsVisibleChanged += MainWindow_IsVisibleChanged;
+            _notifyService = new NotifyService(this);
+            this.Closed += MainWindow_Closed;
+            menuItem_debug.IsChecked = RegistryHelper.GetValue("Logging");
+            menuItem_notifications.IsChecked = RegistryHelper.GetValue("Notifications");
+            menuItem_tray.IsChecked = RegistryHelper.GetValue("MinimizeToTray");
+            menuItem_start_tray.IsChecked = RegistryHelper.GetValue("StartMinimized");
             if (menuItem_debug.IsChecked)
             {
                 Log.Logger = new LoggerConfiguration()
@@ -62,6 +70,17 @@ namespace VoukoderManager.GUI
             CheckSelfUpdate();
             w.Stop();
             Log.Debug($"Initialation finished in {w.ElapsedMilliseconds}ms");
+        }
+
+        private void MainWindow_Closed(object sender, System.EventArgs e)
+        {
+            _notifyService.HideIcon();
+        }
+
+        private void MainWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (!((bool)e.NewValue))
+                _notifyService.ShowIcon();
         }
 
         private void VKPackage_InstallationFinished(object sender, OperationFinishedEventArgs e)
@@ -100,7 +119,10 @@ namespace VoukoderManager.GUI
             PackageManager m = new PackageManager();
             _selfUpdate = m.GetManagerUpdate(new Version(Assembly.GetExecutingAssembly().GetName().Version.ToString()));
             if (_selfUpdate != null)
+            {
                 menuItem_update.Visibility = Visibility.Visible;
+                _notifyService.Notify(new Notification("Update", "There is a update for VoukoderManager. Click to install it"), DoSelfUpdate);
+            }
         }
 
         private void LanguageChanged(object sender, LanguageChangeEventArgs e)
@@ -114,7 +136,13 @@ namespace VoukoderManager.GUI
 
         private void buttonMinimize_Click(object sender, RoutedEventArgs e)
         {
-            this.WindowState = WindowState.Minimized;
+            if (!menuItem_tray.IsChecked)
+                this.WindowState = WindowState.Minimized;
+            else
+            {
+                _notifyService.ShowIcon();
+                this.Hide();
+            }
         }
 
         private void gridMove_MouseDown(object sender, MouseButtonEventArgs e)
@@ -145,7 +173,7 @@ namespace VoukoderManager.GUI
         private void MenuItem_beta_Click(object sender, RoutedEventArgs e)
         {
             var src = e.Source as MenuItem;
-            RegistryHelper.SetUseBetaVersion(src.IsChecked);
+            RegistryHelper.SetValue("UseBetaVersions", src.IsChecked);
         }
 
         private void menuItem_notifications_Click(object sender, RoutedEventArgs e)
@@ -154,7 +182,7 @@ namespace VoukoderManager.GUI
 
         private void menuItem_debug_Click(object sender, RoutedEventArgs e)
         {
-            RegistryHelper.SetLogging(menuItem_debug.IsChecked);
+            RegistryHelper.SetValue("Logging", menuItem_debug.IsChecked);
             if (menuItem_debug.IsChecked)
             {
                 Log.Logger = new LoggerConfiguration()
@@ -177,7 +205,12 @@ namespace VoukoderManager.GUI
             about.Show();
         }
 
-        private async void menuItem_update_Click(object sender, RoutedEventArgs e)
+        private void menuItem_update_Click(object sender, RoutedEventArgs e)
+        {
+            DoSelfUpdate();
+        }
+
+        private async void DoSelfUpdate()
         {
             if (_selfUpdate == null)
                 return;
@@ -196,6 +229,18 @@ namespace VoukoderManager.GUI
                 Process.Start(((VKMGithubEntry)_selfUpdate).DownloadDestination);
                 Application.Current.Shutdown();
             }
+        }
+
+        private void menuItem_tray_Click(object sender, RoutedEventArgs e)
+        {
+            var value = ((MenuItem)e.Source).IsChecked;
+            RegistryHelper.SetValue("MinimizeToTray", value);
+        }
+
+        private void menuItem_start_tray_Click(object sender, RoutedEventArgs e)
+        {
+            var value = ((MenuItem)e.Source).IsChecked;
+            RegistryHelper.SetValue("StartMinimized", value);
         }
     }
 }
