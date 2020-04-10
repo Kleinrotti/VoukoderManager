@@ -179,8 +179,11 @@ namespace VoukoderManager.Core
 
         public static string GetPluginsDir(IEntry program)
         {
-            if (program.ComponentType == ProgramType.Premiere || program.ComponentType == ProgramType.MediaEncoder)
+            if ((program.ComponentType == ProgramType.Premiere || program.ComponentType == ProgramType.MediaEncoder) && program.Version.Major > 6)
                 return RegistryHelper.GetHKEYLocalValue(_premierePluginsDir + program.Version.Major + ".0", "CommonPluginInstallPath");
+            //If CS6 is installed we have to use a different registry path
+            else if ((program.ComponentType == ProgramType.Premiere) && program.Version.Major <= 6)
+                return RegistryHelper.GetHKEYLocalValue(_premierePluginsDir + "CurrentVersion", "Plug-InsDir");
             else if (program.ComponentType == ProgramType.AfterEffects)
                 return RegistryHelper.GetHKEYLocalValue(_afterEffectsPluginsDir + program.Version.Major + ".0", "CommonPluginInstallPath");
             else if (program.ComponentType == ProgramType.MovieStudio)

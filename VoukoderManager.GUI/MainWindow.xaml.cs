@@ -57,7 +57,7 @@ namespace VoukoderManager.GUI
             if (logging)
             {
                 Log.Logger = new LoggerConfiguration()
-                    .MinimumLevel.Verbose()
+                    .MinimumLevel.Debug()
                     .WriteTo.Console()
                     .WriteTo.File("log.txt", rollingInterval: RollingInterval.Hour)
                     .CreateLogger();
