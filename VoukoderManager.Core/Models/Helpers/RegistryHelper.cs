@@ -102,7 +102,7 @@ namespace VoukoderManager.Core
 
         public static bool GetValue(string valueName)
         {
-            using (var _registryKey = Registry.CurrentUser.OpenSubKey(@"Software\VoukoderManager", true))
+            using (var _registryKey = Registry.CurrentUser.CreateSubKey(@"Software\VoukoderManager", true))
             {
                 Log.Debug($"Getting {valueName} from registry");
                 var v = _registryKey.GetValue(valueName);

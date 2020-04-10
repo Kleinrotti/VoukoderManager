@@ -44,6 +44,7 @@ namespace VoukoderManager.Core
                         if (includeConnector)
                             FillComponent(ref pro);
                         list.Add(pro);
+                        Log.Debug($"Adding: {pro.Name} to list");
                     }
                 }
             }
@@ -52,11 +53,13 @@ namespace VoukoderManager.Core
             {
                 entry.SubComponent = GetVoukoderComponent(entry.ComponentType);
                 if (entry.SubComponent != null)
+                {
+                    Log.Debug($"Adding subcomponent: {entry.SubComponent.Name} to entry");
                     entry.SubComponent.SubComponent = GetVoukoderComponent(ProgramType.VoukoderCore);
+                }
             }
             if (onlyNewestVersion)
             {
-                Log.Debug("Removing older versions of same program from list");
                 var enumlengh = Enum.GetNames(typeof(ProgramType)).Length;
                 //Check for multiple installed versions of each program
                 for (int i = 0; i < enumlengh; i++)
@@ -65,6 +68,7 @@ namespace VoukoderManager.Core
                     //if more than one version of the same program is installed
                     if (items.Count() > 2)
                     {
+                        Log.Debug("Removing older versions of same program from list");
                         //search for the newest version of the same program
                         var ii = items.Aggregate((i1, i2) => i1.Version.Major > i2.Version.Major ? i1 : i2);
                         //remove older versions from the list

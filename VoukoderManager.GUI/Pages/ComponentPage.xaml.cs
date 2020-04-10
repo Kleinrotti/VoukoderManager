@@ -9,6 +9,7 @@ using System.Windows.Input;
 using VoukoderManager.Controls;
 using VoukoderManager.Core;
 using VoukoderManager.Core.Models;
+using VoukoderManager.Notify;
 
 namespace VoukoderManager.GUI
 {
@@ -64,16 +65,22 @@ namespace VoukoderManager.GUI
         private void Package_InstallationFinished(object sender, OperationFinishedEventArgs e)
         {
             if (!e.Cancelled)
+            {
                 if (e.Entry.ComponentType == ProgramType.VoukoderCore || ((VKPackage)e.Entry).Dependencies != null)
                     LoadProgramLists();
                 else
                     UpdateProgramList(e.Entry, e.OperationType);
+                NotifyService.Notify(new Notification("Info", "Install finished"));
+            }
         }
 
         private void ProgramEntry_UninstallationFinished(object sender, OperationFinishedEventArgs e)
         {
             if (!e.Cancelled)
+            {
                 UpdateProgramList(e.Entry, e.OperationType);
+                NotifyService.Notify(new Notification("Info", "Uninstall finished"));
+            }
         }
 
         private void ComponentPage_Loaded(object sender, System.Windows.RoutedEventArgs e)

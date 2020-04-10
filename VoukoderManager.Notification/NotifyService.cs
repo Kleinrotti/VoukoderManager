@@ -6,13 +6,13 @@ namespace VoukoderManager.Notify
 {
     public class NotifyService
     {
-        public static NotifyIcon Icon;
+        protected static NotifyIcon Icon;
         protected static ContextMenu Menu;
 
         private static Window _window;
         private static Action _callback;
 
-        public int BalloonTimeout { get; set; } = 5;
+        public static int BalloonTimeout { get; set; } = 5;
 
         static NotifyService()
         {
@@ -29,7 +29,8 @@ namespace VoukoderManager.Notify
 
         private static void Icon_BalloonTipClosed(object sender, EventArgs e)
         {
-            Icon.Visible = false;
+            if (_window.IsVisible)
+                Icon.Visible = false;
         }
 
         public NotifyService(Window window)
@@ -39,7 +40,7 @@ namespace VoukoderManager.Notify
 
         private static void Icon_BalloonTipClicked(object sender, EventArgs e)
         {
-            _callback();
+            _callback?.Invoke();
         }
 
         private static void CreateMenuItems()
@@ -57,13 +58,13 @@ namespace VoukoderManager.Notify
             Icon.ContextMenu = Menu;
         }
 
-        public void Notify(INotification notification)
+        public static void Notify(INotification notification)
         {
             Icon.Visible = true;
             Icon.ShowBalloonTip(BalloonTimeout, notification.Title, notification.Message, ToolTipIcon.None);
         }
 
-        public void Notify(INotification notification, Action callback)
+        public static void Notify(INotification notification, Action callback)
         {
             _callback = callback;
             Icon.Visible = true;

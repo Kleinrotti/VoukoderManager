@@ -1,7 +1,10 @@
 ﻿using Microsoft.Win32;
 using Serilog;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
+using System.Management;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -37,28 +40,39 @@ namespace VoukoderManager.GUI
             }
         }
 
+        private string GetOS
+        {
+            get
+            {
+                return (from x in new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem").Get().Cast<ManagementObject>()
+                        select x.GetPropertyValue("Caption")).FirstOrDefault().ToString();
+            }
+        }
+
         public MainWindow()
         {
             Stopwatch w = new Stopwatch();
             w.Start();
+            var logging = RegistryHelper.GetValue("Logging");
+            if (logging)
+            {
+                Log.Logger = new LoggerConfiguration()
+                    .MinimumLevel.Verbose()
+                    .WriteTo.Console()
+                    .WriteTo.File("log.txt", rollingInterval: RollingInterval.Hour)
+                    .CreateLogger();
+                Log.Information("----Logging started----");
+            }
             _lang = new Lang();
             _lang.Initialize();
             InitializeComponent();
             this.IsVisibleChanged += MainWindow_IsVisibleChanged;
             _notifyService = new NotifyService(this);
             this.Closed += MainWindow_Closed;
-            menuItem_debug.IsChecked = RegistryHelper.GetValue("Logging");
+            menuItem_debug.IsChecked = logging;
             menuItem_notifications.IsChecked = RegistryHelper.GetValue("Notifications");
             menuItem_tray.IsChecked = RegistryHelper.GetValue("MinimizeToTray");
             menuItem_start_tray.IsChecked = RegistryHelper.GetValue("StartMinimized");
-            if (menuItem_debug.IsChecked)
-            {
-                Log.Logger = new LoggerConfiguration()
-                    .MinimumLevel.Debug()
-                    .WriteTo.Console()
-                    .WriteTo.File("log.txt", rollingInterval: RollingInterval.Hour)
-                    .CreateLogger();
-            }
             menuItem_beta.IsChecked = PackageManager.AllowPreReleaseVersion;
             DataContext = this;
             Lang.LanguageChanged += LanguageChanged;
@@ -69,7 +83,8 @@ namespace VoukoderManager.GUI
             framePages.Navigate(_installedPage);
             CheckSelfUpdate();
             w.Stop();
-            Log.Debug($"Initialation finished in {w.ElapsedMilliseconds}ms");
+            Log.Debug($"VoukoderManager running on {GetOS} 64Bit: {Environment.Is64BitOperatingSystem}");
+            Log.Debug($"Initialization finished in {w.ElapsedMilliseconds}ms");
         }
 
         private void MainWindow_Closed(object sender, System.EventArgs e)
@@ -117,11 +132,11 @@ namespace VoukoderManager.GUI
         private void CheckSelfUpdate()
         {
             PackageManager m = new PackageManager();
-            _selfUpdate = m.GetManagerUpdate(new Version(Assembly.GetExecutingAssembly().GetName().Version.ToString()));
+            _selfUpdate = m.GetManagerUpdate(new Core.Models.Version(Assembly.GetExecutingAssembly().GetName().Version.ToString()));
             if (_selfUpdate != null)
             {
                 menuItem_update.Visibility = Visibility.Visible;
-                _notifyService.Notify(new Notification("Update", "There is a update for VoukoderManager. Click to install it"), DoSelfUpdate);
+                NotifyService.Notify(new Notification("Update", "There is a update for VoukoderManager. Click to install it"), DoSelfUpdate);
             }
         }
 
