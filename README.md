@@ -18,7 +18,6 @@ Currently there is a limitation of 60 github api requests per hour. These reques
 <br>
 **Requirements:**
 <br><a href="https://dotnet.microsoft.com/download/dotnet-framework/net48" style="font-size:18pt;">.NET Framework 4.8</a></p>
-<br>
 Windows 10
 <br>
 Voukoder icon made by Noar
