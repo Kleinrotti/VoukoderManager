@@ -8,7 +8,8 @@ namespace VoukoderManager.Core
 {
     public static class RegistryHelper
     {
-        private static List<RegistryView> _views;
+        private static readonly List<RegistryView> _views;
+        private static readonly List<string> _registryProgramPaths;
 
         /// <summary>
         /// Get a value from registry for the given key path and value name
@@ -25,6 +26,8 @@ namespace VoukoderManager.Core
         static RegistryHelper()
         {
             _views = new List<RegistryView>() { RegistryView.Registry32, RegistryView.Registry64 };
+            _registryProgramPaths = new List<string>{ @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall",
+            @"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall" };
         }
 
         private static List<RegistryEntry> _values;
@@ -36,7 +39,7 @@ namespace VoukoderManager.Core
         /// <param name="registryPath"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static List<RegistryEntry> GetPrograms(string registryPath)
+        public static List<RegistryEntry> GetPrograms()
         {
             var curr = DateTime.Now;
             var div = curr - _lastRefreshed;
@@ -48,36 +51,39 @@ namespace VoukoderManager.Core
                 _values = new List<RegistryEntry>();
                 var currentList = new List<RegistryEntry>();
                 RegistryEntry entry = new RegistryEntry();
-                foreach (RegistryView v in _views)
+                foreach (var paths in _registryProgramPaths)
                 {
-                    using (RegistryKey rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, v).OpenSubKey(registryPath))
+                    foreach (RegistryView v in _views)
                     {
-                        foreach (string skName in rk.GetSubKeyNames())
+                        using (RegistryKey rk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, v).OpenSubKey(paths))
                         {
-                            using (RegistryKey sk = rk.OpenSubKey(skName))
+                            foreach (string skName in rk.GetSubKeyNames())
                             {
-                                Log.Verbose<RegistryKey>("Processing program registry entry", sk);
-                                try
+                                using (RegistryKey sk = rk.OpenSubKey(skName))
                                 {
-                                    entry = new RegistryEntry();
-                                    entry.DisplayName = sk.GetValue("DisplayName")?.ToString() ?? "";
-                                    entry.DisplayVersion = sk.GetValue("DisplayVersion")?.ToString() ?? "";
-                                    entry.PreRelease = entry.DisplayName.Contains("rc") || entry.DisplayName.Contains("beta");
-                                    entry.InstallationPath = sk.GetValue("InstallLocation")?.ToString() ?? "";
-                                    entry.UninstallString = sk.GetValue("UninstallString")?.ToString() ?? "";
-                                    entry.Publisher = sk.GetValue("Publisher")?.ToString() ?? "";
-                                    entry.InstallationDate = sk.GetValue("InstallDate")?.ToString() ?? "";
-                                    entry.ModifyPath = sk.GetValue("ModifyPath")?.ToString() ?? "";
-                                    entry.WindowsInstaller = Convert.ToBoolean(sk.GetValue("WindowsInstaller") ?? false);
-
-                                    if (!currentList.Exists(x => x.DisplayName.Contains(entry.DisplayName)))
+                                    Log.Verbose("Processing program registry entry", sk);
+                                    try
                                     {
-                                        currentList.Add(entry);
+                                        entry = new RegistryEntry();
+                                        entry.DisplayName = sk.GetValue("DisplayName")?.ToString() ?? "";
+                                        entry.DisplayVersion = sk.GetValue("DisplayVersion")?.ToString() ?? "";
+                                        entry.PreRelease = entry.DisplayName.Contains("rc") || entry.DisplayName.Contains("beta");
+                                        entry.InstallationPath = sk.GetValue("InstallLocation")?.ToString() ?? "";
+                                        entry.UninstallString = sk.GetValue("UninstallString")?.ToString() ?? "";
+                                        entry.Publisher = sk.GetValue("Publisher")?.ToString() ?? "";
+                                        entry.InstallationDate = sk.GetValue("InstallDate")?.ToString() ?? "";
+                                        entry.ModifyPath = sk.GetValue("ModifyPath")?.ToString() ?? "";
+                                        entry.WindowsInstaller = Convert.ToBoolean(sk.GetValue("WindowsInstaller") ?? false);
+
+                                        if (!currentList.Exists(x => x.DisplayName.Contains(entry.DisplayName)))
+                                        {
+                                            currentList.Add(entry);
+                                        }
                                     }
-                                }
-                                catch (NullReferenceException ex)
-                                {
-                                    Log.Error(ex, $"Error formatting Registry values to RegistryEntry", entry);
+                                    catch (NullReferenceException ex)
+                                    {
+                                        Log.Error(ex, $"Error formatting Registry values to RegistryEntry", entry.DisplayName);
+                                    }
                                 }
                             }
                         }
@@ -95,8 +101,8 @@ namespace VoukoderManager.Core
         {
             using (var _registryKey = Registry.CurrentUser.OpenSubKey(@"Software\VoukoderManager", true))
             {
-                Log.Debug($"Setting registry value logging: {value}");
                 _registryKey.SetValue(valueName, value, RegistryValueKind.DWord);
+                Log.Debug($"Set registry value {valueName}: {value}");
             }
         }
 
@@ -109,6 +115,7 @@ namespace VoukoderManager.Core
                 if (v == null)
                 {
                     _registryKey.SetValue(valueName, false, RegistryValueKind.DWord);
+                    Log.Debug($"Set registry value {valueName}: {false}");
                     return false;
                 }
                 return Convert.ToBoolean(v);

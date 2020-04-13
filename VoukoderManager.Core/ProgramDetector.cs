@@ -11,7 +11,6 @@ namespace VoukoderManager.Core
     /// </summary>
     public static class ProgramDetector
     {
-        private static readonly string _registryProgramPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
         private static readonly string _premierePluginsDir = @"SOFTWARE\Adobe\Premiere Pro\";
         private static readonly string _afterEffectsPluginsDir = @"SOFTWARE\Adobe\After Effects\";
         private static readonly string _vegasPluginsDir = @"SOFTWARE\Sony Creative Software\VEGAS Pro\";
@@ -27,7 +26,7 @@ namespace VoukoderManager.Core
         /// <returns></returns>
         public static List<IProgramEntry> GetInstalledPrograms(bool includeConnector, bool onlyNewestVersion)
         {
-            var programs = RegistryHelper.GetPrograms(_registryProgramPath);
+            var programs = RegistryHelper.GetPrograms();
             Log.Debug("Received registry program list for GetInstalledPrograms");
             List<IProgramEntry> list = new List<IProgramEntry>();
             IProgramEntry pro;
@@ -100,7 +99,7 @@ namespace VoukoderManager.Core
         /// <returns></returns>
         public static IProgramEntry GetVoukoderComponent(ProgramType connectorType)
         {
-            var programs = RegistryHelper.GetPrograms(_registryProgramPath);
+            var programs = RegistryHelper.GetPrograms();
             Log.Debug("Received registry program list for GetVoukoderComponent");
             IProgramEntry entry = null;
             List<RegistryEntry> vComponents = null;
@@ -119,13 +118,13 @@ namespace VoukoderManager.Core
                 var ad = vComponents.Single(x => x.DisplayName.Any(char.IsDigit));
                 ConvertFromRegistryEntry(out entry, ad, ProgramType.VoukoderCore);
             }
-            catch (Exception ex) { }
+            catch (InvalidOperationException ex) { }
             try
             {
                 var re = vComponents.Single(x => x.DisplayName.Contains(connectorType.ToString()));
                 ConvertFromRegistryEntry(out entry, re, connectorType);
             }
-            catch (Exception ex) { }
+            catch (InvalidOperationException ex) { }
             if (entry != null && connectorType == entry.ComponentType)
                 return entry;
 
@@ -139,7 +138,7 @@ namespace VoukoderManager.Core
         /// <returns></returns>
         public static List<IProgramEntry> GetInstalledVoukoderComponents()
         {
-            var programs = RegistryHelper.GetPrograms(_registryProgramPath);
+            var programs = RegistryHelper.GetPrograms();
             Log.Debug("Received registry program list for GetInstalledVoukoderComponents");
             List<IProgramEntry> list = new List<IProgramEntry>();
             IProgramEntry entry;

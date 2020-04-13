@@ -144,7 +144,7 @@ namespace VoukoderManager.GUI
             }
             catch (InvalidOperationException ex)
             {
-                Log.Error(ex, "Error updating Voukodercontrolitem", changedEntry);
+                Log.Error(ex, "Error updating Voukodercontrolitem", changedEntry.Name);
             }
         }
 
