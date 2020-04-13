@@ -15,8 +15,12 @@ If there is an update available for VoukoderManager a green download icon on the
 <br>
 <br>
 Currently there is a limitation of 60 github api requests per hour. These request are used to get the latest versions of voukoder and to download it. In general this limit should not be reached in a normal behavior. But you have an overview in the bottom right corner how many requests are left.
-
-**Requirements:**
-<br><a href="https://dotnet.microsoft.com/download/dotnet-framework/net48" style="font-size:18pt;">.NET Framework 4.8</a></p>
 <br>
+
+### Requirements:
+
+<br><a href="https://dotnet.microsoft.com/download/dotnet-framework/net48" style="font-size:18pt;">.NET Framework 4.8</a></p>
+Windows 10
+<br>
+
 Voukoder icon made by Noar
