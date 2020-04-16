@@ -47,8 +47,8 @@
             </Menu>
         </DockPanel>
         <Label Content="Voukoder Manager" FontSize="35" Margin="30, 45" FontWeight="Light" HorizontalAlignment="Left" x:Name="labelTop" />
-        <Label Content="Remaining API requests: " Margin="15,0" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
-        <Label Content="{Binding RemainingRequests}" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
+        <Label Content="Remaining API requests: " Margin="15,0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Visibility="Collapsed"/>
+        <Label Content="{Binding RemainingRequests}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Visibility="Collapsed"/>
         <Button Content="Installed" Foreground="#3399FF" Margin="6,97,1152,555" FontSize="18" FontWeight="Regular" x:Name="buttonInstalled" Width="Auto" Height="Auto" Click="buttonInstalled_Click">
             <Button.Style>
                 <Style TargetType="{x:Type Button}">

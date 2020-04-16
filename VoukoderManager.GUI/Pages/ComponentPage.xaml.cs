@@ -70,7 +70,7 @@ namespace VoukoderManager.GUI
                     LoadProgramLists();
                 else
                     UpdateProgramList(e.Entry, e.OperationType);
-                NotifyService.Notify(new Notification("Info", "Install finished"));
+                NotifyService.Notify(new Notification("Info", "Installation finished"));
             }
         }
 
@@ -79,7 +79,7 @@ namespace VoukoderManager.GUI
             if (!e.Cancelled)
             {
                 UpdateProgramList(e.Entry, e.OperationType);
-                NotifyService.Notify(new Notification("Info", "Uninstall finished"));
+                NotifyService.Notify(new Notification("Info", "Uninstallation finished"));
             }
         }
 
