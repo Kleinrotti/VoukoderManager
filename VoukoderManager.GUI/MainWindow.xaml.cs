@@ -80,6 +80,7 @@ namespace VoukoderManager.GUI
             VKPackage.InstallationFinished += VKPackage_InstallationFinished;
             _installedPage = new ComponentPage(true);
             _availablePage = new ComponentPage(false);
+            _installedPage.InitializeComponent();
             framePages.Navigate(_installedPage);
             CheckSelfUpdate();
             w.Stop();
@@ -160,6 +161,14 @@ namespace VoukoderManager.GUI
             }
         }
 
+        public void MinimizeToTray()
+        {
+            this.WindowState = WindowState.Minimized;
+            Show();
+            _notifyService.ShowIcon();
+            this.Hide();
+        }
+
         private void gridMove_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
@@ -189,6 +198,7 @@ namespace VoukoderManager.GUI
         {
             var src = e.Source as MenuItem;
             RegistryHelper.SetValue("UseBetaVersions", src.IsChecked);
+            MessageBox.Show("Program restart required");
         }
 
         private void menuItem_notifications_Click(object sender, RoutedEventArgs e)
@@ -256,6 +266,15 @@ namespace VoukoderManager.GUI
         {
             var value = ((MenuItem)e.Source).IsChecked;
             RegistryHelper.SetValue("StartMinimized", value);
+            if (value)
+            {
+                string fullPath = System.Reflection.Assembly.GetAssembly(typeof(VoukoderManager.GUI.App)).Location;
+                RegistryHelper.SetValue(@"Software\Microsoft\Windows\CurrentVersion\Run", "VoukoderManager", fullPath + " --minimized");
+            }
+            else
+            {
+                RegistryHelper.DeleteValue(@"Software\Microsoft\Windows\CurrentVersion\Run", "VoukoderManager");
+            }
         }
     }
 }

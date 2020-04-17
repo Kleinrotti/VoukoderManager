@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using VoukoderManager.Core;
 using VoukoderManager.Core.Models;
+using VoukoderManager.Notify;
 
 namespace VoukoderManager.Controls
 {
@@ -314,6 +315,8 @@ namespace VoukoderManager.Controls
                     _buttonUpdate.Visibility = Visibility.Visible;
                     CreateUpdateInfo(update);
                 }
+                if (_packageUpdate != null)
+                    NotifyService.Notify(new Notification("Update", $"There is an update available: {_packageUpdate.Name}"));
             }
         }
 

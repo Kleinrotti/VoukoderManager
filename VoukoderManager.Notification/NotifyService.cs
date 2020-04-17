@@ -90,12 +90,14 @@ namespace VoukoderManager.Notify
         private static void ItemOpen_Click(object sender, EventArgs e)
         {
             _window.Show();
+            _window.WindowState = WindowState.Normal;
             Icon.Visible = false;
         }
 
         private static void Icon_DoubleClick(object sender, EventArgs e)
         {
             _window.Show();
+            _window.WindowState = WindowState.Normal;
             Icon.Visible = false;
         }
     }

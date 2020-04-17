@@ -97,12 +97,44 @@ namespace VoukoderManager.Core
             return _values;
         }
 
-        public static void SetValue(string valueName, bool value)
+        public static void SetValue(string valueName, object value)
         {
             using (var _registryKey = Registry.CurrentUser.OpenSubKey(@"Software\VoukoderManager", true))
             {
-                _registryKey.SetValue(valueName, value, RegistryValueKind.DWord);
+                if (value.GetType() == typeof(bool))
+                    _registryKey.SetValue(valueName, value, RegistryValueKind.DWord);
+                else
+                    _registryKey.SetValue(valueName, value, RegistryValueKind.String);
                 Log.Debug($"Set registry value {valueName}: {value}");
+            }
+        }
+
+        public static void SetValue(string registryPath, string valueName, object value)
+        {
+            using (var _registryKey = Registry.CurrentUser.OpenSubKey(registryPath, true))
+            {
+                if (value.GetType() == typeof(bool))
+                    _registryKey.SetValue(valueName, value, RegistryValueKind.DWord);
+                else
+                    _registryKey.SetValue(valueName, value, RegistryValueKind.String);
+                Log.Debug($"Set registry value {valueName}: {value}");
+            }
+        }
+
+        public static void DeleteValue(string registryPath, string valueName)
+        {
+            using (var _registryKey = Registry.CurrentUser.OpenSubKey(registryPath, true))
+            {
+                try
+                {
+                    _registryKey.DeleteValue(valueName);
+                }
+                catch (ArgumentException ex)
+                {
+                    Log.Error(ex, "Delete value failed");
+                    return;
+                }
+                Log.Debug($"Remove registry value {valueName}");
             }
         }
 
