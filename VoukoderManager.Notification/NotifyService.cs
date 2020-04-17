@@ -12,6 +12,8 @@ namespace VoukoderManager.Notify
         private static Window _window;
         private static Action _callback;
 
+        public static bool ShowNotifications { get; set; }
+
         public static int BalloonTimeout { get; set; } = 5;
 
         static NotifyService()
@@ -60,6 +62,8 @@ namespace VoukoderManager.Notify
 
         public static void Notify(INotification notification)
         {
+            if (!ShowNotifications)
+                return;
             Icon.Visible = true;
             Icon.ShowBalloonTip(BalloonTimeout, notification.Title, notification.Message, ToolTipIcon.None);
         }
@@ -67,8 +71,7 @@ namespace VoukoderManager.Notify
         public static void Notify(INotification notification, Action callback)
         {
             _callback = callback;
-            Icon.Visible = true;
-            Icon.ShowBalloonTip(BalloonTimeout, notification.Title, notification.Message, ToolTipIcon.None);
+            Notify(notification);
         }
 
         public void ShowIcon()

@@ -74,6 +74,7 @@ namespace VoukoderManager.GUI
             menuItem_tray.IsChecked = RegistryHelper.GetValue("MinimizeToTray");
             menuItem_start_tray.IsChecked = RegistryHelper.GetValue("StartMinimized");
             menuItem_beta.IsChecked = PackageManager.AllowPreReleaseVersion;
+            NotifyService.ShowNotifications = menuItem_notifications.IsChecked;
             DataContext = this;
             Lang.LanguageChanged += LanguageChanged;
             PackageManager.ApiRequestUsed += PackageManager_ApiRequestUsed;
@@ -203,6 +204,9 @@ namespace VoukoderManager.GUI
 
         private void menuItem_notifications_Click(object sender, RoutedEventArgs e)
         {
+            var src = e.Source as MenuItem;
+            RegistryHelper.SetValue("Notifications", src.IsChecked);
+            NotifyService.ShowNotifications = src.IsChecked;
         }
 
         private void menuItem_debug_Click(object sender, RoutedEventArgs e)
