@@ -25,7 +25,7 @@ namespace VoukoderManager.Core.Models
                 else if (ComponentType == ProgramType.VoukoderCore)
                     return @" /i " + Path + @" /qn";
                 else
-                    return @" / i " + Path + @" TGTDIR=""" + PluginsPath + @""" /qn";
+                    return @" /i " + Path + @" TGTDIR=""" + PluginsPath + @""" /qn";
             }
         }
 
