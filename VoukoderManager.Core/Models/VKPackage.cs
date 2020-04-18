@@ -20,10 +20,12 @@ namespace VoukoderManager.Core.Models
         {
             get
             {
-                if (ComponentType == ProgramType.VEGAS || ComponentType == ProgramType.VEGAS)
+                if (ComponentType == ProgramType.VEGAS || ComponentType == ProgramType.MovieStudio)
                     return @" /i " + Path + @" VEGASDIR=""" + PluginsPath + @""" /qn";
+                else if (ComponentType == ProgramType.VoukoderCore)
+                    return @" /i " + Path + @" /qn";
                 else
-                    return @" /i " + Path + @" TGTDIR=""" + PluginsPath + @""" /qn";
+                    return @" / i " + Path + @" TGTDIR=""" + PluginsPath + @""" /qn";
             }
         }
 

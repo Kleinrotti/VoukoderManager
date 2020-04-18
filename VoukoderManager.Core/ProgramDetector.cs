@@ -113,6 +113,8 @@ namespace VoukoderManager.Core
                     vComponents.Add(e);
                 }
             }
+            if (vComponents == null)
+                return null;
             try
             {
                 var ad = vComponents.Single(x => x.DisplayName.Any(char.IsDigit));
